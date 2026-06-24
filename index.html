@@ -333,7 +333,7 @@ input,select{font-family:'Inter',sans-serif}
           <option value="9">Oct</option><option value="10">Nov</option><option value="11">Dec</option>
         </select>
         <select id="chart-year-sel" class="chart-sel">
-          <option>2024</option><option selected>2025</option><option>2026</option>
+          <option>2024</option><option>2025</option><option>2026</option><option>2027</option>
         </select>
         <button class="btn-add" id="btn-add-chart" style="padding:8px 16px;font-size:12px">+ Add</button>
         <div style="width:1px;height:24px;background:var(--border2);margin:0 4px"></div>
@@ -968,6 +968,23 @@ function calcAll(){
 });
 
 // LOGIN
+function setCurrentMonthYear(){
+  var now=new Date();
+  var monthSel=document.getElementById('chart-month-sel');
+  var yearSel=document.getElementById('chart-year-sel');
+  monthSel.value=String(now.getMonth());
+  // if the current year isn't in the dropdown's options, add it so it can always be selected
+  var yearStr=String(now.getFullYear());
+  var hasYear=false;
+  for(var i=0;i<yearSel.options.length;i++){ if(yearSel.options[i].value===yearStr){hasYear=true;break;} }
+  if(!hasYear){
+    var opt=document.createElement('option');
+    opt.value=yearStr; opt.textContent=yearStr;
+    yearSel.appendChild(opt);
+  }
+  yearSel.value=yearStr;
+}
+
 document.getElementById('btn-login').addEventListener('click', function(){
   var u=document.getElementById('login-user').value.trim();
   var p=document.getElementById('login-pass').value;
@@ -982,6 +999,7 @@ document.getElementById('btn-login').addEventListener('click', function(){
     document.getElementById('avatar-letter').textContent=found.username[0].toUpperCase();
     renderAccounts();
     updateChartSelect();
+    setCurrentMonthYear();
     renderChart();
   } else {
     document.getElementById('login-error').classList.add('show');
