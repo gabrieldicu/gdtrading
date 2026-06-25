@@ -100,44 +100,54 @@ input,select{font-family:'Inter',sans-serif}
 .chv.open{transform:rotate(180deg)}
 
 /* EXPANDED */
-.exp-panel{background:#f8f9ff;border-top:1px solid var(--border);display:none}
+.exp-panel{background:#fbfcff;border-top:1px solid var(--border);display:none}
 .exp-panel.open{display:block}
-.pot-bar{display:flex;justify-content:flex-end;gap:24px;padding:10px 24px;border-bottom:1px solid var(--border);background:#f0f4ff}
-.pot-item{font-size:10px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;font-weight:500}
-.pot-item span{font-weight:700;margin-left:6px;font-size:12px}
+.pot-bar{display:flex;justify-content:flex-end;gap:28px;padding:14px 26px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,#eef2ff,#f5f8ff)}
+.pot-item{font-size:10px;color:var(--text3);letter-spacing:1.2px;text-transform:uppercase;font-weight:600}
+.pot-item span{font-weight:800;margin-left:7px;font-size:13px}
 .pot-item span.g{color:var(--green)}.pot-item span.r{color:var(--red)}.pot-item span.b{color:var(--text)}
-.target-bar{display:flex;justify-content:flex-end;gap:24px;padding:9px 24px;border-bottom:1px solid var(--border);background:#fffaf0}
-.target-item{font-size:10px;color:#a16207;letter-spacing:1px;text-transform:uppercase;font-weight:600;display:flex;align-items:center;gap:5px}
-.target-item .ti-val{font-weight:800;margin-left:4px;font-size:12.5px;color:#92400e}
+.target-bar{display:flex;justify-content:flex-end;gap:14px;padding:12px 26px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,#fff9ed,#fffbf2)}
+.target-item{font-size:10px;color:#92671a;letter-spacing:1.1px;text-transform:uppercase;font-weight:700;display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.6);padding:6px 12px;border-radius:9px;border:1px solid rgba(217,119,6,0.18)}
+.target-item .ti-val{font-weight:800;margin-left:4px;font-size:13px;color:#92400e}
 .target-item .ti-val.profit{color:var(--green)}
-.exp-inner{display:grid;grid-template-columns:1fr 360px}
-.chart-area{padding:36px 28px;display:flex;align-items:center;justify-content:center;border-right:1px solid var(--border);min-height:200px}
-.no-data{color:var(--text3);font-size:13px}
-.metrics-panel{padding:20px 24px}
-.metrics-title{font-size:10px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;font-weight:600}
+.exp-inner{display:grid;grid-template-columns:1fr 380px}
+.chart-area{padding:20px;display:flex;flex-direction:column;border-right:1px solid var(--border);min-height:300px;background:linear-gradient(160deg,#0b0d13,#11141d);position:relative}
+.no-data{color:var(--text3);font-size:13px;margin:auto}
+.bh-canvas-wrap{position:relative;flex:1;min-height:230px}
+.bh-tooltip{position:absolute;pointer-events:none;background:#1c2230;color:#fff;padding:10px 14px;border-radius:10px;font-size:12px;box-shadow:0 10px 28px rgba(0,0,0,0.5);opacity:0;transition:opacity 0.12s;z-index:10;border:1px solid rgba(255,255,255,0.08)}
+.bh-tooltip .bht-date{color:#8b94a8;font-size:10.5px;margin-bottom:3px;font-weight:500}
+.bh-tooltip .bht-val{color:#22d3ee;font-weight:700;font-size:14px}
+.bh-tooltip .bht-phase{color:#fbbf24;font-size:10.5px;margin-top:4px;font-weight:600}
+.bh-legend{display:flex;gap:16px;padding:0 6px 12px;font-size:10.5px;color:#8a93a8;font-weight:500}
+.bh-legend span{display:inline-flex;align-items:center;gap:6px}
+.bh-legend .dot{width:7px;height:7px;border-radius:50%;display:inline-block;box-shadow:0 0 6px currentColor}
+.metrics-panel{padding:22px 26px}
+.metrics-title{font-size:10.5px;color:var(--text3);letter-spacing:1.6px;text-transform:uppercase;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;font-weight:700}
 .metrics-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
-.risc-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
-.risc-card{position:relative;background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;transition:border-color 0.15s}
-.risc-card.cyan{border-color:rgba(8,145,178,0.25);background:#f0fcff}
-.risc-val{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-0.3px;margin-top:4px}
+.risc-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px}
+.risc-card{position:relative;background:#fff;border:1px solid var(--border);border-radius:14px;padding:16px 18px;transition:all 0.2s;box-shadow:0 1px 3px rgba(15,23,42,0.04)}
+.risc-card:hover{box-shadow:0 6px 16px rgba(15,23,42,0.08);transform:translateY(-1px)}
+.risc-card.cyan{border-color:rgba(8,145,178,0.22);background:linear-gradient(160deg,#f0fcff,#f7feff)}
+.risc-val{font-size:24px;font-weight:800;color:var(--text);letter-spacing:-0.4px;margin-top:5px}
 .risc-val.cyan{color:#0891b2}
-.risc-copy{position:absolute;top:12px;right:12px;width:26px;height:26px;border-radius:7px;border:1px solid var(--border2);background:var(--surface2);color:var(--text2);font-size:13px;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center}
-.risc-copy:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+.risc-copy{position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text2);font-size:13px;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center}
+.risc-copy:hover{background:var(--accent);color:#fff;border-color:var(--accent);transform:scale(1.06)}
 .risc-copy.copied{background:var(--green);color:#fff;border-color:var(--green)}
 .metric-label{font-size:10px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;font-weight:500}
 .metric-val{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-0.5px}
 .metric-val.cyan{color:var(--cyan)}.metric-val.red{color:var(--red)}.metric-val.green{color:var(--green)}
-.health-title{font-size:10px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;display:flex;justify-content:space-between;font-weight:500}
-.health-badge{display:inline-flex;align-items:center;gap:6px;background:var(--green-bg);border:1px solid var(--green-bd);color:var(--green);padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;margin-bottom:12px}
-.health-badge.warn{background:var(--gold-bg);border-color:#fde047;color:#854d0e}
-.health-badge.danger{background:var(--red-bg);border-color:var(--red-bd);color:var(--red)}
-.health-dot{width:7px;height:7px;border-radius:50%;background:var(--green)}
-.health-dot.warn{background:#eab308}.health-dot.danger{background:var(--red)}
-.gauge-wrap{display:flex;align-items:center;gap:14px}
+.health-title{font-size:10.5px;color:var(--text3);letter-spacing:1.6px;text-transform:uppercase;margin-bottom:10px;display:flex;justify-content:space-between;font-weight:700}
+.health-badge{display:inline-flex;align-items:center;gap:7px;background:var(--green-bg);border:1px solid var(--green-bd);color:var(--green);padding:5px 14px;border-radius:20px;font-size:11.5px;font-weight:700;margin-bottom:14px;box-shadow:0 1px 3px rgba(22,163,74,0.1)}
+.health-badge.warn{background:var(--gold-bg);border-color:#fde047;color:#854d0e;box-shadow:0 1px 3px rgba(234,179,8,0.12)}
+.health-badge.danger{background:var(--red-bg);border-color:var(--red-bd);color:var(--red);box-shadow:0 1px 3px rgba(220,38,38,0.12)}
+.health-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green)}
+.health-dot.warn{background:#eab308;box-shadow:0 0 6px #eab308}.health-dot.danger{background:var(--red);box-shadow:0 0 6px var(--red)}
+.gauge-wrap{display:flex;align-items:center;gap:16px}
 .exp-metrics-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;flex:1}
-.exp-metric{background:#fff;border:1px solid var(--border);border-radius:8px;padding:10px 12px}
-.em-label{font-size:9px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;font-weight:500}
-.em-val{font-size:14px;font-weight:700}
+.exp-metric{background:#fff;border:1px solid var(--border);border-radius:10px;padding:11px 13px;box-shadow:0 1px 3px rgba(15,23,42,0.04);transition:box-shadow 0.2s}
+.exp-metric:hover{box-shadow:0 4px 12px rgba(15,23,42,0.07)}
+.em-label{font-size:9px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;font-weight:600}
+.em-val{font-size:15px;font-weight:800}
 .em-val.r{color:var(--red)}.em-val.g{color:var(--green)}.em-val.y{color:var(--gold)}
 
 /* CALC */
@@ -529,6 +539,25 @@ function getRiscBrokerReward(a){
   return (a.phase==='live') ? total/4 : total;
 }
 
+function todayISO(){
+  var d=new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+
+function recordBalanceHistory(a){
+  if(!a.balanceHistory) a.balanceHistory=[];
+  var today=todayISO();
+  var existing=a.balanceHistory.find(function(h){return h.date===today;});
+  if(existing) existing.balance=a.balance;
+  else a.balanceHistory.push({date:today,balance:a.balance});
+  a.balanceHistory.sort(function(x,y){return x.date<y.date?-1:1;});
+}
+
+function recordPhaseChange(a,newPhase){
+  if(!a.phaseHistory) a.phaseHistory=[];
+  a.phaseHistory.push({date:todayISO(),phase:newPhase});
+}
+
 function getHealthPct(a){
   if(a.phase===1 || a.phase===2){
     var targetPct = a.phase===1 ? 0.08 : 0.05;
@@ -550,6 +579,121 @@ function updateStats(){
   var active = accounts.filter(function(a){return a.phase!=='breached';}).length;
   var breached = accounts.filter(function(a){return a.phase==='breached';}).length;
   document.getElementById('header-stats').textContent = active+' active · '+breached+' breached';
+}
+
+function bindBalanceHistoryTooltip(idx){
+  var canvas=document.getElementById('bh-canvas-'+idx);
+  var tip=document.getElementById('bh-tooltip-'+idx);
+  if(!canvas||!tip) return;
+  var account=accounts[idx];
+  var phaseLabels={1:'Phase 1',2:'Phase 2',live:'Live',breached:'Breached'};
+  canvas.onmousemove=function(ev){
+    var pts=canvas._points;
+    if(!pts||!pts.length){tip.style.opacity=0;return;}
+    var rect=canvas.getBoundingClientRect();
+    var mx=ev.clientX-rect.left;
+    var closest=null,dist=999;
+    for(var i=0;i<pts.length;i++){
+      var d=Math.abs(pts[i].x-mx);
+      if(d<dist){dist=d;closest=pts[i];}
+    }
+    if(closest&&dist<30){
+      tip.style.opacity=1;
+      var left=closest.x+14, top=closest.y-10;
+      if(left+150>canvas.parentElement.offsetWidth) left=closest.x-160;
+      tip.style.left=left+'px'; tip.style.top=top+'px';
+      var phaseEvt=(account.phaseHistory||[]).find(function(ph){return ph.date===closest.date;});
+      tip.innerHTML='<div class="bht-date">'+closest.date+'</div><div class="bht-val">$'+Math.round(closest.balance).toLocaleString()+'</div>'+(phaseEvt?'<div class="bht-phase">→ '+(phaseLabels[phaseEvt.phase]||phaseEvt.phase)+'</div>':'');
+    } else {
+      tip.style.opacity=0;
+    }
+  };
+  canvas.onmouseleave=function(){tip.style.opacity=0;};
+}
+
+function drawBalanceHistory(idx, account){
+  var canvas=document.getElementById('bh-canvas-'+idx);
+  if(!canvas) return;
+  var wrap=canvas.parentElement;
+  var hist=(account.balanceHistory||[]).slice().sort(function(a,b){return a.date<b.date?-1:1;});
+  var ctx=canvas.getContext('2d');
+  var dpr=window.devicePixelRatio||1;
+  var W=wrap.offsetWidth||400, H=wrap.offsetHeight||220;
+  canvas.width=W*dpr; canvas.height=H*dpr; canvas.style.width=W+'px'; canvas.style.height=H+'px';
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,W,H);
+
+  if(hist.length<2){
+    ctx.font='13px Inter'; ctx.fillStyle='#5b6478'; ctx.textAlign='center';
+    ctx.fillText(hist.length===0?'Nu există încă date — se înregistrează la prima editare de Balance':'Mai e nevoie de cel puțin o zi în plus pentru grafic', W/2, H/2);
+    canvas._points=[];
+    return;
+  }
+
+  var PAD={l:54,r:16,t:18,b:28};
+  var gW=W-PAD.l-PAD.r, gH=H-PAD.t-PAD.b;
+  var vals=hist.map(function(h){return h.balance;});
+  var minV=Math.min.apply(null,vals), maxV=Math.max.apply(null,vals);
+  if(minV===maxV){minV-=100; maxV+=100;}
+  var pad=(maxV-minV)*0.15; minV-=pad; maxV+=pad;
+  var xAt=function(i){ return PAD.l+(hist.length>1?i/(hist.length-1):0)*gW; };
+  var yAt=function(v){ return PAD.t+gH-((v-minV)/(maxV-minV))*gH; };
+
+  // grid + y labels
+  ctx.font='10px Inter'; ctx.textAlign='right';
+  for(var g=0;g<=3;g++){
+    var gy=PAD.t+(gH/3)*g;
+    var val=maxV-(maxV-minV)*(g/3);
+    ctx.strokeStyle='rgba(255,255,255,0.06)'; ctx.setLineDash([3,4]); ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(PAD.l,gy); ctx.lineTo(PAD.l+gW,gy); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle='#6b7488';
+    ctx.fillText('$'+Math.round(val).toLocaleString(), PAD.l-8, gy+3);
+  }
+  // x labels (date, sparse)
+  ctx.textAlign='center';
+  var step=Math.max(1,Math.ceil(hist.length/6));
+  for(var i=0;i<hist.length;i+=step){
+    ctx.fillStyle='#6b7488';
+    ctx.fillText(hist[i].date.slice(5), xAt(i), H-PAD.b+16);
+  }
+
+  var pts=hist.map(function(h,i){return {x:xAt(i),y:yAt(h.balance),date:h.date,balance:h.balance};});
+
+  // smooth curve via quadratic midpoints
+  ctx.beginPath(); ctx.moveTo(pts[0].x,pts[0].y);
+  for(var i=0;i<pts.length-1;i++){
+    var p0=pts[i], p1=pts[i+1], mx=(p0.x+p1.x)/2, my=(p0.y+p1.y)/2;
+    ctx.quadraticCurveTo(p0.x,p0.y,mx,my);
+  }
+  ctx.lineTo(pts[pts.length-1].x,pts[pts.length-1].y);
+  ctx.strokeStyle='#22d3ee'; ctx.lineWidth=2.5; ctx.lineJoin='round'; ctx.stroke();
+
+  // fill under curve
+  ctx.lineTo(pts[pts.length-1].x,PAD.t+gH); ctx.lineTo(pts[0].x,PAD.t+gH); ctx.closePath();
+  var grad=ctx.createLinearGradient(0,PAD.t,0,PAD.t+gH);
+  grad.addColorStop(0,'rgba(34,211,238,0.18)'); grad.addColorStop(1,'rgba(34,211,238,0.01)');
+  ctx.fillStyle=grad; ctx.fill();
+
+  // phase change markers
+  var phaseHist=account.phaseHistory||[];
+  var phaseLabels={1:'Phase 1',2:'Phase 2',live:'Live',breached:'Breached'};
+  phaseHist.forEach(function(ph){
+    var di=hist.findIndex(function(h){return h.date===ph.date;});
+    if(di<0) return;
+    var x=xAt(di);
+    ctx.strokeStyle='rgba(251,191,36,0.5)'; ctx.lineWidth=1; ctx.setLineDash([2,3]);
+    ctx.beginPath(); ctx.moveTo(x,PAD.t); ctx.lineTo(x,PAD.t+gH); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle='#fbbf24'; ctx.beginPath(); ctx.arc(x,yAt(hist[di].balance),4,0,6.28); ctx.fill();
+    ctx.font='600 9.5px Inter'; ctx.textAlign='center'; ctx.fillStyle='#fbbf24';
+    ctx.fillText('→ '+(phaseLabels[ph.phase]||ph.phase), x, PAD.t-4);
+  });
+
+  // dots
+  pts.forEach(function(p){
+    ctx.beginPath(); ctx.arc(p.x,p.y,3,0,6.28); ctx.fillStyle='#22d3ee'; ctx.fill();
+  });
+
+  canvas._points=pts;
 }
 
 function drawGauge(id, pct){
@@ -610,7 +754,10 @@ function renderAccounts(){
         targetItems+='<div class="target-item">📈 PHASE 2 <span class="ti-val">$'+Math.round(p2).toLocaleString()+'</span></div>';
       }
       html += '<div class="target-bar">'+targetItems+'</div>';
-      html += '<div class="exp-inner"><div class="chart-area"><div class="no-data">Not enough data</div></div>';
+      html += '<div class="exp-inner"><div class="chart-area">';
+      html += '<div class="bh-legend"><span><span class="dot" style="background:#22d3ee"></span>Balance</span><span><span class="dot" style="background:#fbbf24"></span>Schimbare fază</span></div>';
+      html += '<div class="bh-canvas-wrap"><canvas id="bh-canvas-'+idx+'"></canvas><div class="bh-tooltip" id="bh-tooltip-'+idx+'"></div></div>';
+      html += '</div>';
       html += '<div class="metrics-panel">';
       var riscProp=getRiscProp(a), riscBroker=getRiscBroker(a), riscReward=getRiscBrokerReward(a);
       var phaseLbl=a.phase==='live'?'Live · ÷4 trades · RR 0.5':'Phase '+a.phase+' · full amount · RR 0.5';
@@ -648,7 +795,11 @@ function renderAccounts(){
   }
   if(!html) html = '<div style="padding:24px 20px;color:#999;font-size:13px;text-align:center">No accounts to display.</div>';
   document.getElementById('acc-list').innerHTML = html;
-  if(expanded!==null) setTimeout(function(){drawGauge('gauge-'+expanded,getHealthPct(accounts[expanded]));},50);
+  if(expanded!==null) setTimeout(function(){
+    drawGauge('gauge-'+expanded,getHealthPct(accounts[expanded]));
+    drawBalanceHistory(expanded,accounts[expanded]);
+    bindBalanceHistoryTooltip(expanded);
+  },50);
   updateStats();
   bindCellEvents();
   updateChartSelect();
@@ -690,6 +841,7 @@ function bindCellEvents(){
       var newPhase = sel.value;
       if(newPhase==='breached'){
         accounts[idx].phase='breached'; accounts[idx].icon='warn';
+        recordPhaseChange(accounts[idx],'breached');
         saveState();
         renderAccounts(); return;
       }
@@ -726,6 +878,7 @@ function bindCellEvents(){
       if(isNaN(val)) val = parseFloat(raw.replace(/[^0-9.\-]/g,''))||0;
       accounts[idx][field] = val;
       accounts[idx][field+'Expr'] = raw; // keep the raw expression (e.g. "-130-51-182-166") so it can be continued later
+      if(field==='balance') recordBalanceHistory(accounts[idx]);
       updateStats();
       saveState();
       if(expanded===idx){
@@ -1169,6 +1322,7 @@ document.getElementById('btn-confirm-phase').addEventListener('click', function(
   if(!newId){alert('Introdu adresa noului cont!');return;}
   accounts[pendingPhase.idx].phase=pendingPhase.newPhase;
   accounts[pendingPhase.idx].id=newId;
+  recordPhaseChange(accounts[pendingPhase.idx],pendingPhase.newPhase);
   document.getElementById('phase-modal').classList.remove('open');
   saveState();
   renderAccounts();
