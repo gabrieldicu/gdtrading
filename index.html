@@ -106,12 +106,24 @@ input,select{font-family:'Inter',sans-serif}
 .pot-item{font-size:10px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;font-weight:500}
 .pot-item span{font-weight:700;margin-left:6px;font-size:12px}
 .pot-item span.g{color:var(--green)}.pot-item span.r{color:var(--red)}.pot-item span.b{color:var(--text)}
+.target-bar{display:flex;justify-content:flex-end;gap:24px;padding:9px 24px;border-bottom:1px solid var(--border);background:#fffaf0}
+.target-item{font-size:10px;color:#a16207;letter-spacing:1px;text-transform:uppercase;font-weight:600;display:flex;align-items:center;gap:5px}
+.target-item .ti-val{font-weight:800;margin-left:4px;font-size:12.5px;color:#92400e}
+.target-item .ti-val.profit{color:var(--green)}
 .exp-inner{display:grid;grid-template-columns:1fr 360px}
 .chart-area{padding:36px 28px;display:flex;align-items:center;justify-content:center;border-right:1px solid var(--border);min-height:200px}
 .no-data{color:var(--text3);font-size:13px}
 .metrics-panel{padding:20px 24px}
 .metrics-title{font-size:10px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;font-weight:600}
 .metrics-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.risc-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+.risc-card{position:relative;background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;transition:border-color 0.15s}
+.risc-card.cyan{border-color:rgba(8,145,178,0.25);background:#f0fcff}
+.risc-val{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-0.3px;margin-top:4px}
+.risc-val.cyan{color:#0891b2}
+.risc-copy{position:absolute;top:12px;right:12px;width:26px;height:26px;border-radius:7px;border:1px solid var(--border2);background:var(--surface2);color:var(--text2);font-size:13px;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center}
+.risc-copy:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+.risc-copy.copied{background:var(--green);color:#fff;border-color:var(--green)}
 .metric-label{font-size:10px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;font-weight:500}
 .metric-val{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-0.5px}
 .metric-val.cyan{color:var(--cyan)}.metric-val.red{color:var(--red)}.metric-val.green{color:var(--green)}
@@ -421,8 +433,8 @@ input,select{font-family:'Inter',sans-serif}
 var STORAGE_KEY='gdtrading_state_v1';
 var USERS = [{username:'Gabriel',password:'gabriel2024'},{username:'admin',password:'admin123'}];
 var DEFAULT_ACCOUNTS = [
-  {id:'12197029',phase:'live',firm:'Funding Pips',capital:10000,eval:-66,broker:-340,payouts:0,balance:10000,icon:'bolt',propLot:2,brokerLot:2.18,dailySL:400,dailyTP:900,maxLot:2,healthExp:-466,healthAct:-406,healthDelta:-60},
-  {id:'20188884',phase:'live',firm:'Funding Pips',capital:25000,eval:-142,broker:-727,payouts:0,balance:25000,icon:'bolt',propLot:5,brokerLot:5.45,dailySL:1000,dailyTP:2250,maxLot:5,healthExp:-1142,healthAct:-869,healthDelta:-273},
+  {id:'12197029',phase:'live',firm:'Funding Pips',capital:10000,eval:-66,broker:-340,payouts:0,balance:10000,icon:'bolt'},
+  {id:'20188884',phase:'live',firm:'Funding Pips',capital:25000,eval:-142,broker:-727,payouts:0,balance:25000,icon:'bolt'},
 ];
 var accounts = DEFAULT_ACCOUNTS.map(function(a){return Object.assign({},a);});
 var chartData = {};
@@ -481,22 +493,76 @@ function evalSumExpr(raw){
 
 function getPnL(a){ return a.eval + a.broker + a.payouts; }
 
+function getBE(a){
+  var pnl=getPnL(a);
+  if(pnl>=0) return null; // Pure Profit — breakeven already reached
+  var loss=Math.abs(a.eval+a.broker);
+  return (loss/0.80)+18; // ~$15-20 processing fee buffer
+}
+
+function getPhaseTarget(a,pct){
+  var deficit=Math.max(0, a.capital - a.balance);
+  return a.capital*pct + deficit;
+}
+
+function getPropRiskPct(a){
+  if(a.phase==='live') return 0.025;
+  // Phase 1/2: linear interpolation between 4.5% (capital ≤10k) and 4.3% (capital ≥25k)
+  if(a.capital<=10000) return 0.045;
+  if(a.capital>=25000) return 0.043;
+  var t=(a.capital-10000)/(25000-10000);
+  return 0.045 - t*(0.045-0.043);
+}
+
+function getRiscProp(a){
+  return a.balance * getPropRiskPct(a); // % decided by initial capital size, applied to live balance
+}
+
+function getRiscBroker(a){
+  var total = Math.abs(a.eval) + Math.abs(a.broker);
+  var reward = (a.phase==='live') ? total/4 : total; // Live: split across 4 planned trades; Phase 1/2: full amount
+  return reward*2; // RR 0.5 on broker: risk = 2× the reward target
+}
+
+function getRiscBrokerReward(a){
+  var total = Math.abs(a.eval) + Math.abs(a.broker);
+  return (a.phase==='live') ? total/4 : total;
+}
+
+function getHealthPct(a){
+  if(a.phase===1 || a.phase===2){
+    var targetPct = a.phase===1 ? 0.08 : 0.05;
+    var target = a.capital*targetPct;
+    if(target===0) return 0;
+    var profit = a.balance - a.capital;
+    return (profit/target)*100;
+  }
+  // live (and breached, shown frozen)
+  var maxLoss = Math.abs(a.eval) + Math.abs(a.broker);
+  if(maxLoss===0) return 100;
+  var pnl = getPnL(a);
+  if(pnl>=0) return 100; // Pure Profit — fully recovered
+  var pct = (maxLoss - Math.abs(pnl)) / maxLoss * 100;
+  return pct;
+}
+
 function updateStats(){
   var active = accounts.filter(function(a){return a.phase!=='breached';}).length;
   var breached = accounts.filter(function(a){return a.phase==='breached';}).length;
   document.getElementById('header-stats').textContent = active+' active · '+breached+' breached';
 }
 
-function drawGauge(id, exp, act){
+function drawGauge(id, pct){
   var c = document.getElementById(id); if(!c) return;
   var ctx = c.getContext('2d'), W = c.width, H = c.height, cx = W/2, cy = H*0.75, r = W*0.38;
   ctx.clearRect(0,0,W,H);
   ctx.beginPath(); ctx.arc(cx,cy,r,Math.PI,2*Math.PI); ctx.lineWidth=12; ctx.strokeStyle='#e5e7eb'; ctx.stroke();
   var g = ctx.createLinearGradient(cx-r,cy,cx+r,cy);
-  g.addColorStop(0,'#16a34a'); g.addColorStop(0.5,'#d97706'); g.addColorStop(1,'#dc2626');
+  g.addColorStop(0,'#dc2626'); g.addColorStop(0.5,'#d97706'); g.addColorStop(1,'#16a34a');
   ctx.beginPath(); ctx.arc(cx,cy,r,Math.PI,2*Math.PI); ctx.strokeStyle=g; ctx.lineWidth=12; ctx.stroke();
-  var pct = Math.max(0, Math.min(1, 1+(act/Math.abs(exp))));
-  var angle = Math.PI + pct*Math.PI;
+  var clamped = Math.max(0, Math.min(100, pct)); // needle clamps visually at 0-100, even if underlying pct is negative/over
+  var frac = clamped/100;
+  var angle = Math.PI + frac*Math.PI;
   ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+r*Math.cos(angle), cy+r*Math.sin(angle));
   ctx.lineWidth=2.5; ctx.strokeStyle='#1e2130'; ctx.stroke();
   ctx.beginPath(); ctx.arc(cx,cy,4,0,6.28); ctx.fillStyle='#1e2130'; ctx.fill();
@@ -508,8 +574,8 @@ function renderAccounts(){
   for(var k=0;k<filtered.length;k++){
     var o=filtered[k], a=o.a, idx=o.i;
     var isLive=a.phase==='live', isBreached=a.phase==='breached';
-    var ratio = a.healthAct/Math.abs(a.healthExp);
-    var status = ratio>-0.5?'healthy':ratio>-0.8?'warning':'danger';
+    var healthPct = getHealthPct(a);
+    var status = healthPct>=70?'healthy':healthPct>=30?'warning':'danger';
     var statusLabel = status==='healthy'?'HEALTHY':status==='warning'?'WARNING':'DANGER';
     var pnl = getPnL(a);
     html += '<div>';
@@ -533,22 +599,47 @@ function renderAccounts(){
       var dc='health-dot'+(status==='warning'?' warn':status==='danger'?' danger':'');
       html += '<div class="exp-panel open">';
       html += '<div class="pot-bar"><div class="pot-item">CAPITAL <span class="b">$'+a.capital.toLocaleString()+'</span></div><div class="pot-item">FIRM <span class="b">'+a.firm+'</span></div><div class="pot-item">POTENTIAL PROFIT <span class="'+(pnl>=0?'g':'r')+'">'+(pnl<0?'-$'+Math.abs(pnl):'$'+pnl)+'</span></div></div>';
+      var beVal=getBE(a);
+      var targetItems='';
+      targetItems+='<div class="target-item">🎯 BE <span class="ti-val'+(beVal===null?' profit':'')+'">'+(beVal===null?'Pure Profit':'$'+Math.round(beVal).toLocaleString())+'</span></div>';
+      if(a.phase===1){
+        var p1=getPhaseTarget(a,0.08);
+        targetItems+='<div class="target-item">📈 PHASE 1 <span class="ti-val">$'+Math.round(p1).toLocaleString()+'</span></div>';
+      } else if(a.phase===2){
+        var p2=getPhaseTarget(a,0.05);
+        targetItems+='<div class="target-item">📈 PHASE 2 <span class="ti-val">$'+Math.round(p2).toLocaleString()+'</span></div>';
+      }
+      html += '<div class="target-bar">'+targetItems+'</div>';
       html += '<div class="exp-inner"><div class="chart-area"><div class="no-data">Not enough data</div></div>';
       html += '<div class="metrics-panel">';
-      html += '<div class="metrics-title">TODAY\'S METRICS <span style="font-size:11px;color:var(--text3)">Max Lot: <span style="color:var(--text2);font-weight:600">'+a.maxLot+'</span></span></div>';
-      html += '<div class="metrics-grid">';
-      html += '<div><div class="metric-label">PROP LOT</div><div class="metric-val">'+a.propLot+'</div></div>';
-      html += '<div><div class="metric-label">BROKER LOT</div><div class="metric-val cyan">'+a.brokerLot.toFixed(2)+'</div></div>';
-      html += '<div><div class="metric-label">DAILY SL</div><div class="metric-val red">$'+a.dailySL.toLocaleString()+'</div></div>';
-      html += '<div><div class="metric-label">DAILY TP</div><div class="metric-val green">$'+a.dailyTP.toLocaleString()+'</div></div>';
+      var riscProp=getRiscProp(a), riscBroker=getRiscBroker(a), riscReward=getRiscBrokerReward(a);
+      var phaseLbl=a.phase==='live'?'Live · ÷4 trades · RR 0.5':'Phase '+a.phase+' · full amount · RR 0.5';
+      html += '<div class="metrics-title">RISC CALCULATOR <span style="font-size:11px;color:var(--text3)">'+phaseLbl+'</span></div>';
+      html += '<div class="risc-grid">';
+      html += '<div class="risc-card"><div class="metric-label">RISC PROP ('+(getPropRiskPct(a)*100).toFixed(2)+'% × balance)</div><div class="risc-val">$'+Math.round(riscProp).toLocaleString()+'</div><button class="risc-copy" data-copy="'+Math.round(riscProp)+'" title="Copiază">⧉</button></div>';
+      html += '<div class="risc-card cyan"><div class="metric-label">RISC BROKER <span style="color:var(--text3);font-weight:500">(reward $'+Math.round(riscReward).toLocaleString()+')</span></div><div class="risc-val cyan">$'+Math.round(riscBroker).toLocaleString()+'</div><button class="risc-copy" data-copy="'+Math.round(riscBroker)+'" title="Copiază">⧉</button></div>';
       html += '</div>';
-      html += '<div class="health-title">ACCOUNT HEALTH <span style="font-size:10px;color:var(--text3)">Band: $'+a.healthExp+' → -$500</span></div>';
+      var bandLabel, currentLabel, currentVal;
+      if(a.phase===1 || a.phase===2){
+        var tPct = a.phase===1?0.08:0.05;
+        var tVal = getPhaseTarget(a,tPct) - Math.max(0, a.capital-a.balance); // the pure phase target (8%/5%), excluding deficit makeup
+        bandLabel = '$0 → $'+Math.round(a.capital*tPct).toLocaleString()+' (Phase '+a.phase+' target)';
+        currentLabel = 'Profit curent';
+        var curProfit = a.balance - a.capital;
+        currentVal = (curProfit>=0?'$':'-$')+Math.abs(Math.round(curProfit)).toLocaleString();
+      } else {
+        var maxLossVal = Math.abs(a.eval)+Math.abs(a.broker);
+        bandLabel = '-$'+maxLossVal.toLocaleString()+' → $0 (Breakeven)';
+        currentLabel = 'P&L curent';
+        var pnlNow = getPnL(a);
+        currentVal = (pnlNow>=0?'$':'-$')+Math.abs(Math.round(pnlNow)).toLocaleString();
+      }
+      html += '<div class="health-title">ACCOUNT HEALTH <span style="font-size:10px;color:var(--text3)">Band: '+bandLabel+'</span></div>';
       html += '<div class="'+bc+'"><span class="'+dc+'"></span> '+statusLabel+'</div>';
       html += '<div class="gauge-wrap"><canvas id="gauge-'+idx+'" width="140" height="80"></canvas>';
       html += '<div class="exp-metrics-row">';
-      html += '<div class="exp-metric"><div class="em-label">EXP</div><div class="em-val r">$'+a.healthExp+'</div></div>';
-      html += '<div class="exp-metric"><div class="em-label">ACT</div><div class="em-val r">$'+a.healthAct+'</div></div>';
-      html += '<div class="exp-metric"><div class="em-label">Δ</div><div class="em-val '+(a.healthDelta>=0?'g':'r')+'">$'+a.healthDelta+'</div></div>';
+      html += '<div class="exp-metric"><div class="em-label">'+currentLabel.toUpperCase()+'</div><div class="em-val '+(currentVal.indexOf('-')===0?'r':'g')+'">'+currentVal+'</div></div>';
+      html += '<div class="exp-metric"><div class="em-label">PROGRES</div><div class="em-val '+(healthPct>=70?'g':healthPct>=30?'y':'r')+'">'+Math.round(healthPct)+'%</div></div>';
       html += '</div></div></div></div></div>';
     } else {
       html += '<div class="exp-panel"></div>';
@@ -557,7 +648,7 @@ function renderAccounts(){
   }
   if(!html) html = '<div style="padding:24px 20px;color:#999;font-size:13px;text-align:center">No accounts to display.</div>';
   document.getElementById('acc-list').innerHTML = html;
-  if(expanded!==null) setTimeout(function(){drawGauge('gauge-'+expanded,accounts[expanded].healthExp,accounts[expanded].healthAct);},50);
+  if(expanded!==null) setTimeout(function(){drawGauge('gauge-'+expanded,getHealthPct(accounts[expanded]));},50);
   updateStats();
   bindCellEvents();
   updateChartSelect();
@@ -571,6 +662,24 @@ function bindCellEvents(){
       var idx = parseInt(row.getAttribute('data-idx'));
       expanded = expanded===idx?null:idx;
       renderAccounts();
+    });
+  });
+  // Risc copy buttons
+  document.querySelectorAll('.risc-copy').forEach(function(btn){
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      var val=btn.getAttribute('data-copy');
+      var doneFeedback=function(){
+        btn.textContent='✓'; btn.classList.add('copied');
+        setTimeout(function(){btn.textContent='⧉'; btn.classList.remove('copied');},1200);
+      };
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(val).then(doneFeedback).catch(function(){
+          alert('Nu s-a putut copia automat. Valoare: '+val);
+        });
+      } else {
+        alert('Nu s-a putut copia automat. Valoare: '+val);
+      }
     });
   });
   // Phase selects
@@ -598,9 +707,13 @@ function bindCellEvents(){
     el.addEventListener('click', function(e){e.stopPropagation();});
     el.addEventListener('keydown', function(e){if(e.key==='Enter'){e.preventDefault();el.blur();}});
     el.addEventListener('focus', function(){
-      var txt = el.textContent.replace(/[$,\-]/g,'').trim();
-      // preserve sign
-      var raw = el.textContent.replace(/[$,]/g,'').trim();
+      var idx = parseInt(el.getAttribute('data-idx'));
+      var field = el.getAttribute('data-field');
+      var exprField = field+'Expr';
+      // if an expression history exists for this field, show that so the user can keep appending terms
+      var raw = (accounts[idx][exprField]!==undefined && accounts[idx][exprField]!==null && accounts[idx][exprField]!=='')
+        ? accounts[idx][exprField]
+        : el.textContent.replace(/[$,]/g,'').trim();
       el.textContent = raw;
       var range=document.createRange(),sel=window.getSelection();
       range.selectNodeContents(el);sel.removeAllRanges();sel.addRange(range);
@@ -608,19 +721,24 @@ function bindCellEvents(){
     el.addEventListener('blur', function(){
       var idx = parseInt(el.getAttribute('data-idx'));
       var field = el.getAttribute('data-field');
-      var raw = el.textContent.replace(/[$,]/g,'');
+      var raw = el.textContent.replace(/[$,]/g,'').trim();
       var val = evalSumExpr(raw);
       if(isNaN(val)) val = parseFloat(raw.replace(/[^0-9.\-]/g,''))||0;
       accounts[idx][field] = val;
-      // reformat display
-      if(field==='balance') el.textContent='$'+Math.abs(val).toLocaleString();
-      else el.textContent=(val<0?'-$'+Math.abs(val):'$'+val);
-      el.className='cell-val '+(field==='balance'?'bal':val<0?'neg':val>0?'pos':'zer');
-      var pnl=getPnL(accounts[idx]);
-      var pnlEl=document.getElementById('pnl-'+idx);
-      if(pnlEl){pnlEl.textContent=(pnl<0?'-$'+Math.abs(pnl):'$'+pnl);pnlEl.className='cell-val '+(pnl>=0?'pos':'neg');}
+      accounts[idx][field+'Expr'] = raw; // keep the raw expression (e.g. "-130-51-182-166") so it can be continued later
       updateStats();
       saveState();
+      if(expanded===idx){
+        renderAccounts(); // re-render so the expanded panel (Risc Prop/Broker, Phase target, etc.) reflects the new value
+      } else {
+        // reformat display in place when the row isn't expanded (avoids losing focus elsewhere)
+        if(field==='balance') el.textContent='$'+Math.abs(val).toLocaleString();
+        else el.textContent=(val<0?'-$'+Math.abs(val):'$'+val);
+        el.className='cell-val '+(field==='balance'?'bal':val<0?'neg':val>0?'pos':'zer');
+        var pnl=getPnL(accounts[idx]);
+        var pnlEl=document.getElementById('pnl-'+idx);
+        if(pnlEl){pnlEl.textContent=(pnl<0?'-$'+Math.abs(pnl):'$'+pnl);pnlEl.className='cell-val '+(pnl>=0?'pos':'neg');}
+      }
     });
   });
 }
@@ -1037,11 +1155,6 @@ document.getElementById('btn-confirm-add').addEventListener('click', function(){
   accounts.push({
     id:id,phase:phaseVal,firm:document.getElementById('new-firm').value,capital:capital,
     eval:evalCost?-Math.abs(evalCost):0,broker:0,payouts:0,balance:capital,icon:'bolt',
-    propLot:Math.round(capital/5000),brokerLot:Math.round(capital/5000)*1.09,
-    dailySL:Math.round(capital*0.04),dailyTP:Math.round(capital*0.09),
-    maxLot:Math.round(capital/5000),
-    healthExp:-Math.round(capital*0.04),healthAct:evalCost?-evalCost:0,
-    healthDelta:Math.round(capital*0.04)-(evalCost||0),
   });
   document.getElementById('new-id').value='';document.getElementById('new-eval').value='';
   document.getElementById('add-modal').classList.remove('open');
