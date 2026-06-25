@@ -107,6 +107,7 @@ input,select{font-family:'Inter',sans-serif}
 .pot-item span{font-weight:800;margin-left:7px;font-size:13px}
 .pot-item span.g{color:var(--green)}.pot-item span.r{color:var(--red)}.pot-item span.b{color:var(--text)}
 .exp-inner{display:grid;grid-template-columns:300px 1fr}
+.exp-inner.no-chart{grid-template-columns:1fr}
 .chart-area{padding:20px;display:flex;flex-direction:column;border-right:1px solid var(--border);min-height:300px;background:linear-gradient(160deg,#0b0d13,#11141d);position:relative}
 .no-data{color:var(--text3);font-size:13px;margin:auto}
 .bh-canvas-wrap{position:relative;flex:1;min-height:230px}
@@ -626,8 +627,17 @@ function drawBalanceHistory(idx, account){
   ctx.clearRect(0,0,W,H);
 
   if(hist.length<2){
-    ctx.font='13px Inter'; ctx.fillStyle='#5b6478'; ctx.textAlign='center';
-    ctx.fillText(hist.length===0?'Nu există încă date — se înregistrează la prima editare de Balance':'Mai e nevoie de cel puțin o zi în plus pentru grafic', W/2, H/2);
+    var msg = hist.length===0 ? 'Nu există încă date. Se înregistrează la prima editare de Balance.' : 'Mai e nevoie de o zi pentru a desena graficul.';
+    ctx.font='12px Inter'; ctx.fillStyle='#5b6478'; ctx.textAlign='center';
+    var words=msg.split(' '), lines=[], line='', maxW=W-32;
+    for(var i=0;i<words.length;i++){
+      var test=line?line+' '+words[i]:words[i];
+      if(ctx.measureText(test).width>maxW && line){ lines.push(line); line=words[i]; }
+      else line=test;
+    }
+    if(line) lines.push(line);
+    var lh=18, startY=H/2-((lines.length-1)*lh)/2;
+    lines.forEach(function(l,i){ ctx.fillText(l, W/2, startY+i*lh); });
     canvas._points=[];
     return;
   }
@@ -745,10 +755,14 @@ function renderAccounts(){
       var dc='health-dot'+(status==='warning'?' warn':status==='danger'?' danger':'');
       html += '<div class="exp-panel open">';
       html += '<div class="pot-bar"><div class="pot-item">CAPITAL <span class="b">$'+a.capital.toLocaleString()+'</span></div><div class="pot-item">FIRM <span class="b">'+a.firm+'</span></div><div class="pot-item">POTENTIAL PROFIT <span class="'+(pnl>=0?'g':'r')+'">'+(pnl<0?'-$'+Math.abs(pnl):'$'+pnl)+'</span></div></div>';
-      html += '<div class="exp-inner"><div class="chart-area">';
-      html += '<div class="bh-legend"><span><span class="dot" style="background:#22d3ee"></span>Balance</span><span><span class="dot" style="background:#fbbf24"></span>Schimbare fază</span></div>';
-      html += '<div class="bh-canvas-wrap"><canvas id="bh-canvas-'+idx+'"></canvas><div class="bh-tooltip" id="bh-tooltip-'+idx+'"></div></div>';
-      html += '</div>';
+      var showChart = (a.phase===1 || a.phase===2);
+      html += '<div class="exp-inner'+(showChart?'':' no-chart')+'">';
+      if(showChart){
+        html += '<div class="chart-area">';
+        html += '<div class="bh-legend"><span><span class="dot" style="background:#22d3ee"></span>Balance</span><span><span class="dot" style="background:#fbbf24"></span>Schimbare fază</span></div>';
+        html += '<div class="bh-canvas-wrap"><canvas id="bh-canvas-'+idx+'"></canvas><div class="bh-tooltip" id="bh-tooltip-'+idx+'"></div></div>';
+        html += '</div>';
+      }
       html += '<div class="metrics-panel">';
       var riscProp=getRiscProp(a), riscBroker=getRiscBroker(a), riscReward=getRiscBrokerReward(a);
       var phaseLbl=a.phase==='live'?'Live · ÷4 trades · RR 0.5':'Phase '+a.phase+' · full amount · RR 0.5';
