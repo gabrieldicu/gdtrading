@@ -129,7 +129,7 @@ input,select{font-family:'Inter',sans-serif}
 .risc-card.cyan:hover{box-shadow:0 10px 26px rgba(8,145,178,0.32)}
 .risc-card.gold{background:linear-gradient(150deg,#f59e0b,#b45309);box-shadow:0 4px 14px rgba(217,119,6,0.24)}
 .risc-card.gold:hover{box-shadow:0 10px 26px rgba(217,119,6,0.34)}
-.risc-val.profit{color:#bbf7d0}
+.risc-val.profit{color:#fff}
 .risc-card .metric-label{color:rgba(255,255,255,0.78);font-weight:700;padding-right:36px;display:block}
 .risc-val{font-size:34px;font-weight:800;color:#fff;letter-spacing:-0.6px;margin-top:8px;position:relative}
 .risc-val.cyan{color:#fff}
@@ -778,7 +778,8 @@ function renderAccounts(){
         html += '<div class="risc-card gold"><div class="metric-label">📈 PHASE 2 TARGET</div><div class="risc-val">$'+Math.round(p2).toLocaleString()+'</div><button class="risc-copy" data-copy="'+Math.round(p2)+'" title="Copiază">⧉</button></div>';
       }
       html += '<div class="risc-card"><div class="metric-label">RISC PROP ('+(getPropRiskPct(a)*100).toFixed(2)+'% × balance)</div><div class="risc-val">$'+Math.round(riscProp).toLocaleString()+'</div><button class="risc-copy" data-copy="'+Math.round(riscProp)+'" title="Copiază">⧉</button></div>';
-      html += '<div class="risc-card cyan"><div class="metric-label">RISC BROKER <span style="color:rgba(255,255,255,0.7);font-weight:500">(reward $'+Math.round(riscReward).toLocaleString()+')</span></div><div class="risc-val cyan">$'+Math.round(riscBroker).toLocaleString()+'</div><button class="risc-copy" data-copy="'+Math.round(riscBroker)+'" title="Copiază">⧉</button></div>';
+      var isPureProfit = pnl>=0;
+      html += '<div class="risc-card cyan"><div class="metric-label">RISC BROKER'+(isPureProfit?'':' <span style="color:rgba(255,255,255,0.7);font-weight:500">(reward $'+Math.round(riscReward).toLocaleString()+')</span>')+'</div><div class="risc-val cyan'+(isPureProfit?' profit':'')+'">'+(isPureProfit?'No Broker':'$'+Math.round(riscBroker).toLocaleString())+'</div>'+(isPureProfit?'':'<button class="risc-copy" data-copy="'+Math.round(riscBroker)+'" title="Copiază">⧉</button>')+'</div>';
       html += '</div>';
       var bandLabel, currentLabel, currentVal;
       if(a.phase===1 || a.phase===2){
