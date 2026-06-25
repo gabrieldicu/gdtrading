@@ -510,7 +510,8 @@ function getBE(a){
   var pnl=getPnL(a);
   if(pnl>=0) return null; // Pure Profit — breakeven already reached
   var loss=Math.abs(a.eval+a.broker);
-  return (loss/0.80)+18; // ~$15-20 processing fee buffer
+  if(a.phase===1 || a.phase===2) return loss; // no payout happens in Phase 1/2, so no 80% split applies
+  return (loss/0.80)+18; // Live: payout split (80%) + ~$15-20 processing fee buffer
 }
 
 function getPhaseTarget(a,pct){
@@ -945,12 +946,23 @@ function addChartEntry(){
   var key=document.getElementById('chart-acc-sel').value;
   var payoutAcc=document.getElementById('chart-payout-acc-sel').value;
   if(!chartData[key]) chartData[key]=[];
-  chartData[key]=chartData[key].filter(function(e){return !(e.month===month&&e.year===year&&e.day===day);});
-  chartData[key].push({month:month,year:year,day:day,profit:profit,payoutAcc:payoutAcc||null});
+  var existing=chartData[key].find(function(e){return e.month===month&&e.year===year&&e.day===day;});
+  if(existing) existing.profit+=profit; // accumulate multiple payouts added on the same day
+  else chartData[key].push({month:month,year:year,day:day,profit:profit,payoutAcc:payoutAcc||null});
   chartData[key].sort(function(a,b){return a.year!==b.year?a.year-b.year:(a.month!==b.month?a.month-b.month:(a.day||1)-(b.day||1));});
+  // mirror this payout into the account's Payouts cell in the table, so the two stay in sync
+  if(key!=='all'){
+    var acc=accounts.find(function(a){return a.id===key;});
+    if(acc){
+      acc.payouts=(acc.payouts||0)+profit;
+      var prevExpr=(acc.payoutsExpr!==undefined && acc.payoutsExpr!==null && acc.payoutsExpr!=='') ? acc.payoutsExpr : String(acc.payouts-profit);
+      acc.payoutsExpr=prevExpr+(profit>=0?'+':'')+profit;
+    }
+  }
   document.getElementById('chart-profit-inp').value='';
   saveState();
   renderChart();
+  renderAccounts();
 }
 
 function removeEntry(key,month,year,day){
@@ -1092,39 +1104,37 @@ function renderChart(){
     ctx.fillText(dayTicks[i],x,H-PAD.b+16);
   }
 
-  // build step path: starts at 0 on day 1, jumps to each payout value, holds until next/end of month
-  var stepPts=[{x:dayX(1),y:zero}];
-  for(var i=0;i<data.length;i++){
-    var x=dayX(data[i].day);
-    stepPts.push({x:x,y:stepPts[stepPts.length-1].y}); // horizontal hold up to this day
-    stepPts.push({x:x,y:valY(data[i].profit)}); // vertical jump to new value
-  }
-  stepPts.push({x:dayX(nDays),y:stepPts[stepPts.length-1].y}); // hold to end of month
+  // simple point-to-point line: each point is the day's individual payout (no cumulative steps)
+  var linePts=data.map(function(e){return {x:dayX(e.day),y:valY(e.profit)};});
 
   // zero line
   ctx.strokeStyle='rgba(15,17,23,0.12)';ctx.lineWidth=1;
   ctx.beginPath();ctx.moveTo(PAD.l,zero);ctx.lineTo(PAD.l+gW,zero);ctx.stroke();
 
-  // gradient fill area under the step line
-  ctx.beginPath();ctx.moveTo(stepPts[0].x,zero);
-  for(var i=0;i<stepPts.length;i++) ctx.lineTo(stepPts[i].x,stepPts[i].y);
-  ctx.lineTo(stepPts[stepPts.length-1].x,zero);ctx.closePath();
-  var grad=ctx.createLinearGradient(0,PAD.t,0,PAD.t+gH);
-  grad.addColorStop(0,'rgba(124,58,237,0.20)');
-  grad.addColorStop(0.55,'rgba(37,99,235,0.10)');
-  grad.addColorStop(1,'rgba(37,99,235,0.01)');
-  ctx.fillStyle=grad;ctx.fill();
+  // gradient fill area under the line
+  if(linePts.length>1){
+    ctx.beginPath();ctx.moveTo(linePts[0].x,zero);
+    for(var i=0;i<linePts.length;i++) ctx.lineTo(linePts[i].x,linePts[i].y);
+    ctx.lineTo(linePts[linePts.length-1].x,zero);ctx.closePath();
+    var grad=ctx.createLinearGradient(0,PAD.t,0,PAD.t+gH);
+    grad.addColorStop(0,'rgba(124,58,237,0.20)');
+    grad.addColorStop(0.55,'rgba(37,99,235,0.10)');
+    grad.addColorStop(1,'rgba(37,99,235,0.01)');
+    ctx.fillStyle=grad;ctx.fill();
+  }
 
-  // step line with glow
-  ctx.save();
-  ctx.shadowColor='rgba(37,99,235,0.35)';ctx.shadowBlur=8;ctx.shadowOffsetY=2;
-  ctx.beginPath();
-  ctx.moveTo(stepPts[0].x,stepPts[0].y);
-  for(var i=1;i<stepPts.length;i++) ctx.lineTo(stepPts[i].x,stepPts[i].y);
-  var lineGrad=ctx.createLinearGradient(PAD.l,0,PAD.l+gW,0);
-  lineGrad.addColorStop(0,'#7c3aed');lineGrad.addColorStop(1,'#2563eb');
-  ctx.strokeStyle=lineGrad;ctx.lineWidth=3;ctx.lineJoin='round';ctx.lineCap='round';ctx.stroke();
-  ctx.restore();
+  // line with glow, simple point-to-point (only if 2+ points; a single point shows just the dot)
+  if(linePts.length>1){
+    ctx.save();
+    ctx.shadowColor='rgba(37,99,235,0.35)';ctx.shadowBlur=8;ctx.shadowOffsetY=2;
+    ctx.beginPath();
+    ctx.moveTo(linePts[0].x,linePts[0].y);
+    for(var i=1;i<linePts.length;i++) ctx.lineTo(linePts[i].x,linePts[i].y);
+    var lineGrad=ctx.createLinearGradient(PAD.l,0,PAD.l+gW,0);
+    lineGrad.addColorStop(0,'#7c3aed');lineGrad.addColorStop(1,'#2563eb');
+    ctx.strokeStyle=lineGrad;ctx.lineWidth=3;ctx.lineJoin='round';ctx.lineCap='round';ctx.stroke();
+    ctx.restore();
+  }
 
   // dots with glow ring at each real payout
   var points=[];
