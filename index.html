@@ -1105,7 +1105,8 @@ function renderChart(){
   }
 
   // simple point-to-point line: each point is the day's individual payout (no cumulative steps)
-  var linePts=data.map(function(e){return {x:dayX(e.day),y:valY(e.profit)};});
+  // anchor point at (day 1, $0) so the line always starts from the zero baseline, even with a single data point
+  var linePts=[{x:dayX(1),y:zero}].concat(data.map(function(e){return {x:dayX(e.day),y:valY(e.profit)};}));
 
   // zero line
   ctx.strokeStyle='rgba(15,17,23,0.12)';ctx.lineWidth=1;
