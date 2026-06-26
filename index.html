@@ -352,6 +352,7 @@ input,select{font-family:'Inter',sans-serif}
             <div class="profit-summary-label">Total All-Time</div>
             <div class="profit-summary-val" id="profit-sum-alltime">$0</div>
           </div>
+          <button id="btn-reset-chart" title="Șterge tot istoricul graficului (conturile NU sunt afectate)" style="background:none;border:none;color:var(--text3);font-size:14px;cursor:pointer;padding:0 0 0 6px;line-height:1">↺</button>
         </div>
       </div>
       <div class="profit-controls">
@@ -492,6 +493,13 @@ function resetToDemoData(){
   location.reload();
 }
 
+function resetChartOnly(){
+  if(!confirm('Sigur vrei să ștergi tot istoricul graficului Monthly Profit? Conturile (Eval/Broker/Payouts/Balance) NU sunt afectate.')) return;
+  chartData = {};
+  saveState();
+  renderChart();
+}
+
 loadState();
 
 function evalSumExpr(raw){
@@ -537,6 +545,12 @@ function getPropRiskPct(a){
 
 function getRiscProp(a){
   return a.balance * getPropRiskPct(a); // % decided by initial capital size, applied to live balance
+}
+
+function getDaysToMaxLoss(a){
+  var riscProp=getRiscProp(a);
+  if(riscProp<=0) return null;
+  return (a.capital*0.10)/riscProp;
 }
 
 function getRiscBroker(a){
@@ -782,14 +796,14 @@ function renderAccounts(){
       html += '<div class="risc-grid">';
       var beVal=getBE(a);
       html += '<div class="risc-card gold"><div class="metric-label">🎯 BE</div><div class="risc-val'+(beVal===null?' profit':'')+'">'+(beVal===null?'Pure Profit':'$'+Math.round(beVal).toLocaleString())+'</div>'+(beVal===null?'':'<button class="risc-copy" data-copy="'+Math.round(beVal)+'" title="Copiază">⧉</button>')+'</div>';
-      if(a.phase===1){
-        var p1=getPhaseTarget(a,0.08);
-        html += '<div class="risc-card gold"><div class="metric-label">📈 PHASE 1 TARGET</div><div class="risc-val">$'+Math.round(p1).toLocaleString()+'</div><button class="risc-copy" data-copy="'+Math.round(p1)+'" title="Copiază">⧉</button></div>';
-      } else if(a.phase===2){
-        var p2=getPhaseTarget(a,0.05);
-        html += '<div class="risc-card gold"><div class="metric-label">📈 PHASE 2 TARGET</div><div class="risc-val">$'+Math.round(p2).toLocaleString()+'</div><button class="risc-copy" data-copy="'+Math.round(p2)+'" title="Copiază">⧉</button></div>';
+      if(a.phase===1 || a.phase===2){
+        var pPct=a.phase===1?0.08:0.05;
+        var pTarget=getPhaseTarget(a,pPct);
+        var pProgress=getHealthPct(a);
+        html += '<div class="risc-card gold"><div class="metric-label">📈 PHASE '+a.phase+' TARGET</div><div class="risc-val">$'+Math.round(pTarget).toLocaleString()+'</div><div class="risc-sub">'+Math.round(pProgress)+'% din target atins</div><button class="risc-copy" data-copy="'+Math.round(pTarget)+'" title="Copiază">⧉</button></div>';
       }
-      html += '<div class="risc-card"><div class="metric-label">RISC PROP ('+(getPropRiskPct(a)*100).toFixed(2)+'% × balance)</div><div class="risc-val">$'+Math.round(riscProp).toLocaleString()+'</div><button class="risc-copy" data-copy="'+Math.round(riscProp)+'" title="Copiază">⧉</button></div>';
+      var daysToMax=getDaysToMaxLoss(a);
+      html += '<div class="risc-card"><div class="metric-label">RISC PROP ('+(getPropRiskPct(a)*100).toFixed(2)+'% × balance)</div><div class="risc-val">$'+Math.round(riscProp).toLocaleString()+'</div>'+(daysToMax!==null?'<div class="risc-sub">~'+Math.round(daysToMax)+' zile până la max loss</div>':'')+'<button class="risc-copy" data-copy="'+Math.round(riscProp)+'" title="Copiază">⧉</button></div>';
       var isPureProfit = pnl>=0;
       var minBrokerBal = getMinBrokerBalance(a);
       html += '<div class="risc-card cyan"><div class="metric-label">RISC BROKER'+(isPureProfit?'':' <span style="color:rgba(255,255,255,0.7);font-weight:500">(reward $'+Math.round(riscReward).toLocaleString()+')</span>')+'</div><div class="risc-val cyan'+(isPureProfit?' profit':'')+'">'+(isPureProfit?'No Broker':'$'+Math.round(riscBroker).toLocaleString())+'</div>'+(isPureProfit?'':'<div class="risc-sub">Balanță minimă: $'+Math.round(minBrokerBal).toLocaleString()+'</div>')+(isPureProfit?'':'<button class="risc-copy" data-copy="'+Math.round(riscBroker)+'" title="Copiază">⧉</button>')+'</div>';
@@ -1333,6 +1347,7 @@ document.getElementById('btn-logout').addEventListener('click', function(){
   document.getElementById('login-pass').value='';
 });
 document.getElementById('btn-reset-demo').addEventListener('click', resetToDemoData);
+document.getElementById('btn-reset-chart').addEventListener('click', resetChartOnly);
 
 // BREACHED
 document.getElementById('btn-breached').addEventListener('click', function(){
