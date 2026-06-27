@@ -551,7 +551,10 @@ function getPhaseTarget(a,pct){
 }
 
 function getPropRiskPct(a){
-  if(a.phase==='live') return 0.025;
+  if(a.phase==='live'){
+    if(a.capital===10000) return 0.045; // exception: Live accounts at exactly 10k use 4.5%, not the standard 2.5%
+    return 0.025; // standard Live risk for every other account size
+  }
   // Phase 1/2: linear interpolation between 4.5% (capital ≤10k) and 4.3% (capital ≥25k)
   if(a.capital<=10000) return 0.045;
   if(a.capital>=25000) return 0.043;
