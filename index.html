@@ -575,6 +575,17 @@ function getRiscBroker(a){
   return reward*2; // RR 0.5 on broker: risk = 2× the reward target
 }
 
+function getInitialBrokerBalance(a){
+  // Fixed lookup table, not a formula — only valid for the account sizes currently traded (10K, 25K).
+  if(a.capital===10000) return 300;
+  if(a.capital===25000){
+    var evalAbs=Math.abs(a.eval);
+    // pick whichever known eval price (142 discount vs 177 full) the account's eval cost is closer to
+    return Math.abs(evalAbs-142) <= Math.abs(evalAbs-177) ? 650 : 750;
+  }
+  return null; // no known fixed value for other account sizes yet
+}
+
 function getMinBrokerBalance(a){
   return getRiscBroker(a) / 0.795; // max 79.5% of balance can be risked (leaves ~0.5% buffer for Fusion Markets fees)
 }
@@ -844,7 +855,8 @@ function renderAccounts(){
       var bc='health-badge'+(status==='warning'?' warn':status==='danger'?' danger':'');
       var dc='health-dot'+(status==='warning'?' warn':status==='danger'?' danger':'');
       html += '<div class="exp-panel open">';
-      html += '<div class="pot-bar"><div class="pot-item">CAPITAL <span class="b">$'+a.capital.toLocaleString()+'</span></div><div class="pot-item">FIRM <span class="b">'+a.firm+'</span></div><div class="pot-item">POTENTIAL PROFIT <span class="'+(pnl>=0?'g':'r')+'">'+(pnl<0?'-$'+Math.abs(pnl):'$'+pnl)+'</span></div></div>';
+      var initBrokerBal=getInitialBrokerBalance(a);
+      html += '<div class="pot-bar">'+(initBrokerBal!==null?'<div class="pot-item">BALANȚA BROKER <span class="b">$'+initBrokerBal.toLocaleString()+'</span></div>':'')+'<div class="pot-item">CAPITAL <span class="b">$'+a.capital.toLocaleString()+'</span></div><div class="pot-item">FIRM <span class="b">'+a.firm+'</span></div><div class="pot-item">POTENTIAL PROFIT <span class="'+(pnl>=0?'g':'r')+'">'+(pnl<0?'-$'+Math.abs(pnl):'$'+pnl)+'</span></div></div>';
       var showChart = (a.phase===1 || a.phase===2);
       html += '<div class="exp-inner'+(showChart?'':' no-chart')+'">';
       if(showChart){
