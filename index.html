@@ -759,9 +759,11 @@ function drawBalanceHistory(idx, account){
     ctx.fillText('→ '+(phaseLabels[ph.phase]||ph.phase), x, PAD.t-4);
   });
 
-  // dots
+  // dots, each with a "+1" label above it
   pts.forEach(function(p){
     ctx.beginPath(); ctx.arc(p.x,p.y,3,0,6.28); ctx.fillStyle='#22d3ee'; ctx.fill();
+    ctx.font='700 10px Inter'; ctx.textAlign='center'; ctx.fillStyle='#4ade80';
+    ctx.fillText('+1', p.x, p.y-10);
   });
 
   canvas._points=pts;
