@@ -158,38 +158,47 @@ input,select{font-family:'Inter',sans-serif}
 .em-val.r{color:var(--red)}.em-val.g{color:var(--green)}.em-val.y{color:var(--gold)}
 
 /* CALC */
-.calc-wrap{background:#fff;border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:16px;box-shadow:0 2px 12px rgba(0,0,0,0.06)}
-.calc-section-title{font-size:10px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px;font-weight:600}
-.inputs-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
 .inp-group{display:flex;flex-direction:column;gap:7px}
 .inp-label{font-size:10px;color:var(--text3);letter-spacing:0.5px;font-weight:500;text-transform:uppercase}
 .inp{background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:10px 13px;border-radius:8px;font-size:14px;width:100%;outline:none;font-weight:500;transition:all 0.2s}
 .inp:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(37,99,235,0.1);background:#fff}
-.scenario-tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
-.stab{background:var(--surface2);border:1px solid var(--border2);color:var(--text3);padding:7px 14px;border-radius:7px;font-size:11px;font-weight:500;transition:all 0.15s}
-.stab:hover{color:var(--text2)}
-.stab.active{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
-.trades-wrap{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}
-.trade-box{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
-.trade-box.win{border-color:var(--green-bd);background:var(--green-bg)}
-.trade-box.loss{border-color:var(--red-bd);background:var(--red-bg)}
-.t-num{font-size:10px;color:var(--text3);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;font-weight:600;letter-spacing:1px;text-transform:uppercase}
-.t-badge{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600}
-.t-badge.win{background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd)}
-.t-badge.loss{background:var(--red-bg);color:var(--red);border:1px solid var(--red-bd)}
-.t-badge.pending{background:var(--gold-bg);color:#854d0e;border:1px solid #fde047}
-.t-row{font-size:12px;color:var(--text2);margin-top:6px;display:flex;justify-content:space-between}
-.t-row .g{color:var(--green);font-weight:600}.t-row .r{color:var(--red);font-weight:600}.t-row .y{color:var(--gold);font-weight:600}
-.t-note{font-size:10px;color:var(--text3);margin-top:7px}
-.summary-box{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-.summary-box.success{background:var(--green-bg);border-color:var(--green-bd)}
-.summary-box.danger{background:var(--red-bg);border-color:var(--red-bd)}
-.sum-label{font-size:11px;color:var(--text3)}
-.sum-val{font-size:15px;font-weight:700}
-.sum-val.g{color:var(--green)}.sum-val.r{color:var(--red)}.sum-val.y{color:var(--gold)}
-.alert-box{padding:12px 16px;border-radius:8px;font-size:12px;margin-top:10px;line-height:1.6;font-weight:500}
-.alert-box.success{background:var(--green-bg);border:1px solid var(--green-bd);color:var(--green)}
-.alert-box.danger{background:var(--red-bg);border:1px solid var(--red-bd);color:var(--red)}
+
+/* RULES & LIMITS */
+.rules-page{max-width:1280px}
+.rules-hero{display:flex;align-items:center;gap:16px;margin-bottom:28px}
+.rules-hero-icon{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,#2563eb,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 6px 18px rgba(37,99,235,0.3);flex-shrink:0}
+.rules-hero h1{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-0.4px;margin-bottom:3px}
+.rules-hero p{font-size:13px;color:var(--text3);font-weight:500}
+.rules-table-card{background:#fff;border:1px solid var(--border);border-radius:18px;box-shadow:0 4px 20px rgba(15,23,42,0.06);overflow:hidden;margin-bottom:24px}
+.rules-table{width:100%;border-collapse:collapse}
+.rules-table thead th{background:linear-gradient(135deg,#1e2130,#2a2f45);color:#fff;font-size:10.5px;text-transform:uppercase;letter-spacing:1px;font-weight:700;padding:16px 18px;text-align:left}
+.rules-table thead th:first-child{border-radius:0}
+.rules-table thead th.col-tier{text-align:center;min-width:90px}
+.rules-table tbody tr{border-bottom:1px solid var(--border)}
+.rules-table tbody tr:last-child{border-bottom:none}
+.rules-table tbody tr:hover{background:#fafbff}
+.rules-table td{padding:16px 18px;vertical-align:middle}
+.rule-name{font-size:13.5px;font-weight:700;color:var(--text)}
+.rule-sub{font-size:11px;color:var(--text3);font-weight:500;margin-top:2px}
+.rule-val{text-align:center;font-size:15px;font-weight:800;color:var(--text)}
+.rule-row-full td{padding:14px 18px;font-size:13px;color:var(--text2);font-weight:600;text-align:center;background:#fafbff}
+.rule-row-removed .rule-val{color:var(--text3);font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:0.5px}
+.rule-row-removed .rule-val.kept{color:var(--text)}
+.rule-row-removed .rule-val .pct{display:block;font-size:10px;color:var(--text3);font-weight:500;margin-top:2px}
+.rule-row-personal{background:linear-gradient(135deg,#eef4ff,#f5f9ff)}
+.rule-row-personal td{border-top:1px solid var(--border)}
+.rule-row-personal .rule-val{color:var(--accent)}
+.rule-row-personal .rule-val .pct{display:block;font-size:10px;color:var(--accent);opacity:0.75;font-weight:600;margin-top:2px}
+.rule-row-personal .rule-val.na{color:var(--text3);font-size:11px;font-weight:600;text-transform:none}
+.rule-icon{margin-right:6px}
+.rules-warning{display:flex;gap:14px;background:linear-gradient(135deg,#fff7ed,#fffaf0);border:1px solid #fed7aa;border-radius:16px;padding:18px 22px;box-shadow:0 2px 10px rgba(217,119,6,0.06)}
+.rules-warning .rw-icon{font-size:20px;flex-shrink:0;margin-top:1px}
+.rules-warning .rw-text{font-size:13px;color:#92400e;line-height:1.65;font-weight:500}
+.rules-warning .rw-text b{font-weight:800}
+@media(max-width:1100px){
+  .rules-table{font-size:12px}
+  .rules-table td,.rules-table thead th{padding:12px 10px}
+}
 
 /* MODALS */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,17,23,0.5);z-index:100;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
@@ -294,7 +303,7 @@ input,select{font-family:'Inter',sans-serif}
   </div>
   <div class="nav">
     <button class="tab active" data-panel="dashboard">Dashboard</button>
-    <button class="tab" data-panel="calculator">Risk Calculator</button>
+    <button class="tab" data-panel="calculator">Rules &amp; Limits</button>
   </div>
 
   <div class="panel active" id="panel-dashboard">
@@ -383,23 +392,7 @@ input,select{font-family:'Inter',sans-serif}
   </div>
 
   <div class="panel" id="panel-calculator">
-
-    <div class="calc-wrap">
-      <div class="calc-section-title">Setup cont</div>
-      <div class="inputs-grid">
-        <div class="inp-group"><label class="inp-label">Fee Eval ($)</label><input class="inp" type="number" id="c-fee" value="99"></div>
-        <div class="inp-group"><label class="inp-label">Marime cont ($)</label><input class="inp" type="number" id="c-size" value="50000"></div>
-        <div class="inp-group"><label class="inp-label">Risc prop per trade ($)</label><input class="inp" type="number" id="c-risk" value="2000"></div>
-        <div class="inp-group"><label class="inp-label">Target prop per trade ($)</label><input class="inp" type="number" id="c-target" value="1200"></div>
-      </div>
-      <div class="calc-section-title">Scenariu</div>
-      <div class="scenario-tabs">
-        <button class="stab active" data-scenario="win3">✅ 3/3 Castigate → Live</button>
-        <button class="stab" data-scenario="win2lose1">⚠ 2 Win + Trade 3 Pierdut</button>
-        <button class="stab" data-scenario="live">🏆 Faza Live</button>
-      </div>
-      <div id="scenario-result"></div>
-    </div>
+    <div id="rules-limits-content"></div>
   </div>
 </div>
 
@@ -465,7 +458,6 @@ var chartData = {};
 var MONTHS = ['Ian','Feb','Mar','Apr','Mai','Iun','Iul','Aug','Sep','Oct','Nov','Dec'];
 var expanded = null;
 var showBreached = false;
-var scenario = 'win3';
 var pendingPhase = {idx:null, newPhase:null};
 
 function saveState(){
@@ -1292,65 +1284,73 @@ document.querySelectorAll('.tab').forEach(function(tab){
     document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
     tab.classList.add('active');
     document.getElementById('panel-'+tab.getAttribute('data-panel')).classList.add('active');
-    if(tab.getAttribute('data-panel')==='calculator') calcAll();
   });
-});
-
-// SCENARIO TABS
-document.querySelectorAll('.stab').forEach(function(btn){
-  btn.addEventListener('click', function(){
-    document.querySelectorAll('.stab').forEach(function(b){b.classList.remove('active');});
-    btn.classList.add('active');
-    scenario = btn.getAttribute('data-scenario');
-    calcAll();
-  });
-});
-
-// CALC
-function calcAll(){
-  var fee=parseFloat(document.getElementById('c-fee').value)||99;
-  var risk=parseFloat(document.getElementById('c-risk').value)||2000;
-  var target=parseFloat(document.getElementById('c-target').value)||1200;
-  var t1b=Math.round(fee*.5),t2b=Math.round(fee*1.05),t3b=Math.round(fee*1.6);
-  var html='';
-  if(scenario==='win3'){
-    var tb=t1b+t2b+t3b,net=(target*3)-tb-fee;
-    html='<div class="trades-wrap">'+
-    '<div class="trade-box win"><div class="t-num">TRADE 1 <span class="t-badge win">WIN</span></div><div class="t-row">Prop castig: <span class="g">+$'+target+'</span></div><div class="t-row">Broker pierdere: <span class="r">-$'+t1b+'</span></div><div class="t-note">~50% din fee</div></div>'+
-    '<div class="trade-box win"><div class="t-num">TRADE 2 <span class="t-badge win">WIN</span></div><div class="t-row">Prop castig: <span class="g">+$'+target+'</span></div><div class="t-row">Broker pierdere: <span class="r">-$'+t2b+'</span></div><div class="t-note">~105% din fee</div></div>'+
-    '<div class="trade-box win"><div class="t-num">TRADE 3 <span class="t-badge win">WIN</span></div><div class="t-row">Prop castig: <span class="g">+$'+target+'</span></div><div class="t-row">Broker pierdere: <span class="r">-$'+t3b+'</span></div><div class="t-note">rest acoperire fee</div></div>'+
-    '</div>'+
-    '<div class="summary-box"><div class="sum-label">Total pierdut broker</div><div class="sum-val r">-$'+tb+'</div></div>'+
-    '<div class="summary-box success"><div class="sum-label">Net total</div><div class="sum-val '+(net>=0?'g':'r')+'">'+(net>=0?'+':'')+'$'+Math.abs(net)+' '+(net>=0?'✅':'⚠')+'</div></div>'+
-    '<div class="alert-box success">✅ Treci la LIVE</div>';
-  } else if(scenario==='win2lose1'){
-    var bl=t1b+t2b,nb=risk-bl,n2=nb-fee;
-    html='<div class="trades-wrap">'+
-    '<div class="trade-box win"><div class="t-num">TRADE 1 <span class="t-badge win">WIN</span></div><div class="t-row">Prop: <span class="g">+$'+target+'</span></div><div class="t-row">Broker: <span class="r">-$'+t1b+'</span></div></div>'+
-    '<div class="trade-box win"><div class="t-num">TRADE 2 <span class="t-badge win">WIN</span></div><div class="t-row">Prop: <span class="g">+$'+target+'</span></div><div class="t-row">Broker: <span class="r">-$'+t2b+'</span></div></div>'+
-    '<div class="trade-box loss"><div class="t-num">TRADE 3 <span class="t-badge loss">LOSS</span></div><div class="t-row">Prop: <span class="r">-$'+risk+'</span></div><div class="t-row">Broker: <span class="g">+$'+risk+'</span></div></div>'+
-    '</div>'+
-    '<div class="summary-box danger"><div class="sum-label">Cont prop</div><div class="sum-val r">Breached ❌</div></div>'+
-    '<div class="summary-box"><div class="sum-label">Broker net</div><div class="sum-val g">+$'+nb+'</div></div>'+
-    '<div class="summary-box"><div class="sum-label">Net total</div><div class="sum-val '+(n2>=0?'g':'y')+'">'+(n2>=0?'+':'')+'$'+Math.abs(n2)+'</div></div>'+
-    '<div class="alert-box danger">⚠ Contul e pierdut dar fee-ul este recuperat. Net ≈ $0.</div>';
-  } else {
-    var ti=t1b+t2b+t3b,lt=risk*2;
-    html='<div class="alert-box success" style="margin-bottom:14px">✅ Esti pe contul LIVE</div>'+
-    '<div class="trades-wrap" style="grid-template-columns:1fr 1fr">'+
-    '<div class="trade-box win"><div class="t-num">PROP LIVE <span class="t-badge win">TARGET</span></div><div class="t-row">Risc: <span class="r">-$'+risk+'</span></div><div class="t-row">Target: <span class="g">+$'+lt+'</span></div></div>'+
-    '<div class="trade-box"><div class="t-num">BROKER <span class="t-badge pending">HEDGE</span></div><div class="t-row">Risc: <span class="r">-$'+ti+'</span></div><div class="t-row">= tot pierdut in eval</div></div>'+
-    '</div>'+
-    '<div class="summary-box success"><div class="sum-label">Prop win → PAYOUT</div><div class="sum-val g">+$'+lt+' ✅</div></div>'+
-    '<div class="summary-box danger"><div class="sum-label">Prop loss → broker acopera</div><div class="sum-val y">~$'+risk+' recuperat</div></div>';
-  }
-  document.getElementById('scenario-result').innerHTML=html;
-}
-['c-fee','c-size','c-risk','c-target'].forEach(function(id){
-  document.getElementById(id).addEventListener('input',calcAll);
 });
 
 // LOGIN
+function renderRulesAndLimits(){
+  var tiers=[
+    {label:'5K',maxLoss:500,dailyLoss:250,personal:'4.4–4.5%',personalAmt:'$220–$225',officialNote:'Removed'},
+    {label:'10K',maxLoss:1000,dailyLoss:500,personal:'4.4–4.5%',personalAmt:'$440–$450',officialNote:'Removed'},
+    {label:'25K',maxLoss:2500,dailyLoss:1250,personal:'4.4–4.5%',personalAmt:'$1,100–$1,125',officialNote:'Removed'},
+    {label:'50K',maxLoss:5000,dailyLoss:2500,personal:null,personalAmt:'n/a',officialNote:'$1,500',officialPct:'3%, unchanged'},
+    {label:'100K',maxLoss:10000,dailyLoss:5000,personal:null,personalAmt:'n/a',officialNote:'$2,000',officialPct:'2%, unchanged'},
+  ];
+
+  var html='<div class="rules-page">';
+  html+='<div class="rules-hero"><div class="rules-hero-icon">📋</div><div><h1>Rules &amp; Limits</h1><p>Reguli oficiale Funding Pips · valori fixe, valabile pentru toate conturile</p></div></div>';
+
+  html+='<div class="rules-table-card"><table class="rules-table"><thead><tr><th>Regulă</th>';
+  tiers.forEach(function(t){ html+='<th class="col-tier">'+t.label+'</th>'; });
+  html+='</tr></thead><tbody>';
+
+  // Max loss limit
+  html+='<tr><td><div class="rule-name">🛑 Max loss limit</div><div class="rule-sub">breach durabil · 10%</div></td>';
+  tiers.forEach(function(t){ html+='<td class="rule-val">$'+t.maxLoss.toLocaleString()+'</td>'; });
+  html+='</tr>';
+
+  // Daily loss limit
+  html+='<tr><td><div class="rule-name">📉 Daily loss limit</div><div class="rule-sub">breach durabil · 5% din baseline zilnic</div></td>';
+  tiers.forEach(function(t){ html+='<td class="rule-val">$'+t.dailyLoss.toLocaleString()+'</td>'; });
+  html+='</tr>';
+
+  // Inactivity (full-width row)
+  html+='<tr class="rule-row-full"><td colspan="'+(tiers.length+1)+'"><span class="rule-icon">⏳</span><strong>Inactivitate:</strong> 30 zile fără trade complet = breach (toate mărimile)</td></tr>';
+
+  // Official risk per trade idea
+  html+='<tr class="rule-row-removed"><td><div class="rule-name">✅ Risc per trade idea (oficial)</div><div class="rule-sub">Master · vechea regulă 3%/2%</div></td>';
+  tiers.forEach(function(t){
+    if(t.officialPct){
+      html+='<td class="rule-val kept">$'+t.officialNote+'<span class="pct">'+t.officialPct+'</span></td>';
+    } else {
+      html+='<td class="rule-val">'+t.officialNote+'</td>';
+    }
+  });
+  html+='</tr>';
+
+  // Personal risk plafond
+  html+='<tr class="rule-row-personal"><td><div class="rule-name">👤 Risc per trade — plafonul tău</div><div class="rule-sub">ales de tine, NU regulă FundingPips</div></td>';
+  tiers.forEach(function(t){
+    if(t.personal){
+      html+='<td class="rule-val">'+t.personal+'<span class="pct">'+t.personalAmt+'</span></td>';
+    } else {
+      html+='<td class="rule-val na">limita oficială rămâne '+t.officialPct.split(',')[0]+'</td>';
+    }
+  });
+  html+='</tr>';
+
+  html+='</tbody></table></div>';
+
+  html+='<div class="rules-warning"><div class="rw-icon">⚠️</div><div class="rw-text">'+
+    '<b>4.4–4.5% NU e o regulă FundingPips</b> — e plafonul de risc personal pe care l-ai ales tu, pus aici doar ca referință. '+
+    'Lasă doar 0.5–0.6% marjă față de Daily Loss Limit (5%) pe un singur trade pierzător în ziua respectivă — orice slippage, spread mai larg, '+
+    'sau un al doilea trade în aceeași zi te poate duce direct în breach. Pe 50K/100K nu se aplică, fiindcă limita oficială de 3%/2% per trade idea '+
+    'rămâne activă (unchanged) și e sub 4.4%.</div></div>';
+
+  html+='</div>';
+  document.getElementById('rules-limits-content').innerHTML=html;
+}
+
 function setCurrentMonthYear(){
   var now=new Date();
   var monthSel=document.getElementById('chart-month-sel');
@@ -1384,6 +1384,7 @@ document.getElementById('btn-login').addEventListener('click', function(){
     updateChartSelect();
     setCurrentMonthYear();
     renderChart();
+    renderRulesAndLimits();
   } else {
     document.getElementById('login-error').classList.add('show');
     document.getElementById('login-pass').value='';
