@@ -169,35 +169,33 @@ input,select{font-family:'Inter',sans-serif}
 .rules-hero-icon{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,#2563eb,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 6px 18px rgba(37,99,235,0.3);flex-shrink:0}
 .rules-hero h1{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-0.4px;margin-bottom:3px}
 .rules-hero p{font-size:13px;color:var(--text3);font-weight:500}
-.rules-table-card{background:#fff;border:1px solid var(--border);border-radius:18px;box-shadow:0 4px 20px rgba(15,23,42,0.06);overflow:hidden;margin-bottom:24px}
-.rules-table{width:100%;border-collapse:collapse}
-.rules-table thead th{background:linear-gradient(135deg,#1e2130,#2a2f45);color:#fff;font-size:10.5px;text-transform:uppercase;letter-spacing:1px;font-weight:700;padding:16px 18px;text-align:left}
-.rules-table thead th:first-child{border-radius:0}
-.rules-table thead th.col-tier{text-align:center;min-width:90px}
-.rules-table tbody tr{border-bottom:1px solid var(--border)}
-.rules-table tbody tr:last-child{border-bottom:none}
-.rules-table tbody tr:hover{background:#fafbff}
-.rules-table td{padding:16px 18px;vertical-align:middle}
-.rule-name{font-size:13.5px;font-weight:700;color:var(--text)}
-.rule-sub{font-size:11px;color:var(--text3);font-weight:500;margin-top:2px}
-.rule-val{text-align:center;font-size:15px;font-weight:800;color:var(--text)}
-.rule-row-full td{padding:14px 18px;font-size:13px;color:var(--text2);font-weight:600;text-align:center;background:#fafbff}
-.rule-row-removed .rule-val{color:var(--text3);font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:0.5px}
-.rule-row-removed .rule-val.kept{color:var(--text)}
-.rule-row-removed .rule-val .pct{display:block;font-size:10px;color:var(--text3);font-weight:500;margin-top:2px}
-.rule-row-personal{background:linear-gradient(135deg,#eef4ff,#f5f9ff)}
-.rule-row-personal td{border-top:1px solid var(--border)}
-.rule-row-personal .rule-val{color:var(--accent)}
-.rule-row-personal .rule-val .pct{display:block;font-size:10px;color:var(--accent);opacity:0.75;font-weight:600;margin-top:2px}
-.rule-row-personal .rule-val.na{color:var(--text3);font-size:11px;font-weight:600;text-transform:none}
-.rule-icon{margin-right:6px}
+.rules-table-card{background:#fff;border:1px solid var(--border);border-radius:18px;box-shadow:0 4px 20px rgba(15,23,42,0.06);overflow:hidden;margin-bottom:24px;padding:22px}
+.rules-row{display:grid;grid-template-columns:230px repeat(5,1fr);gap:12px;align-items:stretch;padding:10px 0}
+.rules-row.head{padding:0 0 14px;border-bottom:2px solid var(--border);margin-bottom:6px}
+.rules-row.head .rh-label{font-size:10.5px;color:var(--text3);text-transform:uppercase;letter-spacing:1.2px;font-weight:800;align-self:center}
+.rules-row.head .rh-tier{font-size:13px;color:var(--text);text-transform:uppercase;letter-spacing:1px;font-weight:800;text-align:center;align-self:center}
+.rules-rowlabel{display:flex;flex-direction:column;justify-content:center;padding-right:8px}
+.rule-name{font-size:13.5px;font-weight:800;color:var(--text)}
+.rule-sub{font-size:10.5px;color:var(--text3);font-weight:600;margin-top:3px}
+.rule-chip{border-radius:13px;padding:13px 8px;text-align:center;font-weight:800;font-size:16px;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;transition:transform 0.18s,box-shadow 0.18s;min-height:64px}
+.rule-chip:hover{transform:translateY(-2px)}
+.rule-chip .pct{font-size:9.5px;font-weight:600;opacity:0.85;text-transform:none;letter-spacing:0}
+.rule-chip.c-red{background:linear-gradient(150deg,#f87171,#dc2626);box-shadow:0 4px 12px rgba(220,38,38,0.22)}
+.rule-chip.c-orange{background:linear-gradient(150deg,#fb923c,#c2410c);box-shadow:0 4px 12px rgba(194,65,12,0.22)}
+.rule-chip.c-green{background:linear-gradient(150deg,#4ade80,#16a34a);box-shadow:0 4px 12px rgba(22,163,74,0.22)}
+.rule-chip.c-blue{background:linear-gradient(150deg,#3b5bfa,#2541c4);box-shadow:0 4px 12px rgba(37,99,235,0.22)}
+.rule-chip.c-muted{background:linear-gradient(150deg,#94a3b8,#64748b);color:#fff;box-shadow:0 4px 12px rgba(100,116,139,0.22);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px}
+.rule-chip.c-muted .pct{color:rgba(255,255,255,0.8)}
+.rule-chip.c-na{background:linear-gradient(150deg,#818cf8,#6366f1);color:#fff;box-shadow:0 4px 12px rgba(99,102,241,0.24);font-size:11px;font-weight:700;text-transform:none;line-height:1.35}
+.rules-inactivity{display:flex;align-items:center;justify-content:center;gap:10px;background:#fafbff;border-radius:13px;padding:13px 18px;font-size:12.5px;color:var(--text2);font-weight:600;margin:6px 0}
+.rules-inactivity b{color:var(--text);font-weight:800}
 .rules-warning{display:flex;gap:14px;background:linear-gradient(135deg,#fff7ed,#fffaf0);border:1px solid #fed7aa;border-radius:16px;padding:18px 22px;box-shadow:0 2px 10px rgba(217,119,6,0.06)}
 .rules-warning .rw-icon{font-size:20px;flex-shrink:0;margin-top:1px}
 .rules-warning .rw-text{font-size:13px;color:#92400e;line-height:1.65;font-weight:500}
 .rules-warning .rw-text b{font-weight:800}
 @media(max-width:1100px){
-  .rules-table{font-size:12px}
-  .rules-table td,.rules-table thead th{padding:12px 10px}
+  .rules-row{grid-template-columns:160px repeat(5,1fr);gap:8px}
+  .rule-chip{font-size:13px;padding:10px 4px}
 }
 
 /* MODALS */
@@ -1292,7 +1290,7 @@ function renderRulesAndLimits(){
   var tiers=[
     {label:'5K',maxLoss:500,dailyLoss:250,personal:'4.4–4.5%',personalAmt:'$220–$225',officialNote:'Removed'},
     {label:'10K',maxLoss:1000,dailyLoss:500,personal:'4.4–4.5%',personalAmt:'$440–$450',officialNote:'Removed'},
-    {label:'25K',maxLoss:2500,dailyLoss:1250,personal:'4.4–4.5%',personalAmt:'$1,100–$1,125',officialNote:'Removed'},
+    {label:'25K',maxLoss:2500,dailyLoss:1250,personal:null,personalAmt:'n/a',officialNote:'$750',officialPct:'3%, unchanged'},
     {label:'50K',maxLoss:5000,dailyLoss:2500,personal:null,personalAmt:'n/a',officialNote:'$1,500',officialPct:'3%, unchanged'},
     {label:'100K',maxLoss:10000,dailyLoss:5000,personal:null,personalAmt:'n/a',officialNote:'$2,000',officialPct:'2%, unchanged'},
   ];
@@ -1300,46 +1298,49 @@ function renderRulesAndLimits(){
   var html='<div class="rules-page">';
   html+='<div class="rules-hero"><div class="rules-hero-icon">📋</div><div><h1>Rules &amp; Limits</h1><p>Reguli oficiale Funding Pips · valori fixe, valabile pentru toate conturile</p></div></div>';
 
-  html+='<div class="rules-table-card"><table class="rules-table"><thead><tr><th>Regulă</th>';
-  tiers.forEach(function(t){ html+='<th class="col-tier">'+t.label+'</th>'; });
-  html+='</tr></thead><tbody>';
+  html+='<div class="rules-table-card">';
+
+  // Header row
+  html+='<div class="rules-row head"><div class="rh-label">Regulă</div>';
+  tiers.forEach(function(t){ html+='<div class="rh-tier">'+t.label+'</div>'; });
+  html+='</div>';
 
   // Max loss limit
-  html+='<tr><td><div class="rule-name">🛑 Max loss limit</div><div class="rule-sub">breach durabil · 10%</div></td>';
-  tiers.forEach(function(t){ html+='<td class="rule-val">$'+t.maxLoss.toLocaleString()+'</td>'; });
-  html+='</tr>';
+  html+='<div class="rules-row"><div class="rules-rowlabel"><div class="rule-name">🛑 Max loss limit</div><div class="rule-sub">breach durabil · 10%</div></div>';
+  tiers.forEach(function(t){ html+='<div class="rule-chip c-red">$'+t.maxLoss.toLocaleString()+'</div>'; });
+  html+='</div>';
 
   // Daily loss limit
-  html+='<tr><td><div class="rule-name">📉 Daily loss limit</div><div class="rule-sub">breach durabil · 5% din baseline zilnic</div></td>';
-  tiers.forEach(function(t){ html+='<td class="rule-val">$'+t.dailyLoss.toLocaleString()+'</td>'; });
-  html+='</tr>';
+  html+='<div class="rules-row"><div class="rules-rowlabel"><div class="rule-name">📉 Daily loss limit</div><div class="rule-sub">breach durabil · 5% din baseline zilnic</div></div>';
+  tiers.forEach(function(t){ html+='<div class="rule-chip c-orange">$'+t.dailyLoss.toLocaleString()+'</div>'; });
+  html+='</div>';
 
-  // Inactivity (full-width row)
-  html+='<tr class="rule-row-full"><td colspan="'+(tiers.length+1)+'"><span class="rule-icon">⏳</span><strong>Inactivitate:</strong> 30 zile fără trade complet = breach (toate mărimile)</td></tr>';
+  // Inactivity (full-width banner)
+  html+='<div class="rules-inactivity">⏳ <b>Inactivitate:</b> 30 zile fără trade complet = breach (toate mărimile)</div>';
 
   // Official risk per trade idea
-  html+='<tr class="rule-row-removed"><td><div class="rule-name">✅ Risc per trade idea (oficial)</div><div class="rule-sub">Master · vechea regulă 3%/2%</div></td>';
+  html+='<div class="rules-row"><div class="rules-rowlabel"><div class="rule-name">✅ Risc per trade idea (oficial)</div><div class="rule-sub">Master · vechea regulă 3%/2%</div></div>';
   tiers.forEach(function(t){
     if(t.officialPct){
-      html+='<td class="rule-val kept">$'+t.officialNote+'<span class="pct">'+t.officialPct+'</span></td>';
+      html+='<div class="rule-chip c-muted">'+t.officialNote+'<span class="pct">'+t.officialPct+'</span></div>';
     } else {
-      html+='<td class="rule-val">'+t.officialNote+'</td>';
+      html+='<div class="rule-chip c-green">'+t.officialNote+'</div>';
     }
   });
-  html+='</tr>';
+  html+='</div>';
 
   // Personal risk plafond
-  html+='<tr class="rule-row-personal"><td><div class="rule-name">👤 Risc per trade — plafonul tău</div><div class="rule-sub">ales de tine, NU regulă FundingPips</div></td>';
+  html+='<div class="rules-row"><div class="rules-rowlabel"><div class="rule-name">👤 Risc per trade — plafonul tău</div><div class="rule-sub">ales de tine, NU regulă FundingPips</div></div>';
   tiers.forEach(function(t){
     if(t.personal){
-      html+='<td class="rule-val">'+t.personal+'<span class="pct">'+t.personalAmt+'</span></td>';
+      html+='<div class="rule-chip c-blue">'+t.personal+'<span class="pct">'+t.personalAmt+'</span></div>';
     } else {
-      html+='<td class="rule-val na">limita oficială rămâne '+t.officialPct.split(',')[0]+'</td>';
+      html+='<div class="rule-chip c-na">limita oficială<br>rămâne '+t.officialPct.split(',')[0]+'</div>';
     }
   });
-  html+='</tr>';
+  html+='</div>';
 
-  html+='</tbody></table></div>';
+  html+='</div>';
 
   html+='<div class="rules-warning"><div class="rw-icon">⚠️</div><div class="rw-text">'+
     '<b>4.4–4.5% NU e o regulă FundingPips</b> — e plafonul de risc personal pe care l-ai ales tu, pus aici doar ca referință. '+
