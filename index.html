@@ -620,6 +620,16 @@ function getPayoutAlert(a){
   return daysSince>=14 ? 'PAYOUT_TIME' : 'STOP_WAIT';
 }
 
+function getPhaseAdvanceAlert(a){
+  if(a.phase!==1 && a.phase!==2) return null; // only applies to Phase 1/2 accounts
+  var daysLogged=(a.balanceHistory||[]).length;
+  if(daysLogged<3) return null; // needs at least 3 distinct days recorded
+  var pct=a.phase===1?0.08:0.05;
+  var target=a.capital*(1+pct); // capital + phase target (8% for Phase 1, 5% for Phase 2)
+  if(a.balance < target) return null;
+  return a.phase===1 ? 'Phase 2' : 'Live';
+}
+
 function getHealthPct(a){
   if(a.phase===1 || a.phase===2){
     var targetPct = a.phase===1 ? 0.08 : 0.05;
@@ -798,9 +808,11 @@ function renderAccounts(){
     html += '<div>';
     html += '<div class="acc-row'+(expanded===idx?' open':'')+'" data-idx="'+idx+'">';
     var payoutAlert=getPayoutAlert(a);
+    var phaseAdvance=getPhaseAdvanceAlert(a);
     var alertHtml='';
     if(payoutAlert==='PAYOUT_TIME') alertHtml='<span class="payout-alert ready">🎉 It\'s payout time!</span>';
     else if(payoutAlert==='STOP_WAIT') alertHtml='<span class="payout-alert waiting">⏸ Stop trading, wait the payout</span>';
+    else if(phaseAdvance) alertHtml='<span class="payout-alert ready">🎉 Congratulations! → '+phaseAdvance+'</span>';
     html += '<div class="aname"><span class="aicon'+(a.icon==='warn'?' w':'')+'">'+( a.icon==='warn'?'⚠':'⚡')+'</span>'+a.id+alertHtml+'</div>';
     html += '<div><select class="phase-select'+(isLive?' live':isBreached?' breached':'')+'" data-idx="'+idx+'">';
     html += '<option value="1"'+(a.phase===1?' selected':'')+'>Phase 1</option>';
