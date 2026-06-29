@@ -123,6 +123,10 @@ input,select{font-family:'Inter',sans-serif}
 .bh-legend .dot{width:7px;height:7px;border-radius:50%;display:inline-block;box-shadow:0 0 6px currentColor}
 .metrics-panel{padding:28px 32px}
 .metrics-title{font-size:11px;color:var(--text3);letter-spacing:1.8px;text-transform:uppercase;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;font-weight:800}
+.split-toggle{display:inline-flex;gap:3px;background:var(--surface2);border-radius:7px;padding:2px;vertical-align:middle;margin:0 2px}
+.split-btn{border:none;background:transparent;color:var(--text3);font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:5px;cursor:pointer;transition:all 0.15s;letter-spacing:0.3px}
+.split-btn:hover{color:var(--text2)}
+.split-btn.active{background:var(--accent);color:#fff;box-shadow:0 1px 4px rgba(37,99,235,0.3)}
 .metrics-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
 .risc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;margin-bottom:30px}
 .risc-card{position:relative;border-radius:18px;padding:20px 20px 18px;transition:all 0.22s;box-shadow:0 4px 14px rgba(37,99,235,0.18);background:linear-gradient(150deg,#3b5bfa,#2541c4);overflow:hidden}
@@ -574,7 +578,8 @@ function getDaysToMaxLoss(a){
 
 function getRiscBroker(a){
   var total = Math.abs(a.eval) + Math.abs(a.broker);
-  var reward = (a.phase==='live') ? total/4 : total/2; // Live: split across 4 planned trades; Phase 1/2: split across 2 trades until max loss
+  var split = (a.phase==='live' && a.capital===10000) ? (a.tradeSplit||4) : 4;
+  var reward = (a.phase==='live') ? total/split : total/2; // Live: split across N planned trades (selectable only for 10k accounts, default 4); Phase 1/2: split across 2 trades until max loss
   return reward*2; // RR 0.5 on broker: risk = 2× the reward target
 }
 
@@ -595,7 +600,8 @@ function getMinBrokerBalance(a){
 
 function getRiscBrokerReward(a){
   var total = Math.abs(a.eval) + Math.abs(a.broker);
-  return (a.phase==='live') ? total/4 : total/2;
+  var split = (a.phase==='live' && a.capital===10000) ? (a.tradeSplit||4) : 4;
+  return (a.phase==='live') ? total/split : total/2;
 }
 
 function todayISO(){
@@ -870,7 +876,13 @@ function renderAccounts(){
       }
       html += '<div class="metrics-panel">';
       var riscProp=getRiscProp(a), riscBroker=getRiscBroker(a), riscReward=getRiscBrokerReward(a);
-      var phaseLbl=a.phase==='live'?'Live · ÷4 trades · RR 0.5':'Phase '+a.phase+' · full amount · RR 0.5';
+      var phaseLbl;
+      if(a.phase==='live' && a.capital===10000){
+        var ts=a.tradeSplit||4;
+        phaseLbl='Live · <span class="split-toggle"><button class="split-btn'+(ts===4?' active':'')+'" data-idx="'+idx+'" data-split="4">÷4</button><button class="split-btn'+(ts===2?' active':'')+'" data-idx="'+idx+'" data-split="2">÷2</button></span> trades · RR 0.5';
+      } else {
+        phaseLbl=a.phase==='live'?'Live · ÷4 trades · RR 0.5':'Phase '+a.phase+' · full amount · RR 0.5';
+      }
       html += '<div class="metrics-title">RISC CALCULATOR <span style="font-size:11px;color:var(--text3)">'+phaseLbl+'</span></div>';
       html += '<div class="risc-grid">';
       var beVal=getBE(a);
@@ -928,6 +940,17 @@ function renderAccounts(){
 }
 
 function bindCellEvents(){
+  // Trade split toggle (÷4 / ÷2), only shown for Live 10k accounts
+  document.querySelectorAll('.split-btn').forEach(function(btn){
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      var idx=parseInt(btn.getAttribute('data-idx'));
+      var split=parseInt(btn.getAttribute('data-split'));
+      accounts[idx].tradeSplit=split;
+      saveState();
+      renderAccounts();
+    });
+  });
   // Row click to expand
   document.querySelectorAll('.acc-row').forEach(function(row){
     row.addEventListener('click', function(e){
