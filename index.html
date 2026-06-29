@@ -1118,8 +1118,12 @@ function syncPnLToChart(){
     pnl=getPnL(acc);
     sourceAccounts=[acc.id];
   }
-  if(pnl<=0){
-    alert('Niciun cont nu este pe profit momentan. Graficul de profit înregistrează doar rezultate pozitive — nu s-a adăugat nimic.');
+  // Only the NEW progress since the last sync should be recorded, not the account's raw total P&L —
+  // otherwise repeated clicks would re-count profit that was already logged on a previous click.
+  var alreadyLogged=(chartData[key]||[]).filter(function(e){return e.fromPnL;}).reduce(function(sum,e){return sum+e.profit;},0);
+  var newProgress=pnl-alreadyLogged;
+  if(newProgress<=0){
+    alert('Nu există profit nou față de ultima sincronizare ('+fmtMoney(alreadyLogged)+' deja înregistrat din P&L curent de '+fmtMoney(pnl)+'). Nu s-a adăugat nimic.');
     return;
   }
   var month=parseInt(document.getElementById('chart-month-sel').value);
@@ -1127,7 +1131,7 @@ function syncPnLToChart(){
   var day=new Date().getDate();
   if(!chartData[key]) chartData[key]=[];
   chartData[key]=chartData[key].filter(function(e){return !(e.month===month&&e.year===year&&e.day===day);});
-  chartData[key].push({month:month,year:year,day:day,profit:pnl,payoutAcc:null,fromPnL:true,sourceAccounts:sourceAccounts});
+  chartData[key].push({month:month,year:year,day:day,profit:newProgress,payoutAcc:null,fromPnL:true,sourceAccounts:sourceAccounts});
   chartData[key].sort(function(a,b){return a.year!==b.year?a.year-b.year:(a.month!==b.month?a.month-b.month:(a.day||1)-(b.day||1));});
   saveState();
   renderChart();
