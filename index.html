@@ -1196,9 +1196,9 @@ function renderChart(){
   // summary box (based on the selected month only)
   var totalEl=document.getElementById('profit-sum-total'),avgEl=document.getElementById('profit-sum-avg'),bestEl=document.getElementById('profit-sum-best'),allTimeEl=document.getElementById('profit-sum-alltime'),theoEl=document.getElementById('profit-sum-theo');
 
-  // Theo total (all-time, all months — completely separate from FP accounts)
+  // Theo total — only for the selected month (same behavior as Total/Medie/Best)
   var theoTotal=0;
-  (chartData['theo']||[]).forEach(function(e){ theoTotal+=e.profit; });
+  (chartData['theo']||[]).filter(function(e){return e.month===selMonth&&e.year===selYear;}).forEach(function(e){ theoTotal+=e.profit; });
   if(theoEl){ theoEl.textContent=fmtMoney(theoTotal); theoEl.style.color=theoTotal>=0?'#ea580c':'#dc2626'; }
   if(data.length){
     var sum=0,best=data[0].profit;
