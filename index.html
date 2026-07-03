@@ -1053,6 +1053,7 @@ function updateChartSelect(){
   var cur=sel.value;
   sel.innerHTML='<option value="all">All Accounts</option><option value="theo">⭐ Theo\'s payout</option>';
   for(var i=0;i<accounts.length;i++){
+    if(accounts[i].phase==='breached') continue; // skip breached accounts
     var opt=document.createElement('option');
     opt.value=accounts[i].id;
     opt.textContent=accounts[i].id.slice(-8);
@@ -1064,6 +1065,8 @@ function updateChartSelect(){
   var curPay=paySel.value;
   paySel.innerHTML='<option value="">— Cont payout —</option><option value="theo">⭐ Theo\'s payout</option>';
   for(var i=0;i<accounts.length;i++){
+    if(accounts[i].phase==='breached') continue; // skip breached accounts
+    if(accounts[i].phase!=='live') continue; // only Live accounts in payout dropdown
     var opt2=document.createElement('option');
     opt2.value=accounts[i].id;
     opt2.textContent=accounts[i].id.slice(-8);
