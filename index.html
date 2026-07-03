@@ -414,6 +414,7 @@ input,select{font-family:'Inter',sans-serif}
         <button class="btn-add" id="btn-sync-pnl" style="padding:8px 16px;font-size:12px;background:linear-gradient(135deg,#16a34a,#0891b2)" title="Adaugă P&amp;L-ul curent al contului selectat ca intrare pe grafic, în ziua de azi">📍 Adaugă P&L în grafic</button>
       </div>
       <div class="chart-canvas-wrap">
+        <div id="chart-legend" style="display:flex;gap:16px;padding:6px 4px 4px;font-size:11px;font-weight:600"></div>
         <canvas id="profit-canvas" height="200" style="width:100%"></canvas>
         <div class="chart-tooltip" id="chart-tooltip"></div>
       </div>
@@ -1069,6 +1070,16 @@ function updateChartSelect(){
     paySel.appendChild(opt2);
   }
   if(curPay) paySel.value=curPay;
+
+  // When Theo's payout is selected in the payout dropdown, auto-switch the main selector to 'theo' too
+  paySel.addEventListener('change', function(){
+    if(paySel.value==='theo'){
+      var mainSel=document.getElementById('chart-acc-sel');
+      mainSel.value='theo';
+      mainSel.classList.add('active-filter');
+      renderChart();
+    }
+  });
 }
 
 function addChartEntry(){
@@ -1212,7 +1223,11 @@ function renderChart(){
 
   var nDays=daysInMonth(selMonth,selYear);
 
-  if(!data.length){
+  // Theo data fetched BEFORE the no-data check so we can draw Theo's line even when FP data is empty
+  var theoDataRaw=(key!=='theo') ? (chartData['theo']||[]).filter(function(e){return e.month===selMonth&&e.year===selYear;})
+    .map(function(e){return {day:e.day||1,profit:e.profit};}).sort(function(a,b){return a.day-b.day;}) : [];
+
+  if(!data.length && !theoDataRaw.length){
     ctx.save();
     ctx.font='28px Inter';ctx.textAlign='center';ctx.fillStyle='#dbe2f5';
     ctx.fillText('📊',W/2,H/2-14);
@@ -1227,10 +1242,6 @@ function renderChart(){
 
   var PAD={l:58,r:16,t:20,b:34};
   var gW=W-PAD.l-PAD.r,gH=H-PAD.t-PAD.b;
-
-  // Theo data for this month (fetched early so we can build a SHARED scale)
-  var theoDataRaw=(key!=='theo') ? (chartData['theo']||[]).filter(function(e){return e.month===selMonth&&e.year===selYear;})
-    .map(function(e){return {day:e.day||1,profit:e.profit};}).sort(function(a,b){return a.day-b.day;}) : [];
 
   // Shared scale: max of both series combined so lines start at same zero and can intersect naturally
   var allVals=data.map(function(e){return e.profit;}).concat(theoDataRaw.map(function(e){return e.profit;}));
@@ -1263,8 +1274,9 @@ function renderChart(){
     ctx.fillText(dayTicks[i],x,H-PAD.b+16);
   }
 
-  // anchor point at (day 1, $0) — both lines start from same zero
-  var linePts=[{x:dayX(1),y:zero}].concat(data.map(function(e){return {x:dayX(e.day),y:valY(e.profit)};}));
+  // anchor: one day before the first real data point (so the line starts close to it, not from day 1)
+  var firstDay=data.length?Math.max(1,data[0].day-1):1;
+  var linePts=[{x:dayX(firstDay),y:zero}].concat(data.map(function(e){return {x:dayX(e.day),y:valY(e.profit)};}));
 
   // zero line
   ctx.strokeStyle='rgba(15,17,23,0.12)';ctx.lineWidth=1;
@@ -1272,8 +1284,9 @@ function renderChart(){
 
   // ── THEO line (orange) — drawn FIRST so Forex line renders on top ──
   if(theoDataRaw.length){
-    var theoPts=[{x:dayX(1),y:zero}].concat(theoDataRaw.map(function(e){return {x:dayX(e.day),y:valY(e.profit)};}));
-    if(theoPts.length>1){
+      var theoFirstDay=theoDataRaw.length?Math.max(1,theoDataRaw[0].day-1):1;
+      var theoPts=[{x:dayX(theoFirstDay),y:zero}].concat(theoDataRaw.map(function(e){return {x:dayX(e.day),y:valY(e.profit)};}))
+    if(theoPts.length>=1){
       ctx.beginPath();ctx.moveTo(theoPts[0].x,zero);
       for(var i=0;i<theoPts.length;i++) ctx.lineTo(theoPts[i].x,theoPts[i].y);
       ctx.lineTo(theoPts[theoPts.length-1].x,zero);ctx.closePath();
@@ -1282,7 +1295,7 @@ function renderChart(){
       theoGrad.addColorStop(1,'rgba(249,115,22,0.01)');
       ctx.fillStyle=theoGrad;ctx.fill();
     }
-    if(theoPts.length>1){
+    if(theoPts.length>=1){
       ctx.save();
       ctx.shadowColor='rgba(249,115,22,0.4)';ctx.shadowBlur=8;
       ctx.beginPath();
@@ -1305,7 +1318,7 @@ function renderChart(){
 
   // ── FOREX line (purple→blue) — drawn on top of Theo ──
   // gradient fill area under the line
-  if(linePts.length>1){
+  if(linePts.length>=1){
     ctx.beginPath();ctx.moveTo(linePts[0].x,zero);
     for(var i=0;i<linePts.length;i++) ctx.lineTo(linePts[i].x,linePts[i].y);
     ctx.lineTo(linePts[linePts.length-1].x,zero);ctx.closePath();
@@ -1317,7 +1330,7 @@ function renderChart(){
   }
 
   // line with glow
-  if(linePts.length>1){
+  if(linePts.length>=1){
     ctx.save();
     ctx.shadowColor='rgba(37,99,235,0.35)';ctx.shadowBlur=8;ctx.shadowOffsetY=2;
     ctx.beginPath();
@@ -1355,32 +1368,19 @@ function renderChart(){
     ctx.fillStyle='#2563eb';ctx.font='700 10px Inter';
     ctx.fillText(data[i].day,p.x,H-PAD.b+16);
   }
-  // Legend (top-right) — always shown on All Accounts view
-  if(key==='all'||key==='theo'||accounts.find(function(a){return a.id===key;})){
-    ctx.save();
-    var legW=160, legH=theoDataRaw.length?42:22, legX=W-PAD.r-legW-4, legY=PAD.t+2;
-    ctx.fillStyle='rgba(255,255,255,0.93)';
-    ctx.strokeStyle='rgba(15,23,42,0.1)';ctx.lineWidth=1;
-    if(ctx.roundRect) ctx.roundRect(legX,legY,legW,legH,6); else ctx.rect(legX,legY,legW,legH);
-    ctx.fill();ctx.stroke();
-    // Forex line
-    ctx.beginPath();ctx.moveTo(legX+8,legY+11);ctx.lineTo(legX+26,legY+11);
-    var lg=ctx.createLinearGradient(legX+8,0,legX+26,0);
-    lg.addColorStop(0,'#7c3aed');lg.addColorStop(1,'#2563eb');
-    ctx.strokeStyle=lg;ctx.lineWidth=2.5;ctx.stroke();
-    ctx.fillStyle='#2563eb';ctx.font='600 10px Inter';ctx.textAlign='left';
-    ctx.fillText('Forex / FP',legX+30,legY+15);
-    // Theo line (only if there's data)
+  // Legend — HTML element above canvas, not drawn on canvas
+  var legendEl=document.getElementById('chart-legend');
+  if(legendEl){
+    var legHtml='<span style="display:inline-flex;align-items:center;gap:5px;color:#5b21b6">'
+      +'<span style="display:inline-block;width:18px;height:2.5px;background:linear-gradient(90deg,#7c3aed,#2563eb);border-radius:2px"></span>Forex / FP</span>';
     if(theoDataRaw.length){
-      ctx.beginPath();ctx.moveTo(legX+8,legY+31);ctx.lineTo(legX+26,legY+31);
-      ctx.strokeStyle='#f97316';ctx.lineWidth=2.5;ctx.stroke();
-      ctx.beginPath();ctx.arc(legX+17,legY+31,3,0,6.28);
-      ctx.fillStyle='#f97316';ctx.fill();
-      ctx.fillStyle='#ea580c';ctx.font='600 10px Inter';ctx.textAlign='left';
-      ctx.fillText("⭐ Theo's payout",legX+30,legY+35);
+      legHtml+='<span style="display:inline-flex;align-items:center;gap:5px;color:#ea580c">'
+        +'<span style="display:inline-block;width:18px;height:2.5px;background:#f97316;border-radius:2px"></span>⭐ Theo\'s payout</span>';
     }
-    ctx.restore();
+    legendEl.innerHTML=legHtml;
   }
+
+  // Legend block on canvas removed — now rendered as HTML above the canvas
 
   canvas._points=points;canvas._zero=zero;
 }
