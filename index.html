@@ -386,6 +386,11 @@ input,select{font-family:'Inter',sans-serif}
           </div>
           <div class="profit-summary-div"></div>
           <div class="profit-summary-item">
+            <div class="profit-summary-label" style="color:#ea580c">⭐ Theo</div>
+            <div class="profit-summary-val" id="profit-sum-theo" style="color:#ea580c">$0</div>
+          </div>
+          <div class="profit-summary-div"></div>
+          <div class="profit-summary-item">
             <div class="profit-summary-label">Total All-Time</div>
             <div class="profit-summary-val" id="profit-sum-alltime">$0</div>
           </div>
@@ -1045,7 +1050,7 @@ function bindCellEvents(){
 function updateChartSelect(){
   var sel=document.getElementById('chart-acc-sel');
   var cur=sel.value;
-  sel.innerHTML='<option value="all">All Accounts</option>';
+  sel.innerHTML='<option value="all">All Accounts</option><option value="theo">⭐ Theo\'s payout</option>';
   for(var i=0;i<accounts.length;i++){
     var opt=document.createElement('option');
     opt.value=accounts[i].id;
@@ -1056,7 +1061,7 @@ function updateChartSelect(){
 
   var paySel=document.getElementById('chart-payout-acc-sel');
   var curPay=paySel.value;
-  paySel.innerHTML='<option value="">— Cont payout —</option>';
+  paySel.innerHTML='<option value="">— Cont payout —</option><option value="theo">⭐ Theo\'s payout</option>';
   for(var i=0;i<accounts.length;i++){
     var opt2=document.createElement('option');
     opt2.value=accounts[i].id;
@@ -1148,7 +1153,9 @@ function renderChart(){
   var key=document.getElementById('chart-acc-sel').value;
   var accSelEl=document.getElementById('chart-acc-sel');
   accSelEl.classList.toggle('active-filter', key!=='all');
-  var allData=chartData[key]||[];
+  var allData=key==='all'
+    ? Object.keys(chartData).filter(function(k){return k!=='theo';}).reduce(function(arr,k){return arr.concat(chartData[k]||[]);}, [])
+    : chartData[key]||[];
   var selMonth=parseInt(document.getElementById('chart-month-sel').value);
   var selYear=parseInt(document.getElementById('chart-year-sel').value);
   var data=allData.filter(function(e){return e.month===selMonth&&e.year===selYear;})
@@ -1176,7 +1183,12 @@ function renderChart(){
   document.getElementById('chart-tags').innerHTML=tags||'<span style="font-size:12px;color:#999">Niciun profit adăugat. Selectează contul, luna și apasă + Add.</span>';
 
   // summary box (based on the selected month only)
-  var totalEl=document.getElementById('profit-sum-total'),avgEl=document.getElementById('profit-sum-avg'),bestEl=document.getElementById('profit-sum-best'),allTimeEl=document.getElementById('profit-sum-alltime');
+  var totalEl=document.getElementById('profit-sum-total'),avgEl=document.getElementById('profit-sum-avg'),bestEl=document.getElementById('profit-sum-best'),allTimeEl=document.getElementById('profit-sum-alltime'),theoEl=document.getElementById('profit-sum-theo');
+
+  // Theo total (all-time, all months — completely separate from FP accounts)
+  var theoTotal=0;
+  (chartData['theo']||[]).forEach(function(e){ theoTotal+=e.profit; });
+  if(theoEl){ theoEl.textContent=fmtMoney(theoTotal); theoEl.style.color=theoTotal>=0?'#ea580c':'#dc2626'; }
   if(data.length){
     var sum=0,best=data[0].profit;
     for(var i=0;i<data.length;i++){sum+=data[i].profit;if(data[i].profit>best)best=data[i].profit;}
@@ -1189,10 +1201,10 @@ function renderChart(){
     avgEl.textContent='$0';avgEl.style.color='var(--text)';
     bestEl.textContent='$0';bestEl.style.color='var(--text)';
   }
-  // Total All-Time: sum of every payout across all accounts (manual + "Adaugă P&L în grafic"),
-  // plus ALLTIME_BASE — the profit made before this tracking system existed.
+  // Total All-Time: sum of every payout across all Funding Pips accounts (EXCLUDES Theo's payouts — tracked separately)
   var allTimeSum=ALLTIME_BASE;
   Object.keys(chartData).forEach(function(k){
+    if(k==='theo') return; // Theo's profits are separate, not added to FP totals
     (chartData[k]||[]).forEach(function(e){ allTimeSum+=e.profit; });
   });
   allTimeEl.textContent=fmtMoney(allTimeSum);
@@ -1215,8 +1227,14 @@ function renderChart(){
 
   var PAD={l:58,r:16,t:20,b:34};
   var gW=W-PAD.l-PAD.r,gH=H-PAD.t-PAD.b;
-  var vals=data.map(function(e){return e.profit;});
-  var maxAbs=Math.max.apply(null,vals.map(Math.abs).concat([0]))||100;
+
+  // Theo data for this month (fetched early so we can build a SHARED scale)
+  var theoDataRaw=(key!=='theo') ? (chartData['theo']||[]).filter(function(e){return e.month===selMonth&&e.year===selYear;})
+    .map(function(e){return {day:e.day||1,profit:e.profit};}).sort(function(a,b){return a.day-b.day;}) : [];
+
+  // Shared scale: max of both series combined so lines start at same zero and can intersect naturally
+  var allVals=data.map(function(e){return e.profit;}).concat(theoDataRaw.map(function(e){return e.profit;}));
+  var maxAbs=Math.max.apply(null,allVals.map(Math.abs).concat([0]))||100;
   var maxV=maxAbs*1.25;
   var zero=PAD.t+gH/2;
   var dayX=function(d){ return PAD.l+((d-1)/(nDays-1>0?nDays-1:1))*gW; };
@@ -1245,14 +1263,47 @@ function renderChart(){
     ctx.fillText(dayTicks[i],x,H-PAD.b+16);
   }
 
-  // simple point-to-point line: each point is the day's individual payout (no cumulative steps)
-  // anchor point at (day 1, $0) so the line always starts from the zero baseline, even with a single data point
+  // anchor point at (day 1, $0) — both lines start from same zero
   var linePts=[{x:dayX(1),y:zero}].concat(data.map(function(e){return {x:dayX(e.day),y:valY(e.profit)};}));
 
   // zero line
   ctx.strokeStyle='rgba(15,17,23,0.12)';ctx.lineWidth=1;
   ctx.beginPath();ctx.moveTo(PAD.l,zero);ctx.lineTo(PAD.l+gW,zero);ctx.stroke();
 
+  // ── THEO line (orange) — drawn FIRST so Forex line renders on top ──
+  if(theoDataRaw.length){
+    var theoPts=[{x:dayX(1),y:zero}].concat(theoDataRaw.map(function(e){return {x:dayX(e.day),y:valY(e.profit)};}));
+    if(theoPts.length>1){
+      ctx.beginPath();ctx.moveTo(theoPts[0].x,zero);
+      for(var i=0;i<theoPts.length;i++) ctx.lineTo(theoPts[i].x,theoPts[i].y);
+      ctx.lineTo(theoPts[theoPts.length-1].x,zero);ctx.closePath();
+      var theoGrad=ctx.createLinearGradient(0,PAD.t,0,PAD.t+gH);
+      theoGrad.addColorStop(0,'rgba(249,115,22,0.18)');
+      theoGrad.addColorStop(1,'rgba(249,115,22,0.01)');
+      ctx.fillStyle=theoGrad;ctx.fill();
+    }
+    if(theoPts.length>1){
+      ctx.save();
+      ctx.shadowColor='rgba(249,115,22,0.4)';ctx.shadowBlur=8;
+      ctx.beginPath();
+      ctx.moveTo(theoPts[0].x,theoPts[0].y);
+      for(var i=1;i<theoPts.length;i++) ctx.lineTo(theoPts[i].x,theoPts[i].y);
+      ctx.strokeStyle='#f97316';ctx.lineWidth=3;ctx.lineJoin='round';ctx.lineCap='round';ctx.stroke();
+      ctx.restore();
+    }
+    for(var i=0;i<theoDataRaw.length;i++){
+      var tp={x:dayX(theoDataRaw[i].day),y:valY(theoDataRaw[i].profit)};
+      ctx.beginPath();ctx.arc(tp.x,tp.y,8,0,6.28);
+      ctx.fillStyle='rgba(249,115,22,0.15)';ctx.fill();
+      ctx.beginPath();ctx.arc(tp.x,tp.y,4.5,0,6.28);
+      ctx.fillStyle='#f97316';ctx.fill();
+      ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();
+      ctx.fillStyle='#ea580c';ctx.font='700 10px Inter';ctx.textAlign='center';
+      ctx.fillText('⭐'+fmtMoney(theoDataRaw[i].profit),tp.x,tp.y-14);
+    }
+  }
+
+  // ── FOREX line (purple→blue) — drawn on top of Theo ──
   // gradient fill area under the line
   if(linePts.length>1){
     ctx.beginPath();ctx.moveTo(linePts[0].x,zero);
@@ -1265,7 +1316,7 @@ function renderChart(){
     ctx.fillStyle=grad;ctx.fill();
   }
 
-  // line with glow, simple point-to-point (only if 2+ points; a single point shows just the dot)
+  // line with glow
   if(linePts.length>1){
     ctx.save();
     ctx.shadowColor='rgba(37,99,235,0.35)';ctx.shadowBlur=8;ctx.shadowOffsetY=2;
@@ -1304,6 +1355,33 @@ function renderChart(){
     ctx.fillStyle='#2563eb';ctx.font='700 10px Inter';
     ctx.fillText(data[i].day,p.x,H-PAD.b+16);
   }
+  // Legend (top-right) — always shown on All Accounts view
+  if(key==='all'||key==='theo'||accounts.find(function(a){return a.id===key;})){
+    ctx.save();
+    var legW=160, legH=theoDataRaw.length?42:22, legX=W-PAD.r-legW-4, legY=PAD.t+2;
+    ctx.fillStyle='rgba(255,255,255,0.93)';
+    ctx.strokeStyle='rgba(15,23,42,0.1)';ctx.lineWidth=1;
+    if(ctx.roundRect) ctx.roundRect(legX,legY,legW,legH,6); else ctx.rect(legX,legY,legW,legH);
+    ctx.fill();ctx.stroke();
+    // Forex line
+    ctx.beginPath();ctx.moveTo(legX+8,legY+11);ctx.lineTo(legX+26,legY+11);
+    var lg=ctx.createLinearGradient(legX+8,0,legX+26,0);
+    lg.addColorStop(0,'#7c3aed');lg.addColorStop(1,'#2563eb');
+    ctx.strokeStyle=lg;ctx.lineWidth=2.5;ctx.stroke();
+    ctx.fillStyle='#2563eb';ctx.font='600 10px Inter';ctx.textAlign='left';
+    ctx.fillText('Forex / FP',legX+30,legY+15);
+    // Theo line (only if there's data)
+    if(theoDataRaw.length){
+      ctx.beginPath();ctx.moveTo(legX+8,legY+31);ctx.lineTo(legX+26,legY+31);
+      ctx.strokeStyle='#f97316';ctx.lineWidth=2.5;ctx.stroke();
+      ctx.beginPath();ctx.arc(legX+17,legY+31,3,0,6.28);
+      ctx.fillStyle='#f97316';ctx.fill();
+      ctx.fillStyle='#ea580c';ctx.font='600 10px Inter';ctx.textAlign='left';
+      ctx.fillText("⭐ Theo's payout",legX+30,legY+35);
+    }
+    ctx.restore();
+  }
+
   canvas._points=points;canvas._zero=zero;
 }
 
