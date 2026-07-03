@@ -1187,7 +1187,6 @@ function renderChart(){
   var theoData=(chartData['theo']||[]).filter(function(e){return e.month===selMonth&&e.year===selYear;})
     .map(function(e){return {day:e.day||1,profit:e.profit};})
     .sort(function(a,b){return a.day-b.day;});
-  console.log('DEBUG key=',key,'fxData=',JSON.stringify(fxData),'theoData=',JSON.stringify(theoData),'chartData keys=',Object.keys(chartData));
 
   // ── CANVAS setup
   var canvas=document.getElementById('profit-canvas');
