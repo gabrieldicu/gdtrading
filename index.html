@@ -1073,16 +1073,6 @@ function updateChartSelect(){
     paySel.appendChild(opt2);
   }
   if(curPay) paySel.value=curPay;
-
-  // When Theo's payout is selected in the payout dropdown, auto-switch the main selector to 'theo' too
-  paySel.addEventListener('change', function(){
-    if(paySel.value==='theo'){
-      var mainSel=document.getElementById('chart-acc-sel');
-      mainSel.value='theo';
-      mainSel.classList.add('active-filter');
-      renderChart();
-    }
-  });
 }
 
 function addChartEntry(){
@@ -1094,9 +1084,8 @@ function addChartEntry(){
   var key=document.getElementById('chart-acc-sel').value;
   var payoutAcc=document.getElementById('chart-payout-acc-sel').value;
   if(!chartData[key]) chartData[key]=[];
-  var existing=chartData[key].find(function(e){return e.month===month&&e.year===year&&e.day===day;});
-  if(existing) existing.profit+=profit; // accumulate multiple payouts added on the same day
-  else chartData[key].push({month:month,year:year,day:day,profit:profit,payoutAcc:payoutAcc||null});
+  // always push a new entry — don't accumulate same-day entries
+  chartData[key].push({month:month,year:year,day:day,profit:profit,payoutAcc:payoutAcc||null});
   chartData[key].sort(function(a,b){return a.year!==b.year?a.year-b.year:(a.month!==b.month?a.month-b.month:(a.day||1)-(b.day||1));});
   // mirror this payout into the account's Payouts cell in the table, so the two stay in sync
   if(key!=='all'){
@@ -1252,7 +1241,7 @@ function renderChart(){
   var gW=W-PAD.l-PAD.r, gH=H-PAD.t-PAD.b;
   var allVals=fxData.map(function(e){return e.profit;}).concat(theoData.map(function(e){return e.profit;}));
   var maxVal=Math.max.apply(null,allVals.concat([1]));
-  var maxV=maxVal*1.2;
+  var maxV=maxVal*1.25; // 25% padding so labels don't clip
   var dayX=function(d){return PAD.l+((d-1)/Math.max(nDays-1,1))*gW;};
   var valY=function(v){return PAD.t+gH*(1-v/maxV);};
   var botY=PAD.t+gH;
@@ -1278,19 +1267,18 @@ function renderChart(){
   for(var d=1;d<=nDays;d+=step) ctx.fillText(d,dayX(d),botY+16);
   ctx.fillText(nDays,dayX(nDays),botY+16);
 
-  // ── DRAW LINE helper
+  // ── DRAW LINE helper — Opțiunea A: fiecare payout la valoarea lui individuală
   function drawSeries(dataArr, colorA, colorB, dotColor){
     if(!dataArr.length) return;
-    // build cumulative line points
+    // line connects: $0 (day1) → individual value pt1 → individual value pt2 → hold to lastDay
     var pts=[{x:dayX(1),y:botY}];
-    var cum=0;
     for(var i=0;i<dataArr.length;i++){
-      cum+=dataArr[i].profit;
-      pts.push({x:dayX(dataArr[i].day),y:valY(cum)});
+      pts.push({x:dayX(dataArr[i].day),y:valY(dataArr[i].profit)});
     }
-    pts.push({x:dayX(lastDay),y:valY(cum)});
+    // hold last value to end of period
+    pts.push({x:dayX(lastDay),y:pts[pts.length-1].y});
 
-    // fill
+    // fill under line
     ctx.beginPath();ctx.moveTo(pts[0].x,botY);
     for(var i=0;i<pts.length;i++) ctx.lineTo(pts[i].x,pts[i].y);
     ctx.lineTo(pts[pts.length-1].x,botY);ctx.closePath();
@@ -1307,20 +1295,34 @@ function renderChart(){
     ctx.strokeStyle=lg;ctx.lineWidth=2.5;ctx.lineJoin='round';ctx.lineCap='round';ctx.stroke();
     ctx.restore();
 
-    // dots — positioned at cumulative Y, label shows INDIVIDUAL profit
-    cum=0;
+    // dots — la valoarea individuală a fiecărui payout, cu etichete decalate să nu se suprapună
+    var dotPositions=[];
     for(var i=0;i<dataArr.length;i++){
-      cum+=dataArr[i].profit;
-      var dx=dayX(dataArr[i].day), dy=valY(cum);
+      var dx=dayX(dataArr[i].day), dy=valY(dataArr[i].profit);
+      dotPositions.push({dx:dx,dy:dy,profit:dataArr[i].profit});
+    }
+    for(var i=0;i<dotPositions.length;i++){
+      var dx=dotPositions[i].dx, dy=dotPositions[i].dy;
       ctx.beginPath();ctx.arc(dx,dy,7,0,6.28);
       ctx.fillStyle=dotColor+'22';ctx.fill();
       ctx.beginPath();ctx.arc(dx,dy,4,0,6.28);
       ctx.fillStyle=dotColor;ctx.fill();
       ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();
-      // label: individual profit value
-      var lbl=fmtMoney(dataArr[i].profit);
+      // calculate label offset to avoid overlap with nearby dots
+      var lbl=fmtMoney(dotPositions[i].profit);
       ctx.fillStyle=dotColor;ctx.font='700 10px Inter';ctx.textAlign='center';
-      var ly=dy-14; if(ly<PAD.t+10) ly=dy+20;
+      // alternate above/below based on index, with extra offset if dots are close vertically
+      var baseOffset=16;
+      var above=(i%2===0);
+      // check if previous dot is close — if so, increase offset
+      if(i>0){
+        var prev=dotPositions[i-1];
+        var distY=Math.abs(dy-prev.dy);
+        if(distY<30) baseOffset=baseOffset+(i%2===0?10:-10);
+      }
+      var ly=above?dy-baseOffset:dy+baseOffset+6;
+      if(ly<PAD.t+10) ly=dy+baseOffset+6;
+      if(ly>PAD.t+gH-4) ly=dy-baseOffset;
       ctx.fillText(lbl,dx,ly);
     }
     return pts;
@@ -1332,10 +1334,8 @@ function renderChart(){
 
   // build points for tooltip
   var points=[];
-  var cum=0;
   for(var i=0;i<fxData.length;i++){
-    cum+=fxData[i].profit;
-    points.push({x:dayX(fxData[i].day),y:valY(cum),v:fxData[i].profit,
+    points.push({x:dayX(fxData[i].day),y:valY(fxData[i].profit),v:fxData[i].profit,
       label:fxData[i].day+' '+MONTHS[selMonth].slice(0,3),
       payoutAcc:fxData[i].payoutAcc,sourceAccounts:fxData[i].sourceAccounts});
   }
@@ -1594,6 +1594,15 @@ document.getElementById('btn-confirm-phase').addEventListener('click', function(
 
 // CHART BUTTON
 document.getElementById('btn-add-chart').addEventListener('click', addChartEntry);
+// Theo payout auto-switch: when Theo selected in payout dropdown, switch main selector to theo too
+document.getElementById('chart-payout-acc-sel').addEventListener('change', function(){
+  if(this.value==='theo'){
+    var mainSel=document.getElementById('chart-acc-sel');
+    mainSel.value='theo';
+    mainSel.classList.add('active-filter');
+    renderChart();
+  }
+});
 document.getElementById('btn-sync-pnl').addEventListener('click', syncPnLToChart);
 document.getElementById('chart-acc-sel').addEventListener('change', renderChart);
 document.getElementById('chart-month-sel').addEventListener('change', renderChart);
