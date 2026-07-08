@@ -167,53 +167,63 @@ input,select{font-family:'Inter',sans-serif}
 .inp{background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:10px 13px;border-radius:8px;font-size:14px;width:100%;outline:none;font-weight:500;transition:all 0.2s}
 .inp:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(37,99,235,0.1);background:#fff}
 
-/* HEDGE CALCULATOR */
-#hedge-calc-wrap{font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;max-width:660px}
-#hedge-calc-wrap h1{font-size:14px;letter-spacing:3px;color:#16a34a;font-weight:700;display:flex;align-items:center;gap:10px;margin-bottom:4px}
-#hedge-calc-wrap h1::before{content:"";width:7px;height:7px;background:#16a34a;border-radius:50%;box-shadow:0 0 8px #16a34a;animation:hpulse 2s infinite}
-@keyframes hpulse{50%{opacity:.3}}
-#hedge-calc-wrap .hsub{color:var(--text3);font-size:11px;letter-spacing:1px;margin-bottom:18px}
+/* HEDGE CALCULATOR — dark theme original */
+#hedge-calc-wrap{
+  --hbg:#050807;--hpanel:#0a0f0d;--hpanel2:#070b09;--hline:#14201b;
+  --hgreen:#39ff9a;--hgreen-dim:#1f7a52;--hamber:#ffb454;--hred:#ff5a5a;
+  --htext:#c9e8d8;--hmuted:#5f7a6e;--hfaint:#2a3a33;
+  background:var(--hbg);color:var(--htext);
+  font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+  min-height:60vh;padding:22px 28px 40px;
+  background-image:radial-gradient(circle at 50% -10%,rgba(57,255,154,.06),transparent 55%);
+  border-radius:16px;
+}
+#hedge-calc-wrap h1{font-size:15px;letter-spacing:3px;color:var(--hgreen);font-weight:600;display:flex;align-items:center;gap:10px;margin-bottom:4px}
+#hedge-calc-wrap h1::before{content:"";width:8px;height:8px;background:var(--hgreen);border-radius:50%;box-shadow:0 0 8px var(--hgreen);animation:hpulse 2s infinite}
+@keyframes hpulse{50%{opacity:.35}}
+#hedge-calc-wrap .hsub{color:var(--hmuted);font-size:11px;letter-spacing:1px;margin-bottom:18px}
 #hedge-calc-wrap .hmodebar{display:flex;gap:8px;margin-bottom:16px}
-#hedge-calc-wrap .hmode{flex:1;text-align:center;padding:11px;font-size:11px;letter-spacing:2px;background:#f8f9ff;border:1px solid var(--border);border-radius:10px;color:var(--text3);cursor:pointer;transition:.15s;font-weight:700}
-#hedge-calc-wrap .hmode.active{color:#16a34a;border-color:#86efac;background:#f0fdf4}
-#hedge-calc-wrap .hmode small{display:block;font-size:9px;letter-spacing:1px;color:var(--text3);margin-top:2px;font-weight:400}
-#hedge-calc-wrap .hmode.active small{color:#4ade80}
+#hedge-calc-wrap .hmode{flex:1;text-align:center;padding:12px;font-size:12px;letter-spacing:2px;background:var(--hpanel2);border:1px solid var(--hline);border-radius:8px;color:var(--hmuted);cursor:pointer;transition:.15s;user-select:none;font-weight:600}
+#hedge-calc-wrap .hmode.active{color:var(--hgreen);border-color:var(--hgreen-dim);background:rgba(57,255,154,.06);box-shadow:0 0 14px rgba(57,255,154,.08)}
+#hedge-calc-wrap .hmode small{display:block;font-size:9px;letter-spacing:1px;color:var(--hfaint);margin-top:3px;font-weight:400}
+#hedge-calc-wrap .hmode.active small{color:var(--hgreen-dim)}
 #hedge-calc-wrap .hwindow{display:none}#hedge-calc-wrap .hwindow.active{display:block}
-#hedge-calc-wrap .hsettings{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;background:#f8f9ff;border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:14px}
+#hedge-calc-wrap .hsettings{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;background:var(--hpanel2);border:1px solid var(--hline);border-radius:8px;padding:10px;margin-bottom:14px}
 #hedge-calc-wrap .hsettings .hfield{margin:0}
 #hedge-calc-wrap .htabs{display:flex;gap:6px;margin-bottom:14px}
-#hedge-calc-wrap .htab{flex:1;text-align:center;padding:9px 6px;font-size:11px;letter-spacing:1px;background:#f8f9ff;border:1px solid var(--border);border-radius:8px;color:var(--text3);cursor:pointer;transition:.15s}
-#hedge-calc-wrap .htab.active{color:#16a34a;border-color:#86efac;background:#f0fdf4}
-#hedge-calc-wrap .hpanel{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;box-shadow:0 2px 8px rgba(15,23,42,0.04)}
-#hedge-calc-wrap .hpanel-title{font-size:10px;letter-spacing:2px;color:#16a34a;text-transform:uppercase;margin-bottom:13px;font-weight:700}
+#hedge-calc-wrap .htab{flex:1;text-align:center;padding:9px 6px;font-size:11px;letter-spacing:1px;background:var(--hpanel2);border:1px solid var(--hline);border-radius:6px;color:var(--hmuted);cursor:pointer;transition:.15s;user-select:none}
+#hedge-calc-wrap .htab.active{color:var(--hgreen);border-color:var(--hgreen-dim);background:rgba(57,255,154,.05)}
+#hedge-calc-wrap .htab:hover{color:var(--htext)}
+#hedge-calc-wrap .hpanel{background:var(--hpanel);border:1px solid var(--hline);border-radius:8px;padding:16px;margin-bottom:14px}
+#hedge-calc-wrap .hpanel-title{font-size:10px;letter-spacing:2px;color:var(--hgreen-dim);text-transform:uppercase;margin-bottom:13px;font-weight:600}
 #hedge-calc-wrap .hview{display:none}#hedge-calc-wrap .hview.active{display:block}
 #hedge-calc-wrap .hfield{margin-bottom:11px}
-#hedge-calc-wrap label{display:block;font-size:10px;color:var(--text3);margin-bottom:4px;letter-spacing:.5px}
-#hedge-calc-wrap label .hint{color:var(--text3);font-size:9px}
-#hedge-calc-wrap .hinp{width:100%;background:#f8f9ff;border:1px solid var(--border2);color:var(--text);font-family:inherit;font-size:14px;padding:8px 10px;border-radius:7px;outline:none;transition:.15s}
-#hedge-calc-wrap .hinp:focus{border-color:#16a34a;background:#fff}
+#hedge-calc-wrap label{display:block;font-size:10px;color:var(--hmuted);margin-bottom:4px;letter-spacing:.5px}
+#hedge-calc-wrap label .hint{color:var(--hfaint);font-size:9px}
+#hedge-calc-wrap .hinp{width:100%;background:#040605;border:1px solid var(--hline);color:var(--hgreen);font-family:inherit;font-size:15px;padding:8px 10px;border-radius:5px;outline:none;transition:.15s}
+#hedge-calc-wrap .hinp:focus{border-color:var(--hgreen-dim)}
 #hedge-calc-wrap .hrow{display:grid;gap:10px}#hedge-calc-wrap .hrow.c2{grid-template-columns:1fr 1fr}#hedge-calc-wrap .hrow.c3{grid-template-columns:1fr 1fr 1fr}
-#hedge-calc-wrap .hout{background:#f0fdf4;border:1px solid #86efac;border-radius:10px;padding:16px;margin-top:4px}
-#hedge-calc-wrap .hbig{display:flex;align-items:baseline;justify-content:space-between;padding:10px 0;border-bottom:1px dashed var(--border)}
+#hedge-calc-wrap .hout{background:#040605;border:1px solid var(--hgreen-dim);border-radius:8px;padding:16px;margin-top:4px}
+#hedge-calc-wrap .hbig{display:flex;align-items:baseline;justify-content:space-between;padding:10px 0;border-bottom:1px dashed var(--hline)}
 #hedge-calc-wrap .hbig:last-child{border-bottom:none}
-#hedge-calc-wrap .hbig .hk{font-size:10px;color:var(--text3);letter-spacing:.5px}
-#hedge-calc-wrap .hbig .hv{font-size:22px;color:#16a34a;font-weight:700;letter-spacing:1px}
-#hedge-calc-wrap .hbig .hv small{font-size:11px;color:var(--text3);margin-left:3px}
-#hedge-calc-wrap .hv.hamber{color:#d97706}#hedge-calc-wrap .hv.hred{color:#dc2626}
-#hedge-calc-wrap .hbd{margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:11px;line-height:1.85;color:var(--text2)}
-#hedge-calc-wrap .hbd b{color:var(--text)}#hedge-calc-wrap .hbd .hg{color:#16a34a}#hedge-calc-wrap .hbd .ha{color:#d97706}
-#hedge-calc-wrap .hwarn{font-size:11px;color:#dc2626;background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:9px 11px;margin-top:10px;line-height:1.55;display:none}
+#hedge-calc-wrap .hbig .hk{font-size:10px;color:var(--hmuted);letter-spacing:.5px}
+#hedge-calc-wrap .hbig .hv{font-size:24px;color:var(--hgreen);font-weight:600;letter-spacing:1px}
+#hedge-calc-wrap .hbig .hv small{font-size:11px;color:var(--hmuted);margin-left:3px}
+#hedge-calc-wrap .hv.hamber{color:var(--hamber)}#hedge-calc-wrap .hv.hred{color:var(--hred)}
+#hedge-calc-wrap .hbd{margin-top:12px;padding-top:12px;border-top:1px solid var(--hline);font-size:11px;line-height:1.85;color:var(--hmuted)}
+#hedge-calc-wrap .hbd b{color:var(--htext)}#hedge-calc-wrap .hbd .hg{color:var(--hgreen)}#hedge-calc-wrap .hbd .ha{color:var(--hamber)}
+#hedge-calc-wrap .hwarn{font-size:11px;color:var(--hred);background:rgba(255,90,90,.07);border:1px solid rgba(255,90,90,.25);border-radius:6px;padding:9px 11px;margin-top:10px;line-height:1.55;display:none}
 #hedge-calc-wrap .hwarn.show{display:block}
 #hedge-calc-wrap table{width:100%;border-collapse:collapse;margin-top:8px;font-size:11px}
-#hedge-calc-wrap th{text-align:right;color:var(--text3);font-weight:700;font-size:9px;letter-spacing:1px;padding:6px 8px;border-bottom:1px solid var(--border);text-transform:uppercase}
+#hedge-calc-wrap th{text-align:right;color:var(--hfaint);font-weight:600;font-size:9px;letter-spacing:1px;padding:6px 8px;border-bottom:1px solid var(--hline);text-transform:uppercase}
 #hedge-calc-wrap th:first-child{text-align:left}
-#hedge-calc-wrap td{padding:7px 8px;text-align:right;border-bottom:1px solid var(--border);color:var(--text)}
-#hedge-calc-wrap td:first-child{text-align:left;color:var(--text3)}
-#hedge-calc-wrap td .hinp{font-size:12px;padding:5px 7px;text-align:right;width:80px}
-#hedge-calc-wrap td .hlot{color:#16a34a;font-weight:700}#hedge-calc-wrap td .hover2{color:#dc2626}
-#hedge-calc-wrap tfoot td{border-bottom:none;color:#16a34a;font-weight:700;padding-top:10px}
-#hedge-calc-wrap .hbadge{display:inline-block;font-size:10px;padding:3px 8px;border-radius:6px;letter-spacing:1px;background:#f0fdf4;color:#16a34a;border:1px solid #86efac}
-#hedge-calc-wrap .hnote{font-size:11px;color:#92400e;background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:11px 13px;margin-top:14px;line-height:1.6}
+#hedge-calc-wrap td{padding:7px 8px;text-align:right;border-bottom:1px solid var(--hline);color:var(--htext)}
+#hedge-calc-wrap td:first-child{text-align:left;color:var(--hmuted)}
+#hedge-calc-wrap .hlot{color:var(--hgreen);font-weight:600}#hedge-calc-wrap .hover2{color:var(--hred)}
+#hedge-calc-wrap tfoot td{border-bottom:none;color:var(--hgreen);font-weight:600;padding-top:10px}
+#hedge-calc-wrap .hbadge{display:inline-block;font-size:10px;padding:3px 8px;border-radius:4px;letter-spacing:1px;background:rgba(57,255,154,.1);color:var(--hgreen);border:1px solid var(--hgreen-dim)}
+#hedge-calc-wrap .hnote{font-size:11px;color:var(--hamber);background:rgba(255,180,84,.06);border:1px solid rgba(255,180,84,.2);border-radius:6px;padding:11px 13px;margin-top:14px;line-height:1.6}
+#hedge-calc-wrap .hnote b{color:var(--hamber)}
 
 /* RULES & LIMITS */
 .rules-page{max-width:1280px}
@@ -475,7 +485,7 @@ input,select{font-family:'Inter',sans-serif}
     <div id="rules-limits-content"></div>
   </div>
 
-  <div class="panel" id="panel-hedge">
+  <div class="panel" id="panel-hedge" style="padding:0;background:transparent;border:none;box-shadow:none">
     <div id="hedge-calc-wrap"></div>
   </div>
 </div>
