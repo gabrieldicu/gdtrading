@@ -167,6 +167,54 @@ input,select{font-family:'Inter',sans-serif}
 .inp{background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:10px 13px;border-radius:8px;font-size:14px;width:100%;outline:none;font-weight:500;transition:all 0.2s}
 .inp:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(37,99,235,0.1);background:#fff}
 
+/* HEDGE CALCULATOR */
+#hedge-calc-wrap{font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;max-width:660px}
+#hedge-calc-wrap h1{font-size:14px;letter-spacing:3px;color:#16a34a;font-weight:700;display:flex;align-items:center;gap:10px;margin-bottom:4px}
+#hedge-calc-wrap h1::before{content:"";width:7px;height:7px;background:#16a34a;border-radius:50%;box-shadow:0 0 8px #16a34a;animation:hpulse 2s infinite}
+@keyframes hpulse{50%{opacity:.3}}
+#hedge-calc-wrap .hsub{color:var(--text3);font-size:11px;letter-spacing:1px;margin-bottom:18px}
+#hedge-calc-wrap .hmodebar{display:flex;gap:8px;margin-bottom:16px}
+#hedge-calc-wrap .hmode{flex:1;text-align:center;padding:11px;font-size:11px;letter-spacing:2px;background:#f8f9ff;border:1px solid var(--border);border-radius:10px;color:var(--text3);cursor:pointer;transition:.15s;font-weight:700}
+#hedge-calc-wrap .hmode.active{color:#16a34a;border-color:#86efac;background:#f0fdf4}
+#hedge-calc-wrap .hmode small{display:block;font-size:9px;letter-spacing:1px;color:var(--text3);margin-top:2px;font-weight:400}
+#hedge-calc-wrap .hmode.active small{color:#4ade80}
+#hedge-calc-wrap .hwindow{display:none}#hedge-calc-wrap .hwindow.active{display:block}
+#hedge-calc-wrap .hsettings{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;background:#f8f9ff;border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:14px}
+#hedge-calc-wrap .hsettings .hfield{margin:0}
+#hedge-calc-wrap .htabs{display:flex;gap:6px;margin-bottom:14px}
+#hedge-calc-wrap .htab{flex:1;text-align:center;padding:9px 6px;font-size:11px;letter-spacing:1px;background:#f8f9ff;border:1px solid var(--border);border-radius:8px;color:var(--text3);cursor:pointer;transition:.15s}
+#hedge-calc-wrap .htab.active{color:#16a34a;border-color:#86efac;background:#f0fdf4}
+#hedge-calc-wrap .hpanel{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;box-shadow:0 2px 8px rgba(15,23,42,0.04)}
+#hedge-calc-wrap .hpanel-title{font-size:10px;letter-spacing:2px;color:#16a34a;text-transform:uppercase;margin-bottom:13px;font-weight:700}
+#hedge-calc-wrap .hview{display:none}#hedge-calc-wrap .hview.active{display:block}
+#hedge-calc-wrap .hfield{margin-bottom:11px}
+#hedge-calc-wrap label{display:block;font-size:10px;color:var(--text3);margin-bottom:4px;letter-spacing:.5px}
+#hedge-calc-wrap label .hint{color:var(--text3);font-size:9px}
+#hedge-calc-wrap .hinp{width:100%;background:#f8f9ff;border:1px solid var(--border2);color:var(--text);font-family:inherit;font-size:14px;padding:8px 10px;border-radius:7px;outline:none;transition:.15s}
+#hedge-calc-wrap .hinp:focus{border-color:#16a34a;background:#fff}
+#hedge-calc-wrap .hrow{display:grid;gap:10px}#hedge-calc-wrap .hrow.c2{grid-template-columns:1fr 1fr}#hedge-calc-wrap .hrow.c3{grid-template-columns:1fr 1fr 1fr}
+#hedge-calc-wrap .hout{background:#f0fdf4;border:1px solid #86efac;border-radius:10px;padding:16px;margin-top:4px}
+#hedge-calc-wrap .hbig{display:flex;align-items:baseline;justify-content:space-between;padding:10px 0;border-bottom:1px dashed var(--border)}
+#hedge-calc-wrap .hbig:last-child{border-bottom:none}
+#hedge-calc-wrap .hbig .hk{font-size:10px;color:var(--text3);letter-spacing:.5px}
+#hedge-calc-wrap .hbig .hv{font-size:22px;color:#16a34a;font-weight:700;letter-spacing:1px}
+#hedge-calc-wrap .hbig .hv small{font-size:11px;color:var(--text3);margin-left:3px}
+#hedge-calc-wrap .hv.hamber{color:#d97706}#hedge-calc-wrap .hv.hred{color:#dc2626}
+#hedge-calc-wrap .hbd{margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:11px;line-height:1.85;color:var(--text2)}
+#hedge-calc-wrap .hbd b{color:var(--text)}#hedge-calc-wrap .hbd .hg{color:#16a34a}#hedge-calc-wrap .hbd .ha{color:#d97706}
+#hedge-calc-wrap .hwarn{font-size:11px;color:#dc2626;background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:9px 11px;margin-top:10px;line-height:1.55;display:none}
+#hedge-calc-wrap .hwarn.show{display:block}
+#hedge-calc-wrap table{width:100%;border-collapse:collapse;margin-top:8px;font-size:11px}
+#hedge-calc-wrap th{text-align:right;color:var(--text3);font-weight:700;font-size:9px;letter-spacing:1px;padding:6px 8px;border-bottom:1px solid var(--border);text-transform:uppercase}
+#hedge-calc-wrap th:first-child{text-align:left}
+#hedge-calc-wrap td{padding:7px 8px;text-align:right;border-bottom:1px solid var(--border);color:var(--text)}
+#hedge-calc-wrap td:first-child{text-align:left;color:var(--text3)}
+#hedge-calc-wrap td .hinp{font-size:12px;padding:5px 7px;text-align:right;width:80px}
+#hedge-calc-wrap td .hlot{color:#16a34a;font-weight:700}#hedge-calc-wrap td .hover2{color:#dc2626}
+#hedge-calc-wrap tfoot td{border-bottom:none;color:#16a34a;font-weight:700;padding-top:10px}
+#hedge-calc-wrap .hbadge{display:inline-block;font-size:10px;padding:3px 8px;border-radius:6px;letter-spacing:1px;background:#f0fdf4;color:#16a34a;border:1px solid #86efac}
+#hedge-calc-wrap .hnote{font-size:11px;color:#92400e;background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:11px 13px;margin-top:14px;line-height:1.6}
+
 /* RULES & LIMITS */
 .rules-page{max-width:1280px}
 .rules-hero{display:flex;align-items:center;gap:16px;margin-bottom:28px}
@@ -329,6 +377,7 @@ input,select{font-family:'Inter',sans-serif}
   <div class="nav">
     <button class="tab active" data-panel="dashboard">Dashboard</button>
     <button class="tab" data-panel="calculator">Rules &amp; Limits</button>
+    <button class="tab" data-panel="hedge">Hedge Calculator</button>
   </div>
 
   <div class="panel active" id="panel-dashboard">
@@ -424,6 +473,10 @@ input,select{font-family:'Inter',sans-serif}
 
   <div class="panel" id="panel-calculator">
     <div id="rules-limits-content"></div>
+  </div>
+
+  <div class="panel" id="panel-hedge">
+    <div id="hedge-calc-wrap"></div>
   </div>
 </div>
 
@@ -654,7 +707,7 @@ function getPayoutAlert(a){
     var last=sorted[0];
     startDate=last.year+'-'+String(last.month+1).padStart(2,'0')+'-'+String(last.day||1).padStart(2,'0');
   }
-  if(!startDate) return 'STOP_WAIT'; // no reference date yet, but P&L already ≥0 — safest default is to pause
+  if(!startDate) return 'PAYOUT_TIME'; // no reference date — balance is already above 5%, safe to payout
   var daysSince=daysBetweenISO(startDate,todayISO());
   return daysSince>=14 ? 'PAYOUT_TIME' : 'STOP_WAIT';
 }
@@ -1398,6 +1451,182 @@ document.querySelectorAll('.tab').forEach(function(tab){
 });
 
 // LOGIN
+function renderHedgeCalc(){
+  var wrap=document.getElementById('hedge-calc-wrap');
+  if(!wrap||wrap._initialized) return;
+  wrap._initialized=true;
+  wrap.innerHTML=`
+    <h1>HEDGELINE CALC</h1>
+    <div class="hsub">MNQ (tradovate) &rarr; NAS100 (mt5)</div>
+    <div class="hmodebar">
+      <div class="hmode active" data-hm="simple">SIMPLU<small>un trade, rapid</small></div>
+      <div class="hmode" data-hm="complex">COMPLEX<small>pe faze (phase1 / live)</small></div>
+    </div>
+    <div class="hsettings">
+      <div class="hfield"><label>$/pt MNQ</label><input class="hinp" id="hmnqPt" type="number" value="2" step="0.5"></div>
+      <div class="hfield"><label>$/pt NAS/lot</label><input class="hinp" id="hnasPt" type="number" value="1" step="0.1"></div>
+      <div class="hfield"><label>Max lot</label><input class="hinp" id="hmaxLot" type="number" value="7" step="0.1"></div>
+      <div class="hfield"><label>Floor $</label><input class="hinp" id="hfloor" type="number" value="51000" step="100"></div>
+    </div>
+    <div class="hwindow active" id="hw-simple">
+      <div class="hpanel">
+        <div class="hpanel-title">Un trade — sizing rapid</div>
+        <div class="hrow c2">
+          <div class="hfield"><label>Contracte MNQ</label><input class="hinp" id="hsUnits" type="number" value="12"></div>
+          <div class="hfield"><label>SL prop <span class="hint">($)</span></label><input class="hinp" id="hsSL" type="number" value="2000"></div>
+        </div>
+        <div class="hfield"><label>Sumă de recuperat <span class="hint">(taxă + costuri, $)</span></label><input class="hinp" id="hsRec" type="number" value="99"></div>
+      </div>
+      <div class="hout">
+        <div class="hbig"><span class="hk">LOT NAS100 DE PUS</span><span class="hv" id="hsLot">—</span></div>
+        <div class="hbig"><span class="hk">PUNCTE PÂNĂ LA SL</span><span class="hv hamber" id="hsPts">—<small>pct</small></span></div>
+        <div class="hbd" id="hsBd"></div>
+      </div>
+      <div class="hnote"><b>Reminder:</b> hedge parțial — recuperează suma doar dacă MNQ și NAS parcurg același nr. de puncte. Nu include spread/basis/latență.</div>
+    </div>
+    <div class="hwindow" id="hw-complex">
+      <div class="htabs">
+        <div class="htab active" data-ht="p1">PHASE 1</div>
+        <div class="htab" data-ht="big">LIVE · BIG</div>
+        <div class="htab" data-ht="days">LIVE · ZILE</div>
+      </div>
+      <div class="hview active" id="hv-p1">
+        <div class="hpanel">
+          <div class="hpanel-title">Phase 1 — 3 trade-uri hedge</div>
+          <div class="hrow c3">
+            <div class="hfield"><label>Target $</label><input class="hinp" id="hp1target" type="number" value="1200"></div>
+            <div class="hfield"><label>Cons. % trade</label><input class="hinp" id="hp1cons" type="number" value="40"></div>
+            <div class="hfield"><label>Buffer $</label><input class="hinp" id="hp1buf" type="number" value="0"></div>
+          </div>
+          <div class="hrow c3">
+            <div class="hfield"><label>Units MNQ</label><input class="hinp" id="hp1units" type="number" value="12"></div>
+            <div class="hfield"><label>SL $ / trade</label><input class="hinp" id="hp1sl" type="number" value="2000"></div>
+            <div class="hfield"><label>Fee eval $</label><input class="hinp" id="hp1fee" type="number" value="99"></div>
+          </div>
+        </div>
+        <div class="hout" id="hp1out"></div>
+      </div>
+      <div class="hview" id="hv-big">
+        <div class="hpanel">
+          <div class="hpanel-title">Live — trade mare</div>
+          <div class="hrow c2">
+            <div class="hfield"><label>Units MNQ</label><input class="hinp" id="hbgUnits" type="number" value="12"></div>
+            <div class="hfield"><label>SL $ trade</label><input class="hinp" id="hbgSL" type="number" value="2000"></div>
+          </div>
+          <div class="hrow c3">
+            <div class="hfield"><label>Deficit $</label><input class="hinp" id="hbgDef" type="number" value="500"></div>
+            <div class="hfield"><label>Total recuperat $</label><input class="hinp" id="hbgTotal" type="number" value="3000"></div>
+            <div class="hfield"><label>Small trade $</label><input class="hinp" id="hbgSmall" type="number" value="1200"></div>
+          </div>
+        </div>
+        <div class="hout" id="hbgOut"></div>
+      </div>
+      <div class="hview" id="hv-days">
+        <div class="hpanel">
+          <div class="hpanel-title">Live — pe zile</div>
+          <div class="hrow c2">
+            <div class="hfield"><label>Balanță broker $</label><input class="hinp" id="hdBal" type="number" value="55000"></div>
+            <div class="hfield"><label>Deficit total $</label><input class="hinp" id="hdDef" type="number" value="500"></div>
+          </div>
+          <div class="hrow c2">
+            <div class="hfield"><label>SL $ / zi</label><input class="hinp" id="hdSL" type="number" value="2000"></div>
+            <div class="hfield"><label>Units MNQ</label><input class="hinp" id="hdUnits" type="number" value="12"></div>
+          </div>
+        </div>
+        <div class="hout">
+          <div class="hbig"><span class="hk">ROOM PÂNĂ LA FLOOR</span><span class="hv hamber" id="hdRoom">—</span></div>
+          <div class="hbig"><span class="hk">SL-URI DISPONIBILE</span><span class="hv" id="hdSlots">—</span></div>
+          <div class="hbd" style="margin-top:10px">Împarte deficitul pe sloturi (editabil):</div>
+          <table id="hdTable">
+            <thead><tr><th>Slot</th><th>SL $</th><th>Recuperare $</th><th>Ratio</th><th>Broker lot</th></tr></thead>
+            <tbody></tbody>
+            <tfoot><tr><td>TOTAL</td><td id="hdTotSL">—</td><td id="hdTotRec">—</td><td></td><td></td></tr></tfoot>
+          </table>
+          <div class="hwarn" id="hdWarn"></div>
+        </div>
+      </div>
+    </div>`;
+
+  // helpers
+  var hg=function(){return{mnqPt:+document.getElementById('hmnqPt').value||2,nasPt:+document.getElementById('hnasPt').value||1,maxLot:+document.getElementById('hmaxLot').value||7,floor:+document.getElementById('hfloor').value||51000};};
+  var hf0=function(n){return Math.round(n).toLocaleString('en-US');};
+  var hf2=function(n){return n.toFixed(2);};
+  var hptsSL=function(sl,u,m){return u>0?sl/(u*m):0;};
+  var hhedgeLot=function(rec,pts,nas){return (pts>0&&nas>0)?rec/(pts*nas):0;};
+
+  function hcalcSimple(){
+    var C=hg(),u=+document.getElementById('hsUnits').value||0,sl=+document.getElementById('hsSL').value||0,rec=+document.getElementById('hsRec').value||0;
+    var exp=u*C.mnqPt,pts=hptsSL(sl,u,C.mnqPt),lot=hhedgeLot(rec,pts,C.nasPt),ticks=pts*4;
+    document.getElementById('hsLot').textContent=lot>0?hf2(lot):'—';
+    document.getElementById('hsPts').innerHTML=pts>0?pts.toFixed(1)+'<small>pct</small>':'—';
+    document.getElementById('hsBd').innerHTML='expunere prop: <b class="hg">'+u+' × $'+C.mnqPt+'</b> = <b>$'+hf0(exp)+'/punct</b><br>SL puncte: <b>$'+hf0(sl)+' ÷ $'+hf0(exp)+'</b> = <b class="hg">'+pts.toFixed(1)+' pct</b> ('+ticks.toFixed(0)+' ticks)<br>lot hedge: <b>$'+hf0(rec)+' ÷ ('+pts.toFixed(1)+' × $'+C.nasPt+')</b> = <b class="hg">'+hf2(lot)+' lot</b>';
+  }
+  function hcalcP1(){
+    var C=hg(),target=+document.getElementById('hp1target').value||0,cons=(+document.getElementById('hp1cons').value||40)/100;
+    var sl=+document.getElementById('hp1sl').value||0,units=+document.getElementById('hp1units').value||0,buf=+document.getElementById('hp1buf').value||0,fee=+document.getElementById('hp1fee').value||0;
+    var capDay=target*cons,t3=Math.max(0,target-2*capDay)+buf,totalProfit=2*capDay+t3;
+    var realCons=totalProfit>0?capDay/totalProfit*100:0,pts=hptsSL(sl,units,C.mnqPt);
+    var lot1=hhedgeLot(fee,pts,C.nasPt),loss1=lot1*(capDay/(units*C.mnqPt))*C.nasPt;
+    var def2=fee+loss1,lot2=hhedgeLot(def2,pts,C.nasPt),loss2=lot2*(capDay/(units*C.mnqPt))*C.nasPt;
+    var def3=fee+loss1+loss2,lot3=hhedgeLot(def3,pts,C.nasPt);
+    var over=[lot1,lot2,lot3].some(function(l){return l>C.maxLot;});
+    document.getElementById('hp1out').innerHTML='<div class="hbig"><span class="hk">STRUCTURA 3 TRADE-URI</span><span class="hbadge">cons. reală '+realCons.toFixed(1)+'%</span></div><div class="hbd">SL puncte: <b>$'+hf0(sl)+' ÷ ('+units+'×$'+C.mnqPt+')</b> = <b class="hg">'+pts.toFixed(1)+' pct</b><br><br><b>Trade 1</b> — TP $'+hf0(capDay)+' → hedge <b class="hg">'+hf2(lot1)+' lot</b> (recuperă $'+hf0(fee)+')<br><b>Trade 2</b> — TP $'+hf0(capDay)+' → hedge <b class="hg">'+hf2(lot2)+' lot</b> (recuperă $'+hf0(def2)+')<br><b>Trade 3</b> — TP $'+hf0(t3)+' → hedge <b class="hg">'+hf2(lot3)+' lot</b> (recuperă $'+hf0(def3)+')<br><br>profit prop total: <b>$'+hf0(totalProfit)+'</b></div><div class="hwarn'+(over?' show':'')+'"><b>Peste Max Lot '+C.maxLot+'!</b> Reduce units sau acceptă recuperare parțială.</div>';
+  }
+  function hcalcBig(){
+    var C=hg(),units=+document.getElementById('hbgUnits').value||0,sl=+document.getElementById('hbgSL').value||0,def=+document.getElementById('hbgDef').value||0;
+    var total=+document.getElementById('hbgTotal').value||0,small=+document.getElementById('hbgSmall').value||0;
+    var tpOpt=Math.max(0,total-small),pts=hptsSL(sl,units,C.mnqPt),lot=hhedgeLot(def,pts,C.nasPt);
+    var ptsTP=units>0?tpOpt/(units*C.mnqPt):0,lossIfWin=lot*ptsTP*C.nasPt,over=lot>C.maxLot;
+    document.getElementById('hbgOut').innerHTML='<div class="hbig"><span class="hk">TP OPTIM</span><span class="hv">$'+hf0(tpOpt)+'</span></div><div class="hbig"><span class="hk">HEDGE LOT</span><span class="hv'+(over?' hred':'')+'">'+hf2(lot)+'<small>lot</small></span></div><div class="hbig"><span class="hk">COST DACĂ PROP CÂȘTIGĂ</span><span class="hv hamber">-$'+hf0(lossIfWin)+'</span></div><div class="hwarn'+(over?' show':'')+'"><b>Peste Max Lot '+C.maxLot+'!</b></div>';
+  }
+  function hcalcDays(){
+    var C=hg(),bal=+document.getElementById('hdBal').value||0,sl=+document.getElementById('hdSL').value||0;
+    var units=+document.getElementById('hdUnits').value||0,def=+document.getElementById('hdDef').value||0;
+    var room=Math.max(0,bal-C.floor),nFull=sl>0?Math.floor(room/sl):0,rem=room-nFull*sl;
+    var slots=[];for(var i=0;i<nFull;i++)slots.push(sl);if(rem>0.5)slots.push(rem);
+    var tbody=document.getElementById('hdTable').querySelector('tbody');tbody.innerHTML='';
+    var anyOver=false,totSL=0,totRec=0,totSlotSL=slots.reduce(function(a,b){return a+b;},0);
+    slots.forEach(function(s,i){
+      var rec=totSlotSL>0?def*(s/totSlotSL):0,pts=hptsSL(s,units,C.mnqPt),lot=hhedgeLot(rec,pts,C.nasPt);
+      var ratio=units>0?lot/units:0,over=lot>C.maxLot;if(over)anyOver=true;totSL+=s;totRec+=rec;
+      var tr=document.createElement('tr');
+      tr.innerHTML='<td>#'+(i+1)+'</td><td>$'+hf0(s)+'</td><td><input type="number" class="hinp" value="'+Math.round(rec)+'" style="width:80px;font-size:12px;padding:4px 6px"></td><td>'+ratio.toFixed(2)+'</td><td class="'+(over?'hover2':'hlot')+'">'+hf2(lot)+'</td>';
+      tbody.appendChild(tr);
+    });
+    document.getElementById('hdRoom').textContent='$'+hf0(room);
+    document.getElementById('hdSlots').textContent=slots.length+' × SL';
+    document.getElementById('hdTotSL').textContent='$'+hf0(totSL);
+    document.getElementById('hdTotRec').textContent='$'+hf0(totRec);
+    var wd=document.getElementById('hdWarn');
+    if(anyOver){wd.classList.add('show');wd.innerHTML='<b>Un slot depășește Max Lot '+C.maxLot+'!</b>';}
+    else if(totRec<def-1){wd.classList.add('show');wd.style.color='#d97706';wd.innerHTML='<b style="color:#d97706">Recuperare incompletă:</b> $'+hf0(totRec)+' din $'+hf0(def)+'.';}
+    else wd.classList.remove('show');
+  }
+  function hcalcAll(){hcalcSimple();hcalcP1();hcalcBig();hcalcDays();}
+
+  // mode toggle
+  wrap.querySelectorAll('.hmode').forEach(function(m){
+    m.addEventListener('click',function(){
+      wrap.querySelectorAll('.hmode').forEach(function(x){x.classList.remove('active');});
+      wrap.querySelectorAll('.hwindow').forEach(function(x){x.classList.remove('active');});
+      m.classList.add('active');
+      document.getElementById('hw-'+m.dataset.hm).classList.add('active');
+    });
+  });
+  // tab toggle
+  wrap.querySelectorAll('.htab').forEach(function(t){
+    t.addEventListener('click',function(){
+      wrap.querySelectorAll('.htab').forEach(function(x){x.classList.remove('active');});
+      wrap.querySelectorAll('.hview').forEach(function(x){x.classList.remove('active');});
+      t.classList.add('active');
+      document.getElementById('hv-'+t.dataset.ht).classList.add('active');
+    });
+  });
+  // inputs
+  wrap.querySelectorAll('.hinp').forEach(function(i){i.addEventListener('input',hcalcAll);});
+  hcalcAll();
+}
+
 function renderRulesAndLimits(){
   var tiers=[
     {label:'5K',maxLoss:500,dailyLoss:250,personal:'4.4–4.5%',personalAmt:'$220–$225',officialNote:'Removed'},
@@ -1535,6 +1764,7 @@ document.getElementById('btn-login').addEventListener('click', function(){
     setCurrentMonthYear();
     renderChart();
     renderRulesAndLimits();
+    renderHedgeCalc();
   } else {
     document.getElementById('login-error').classList.add('show');
     document.getElementById('login-pass').value='';
