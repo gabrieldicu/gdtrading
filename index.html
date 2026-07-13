@@ -1270,20 +1270,43 @@ function renderChart(){
   var totalEl=document.getElementById('profit-sum-total'),avgEl=document.getElementById('profit-sum-avg'),
       bestEl=document.getElementById('profit-sum-best'),allTimeEl=document.getElementById('profit-sum-alltime'),
       theoEl=document.getElementById('profit-sum-theo');
+
+  // Theo luna curentă
   var theoTotal=0;
   theoData.forEach(function(e){theoTotal+=e.profit;});
   if(theoEl){theoEl.textContent=fmtMoney(theoTotal);theoEl.style.color=theoTotal>=0?'#ea580c':'#dc2626';}
-  if(fxData.length){
-    var sum=0,best=fxData[0].profit;
-    fxData.forEach(function(e){sum+=e.profit;if(e.profit>best)best=e.profit;});
-    totalEl.textContent=fmtMoney(sum);totalEl.style.color=sum>=0?'#16a34a':'#dc2626';
-    avgEl.textContent=fmtMoney(sum/fxData.length);avgEl.style.color=sum>=0?'#16a34a':'#dc2626';
-    bestEl.textContent=fmtMoney(best);bestEl.style.color='#7c3aed';
+
+  // Total = FX + Theo pentru luna selectată
+  var fxSum=0,best=0;
+  fxData.forEach(function(e){fxSum+=e.profit;if(e.profit>best)best=e.profit;});
+  var totalSum=fxSum+theoTotal;
+  totalEl.textContent=fmtMoney(totalSum);totalEl.style.color=totalSum>=0?'#16a34a':'#dc2626';
+  bestEl.textContent=fxData.length?fmtMoney(best):'$0';bestEl.style.color='#7c3aed';
+
+  // Medie/Lună = media pe TOATE lunile înregistrate (FX + Theo), nu doar luna curentă
+  var monthlyTotals={};
+  // adună FX pe luni
+  Object.keys(chartData).forEach(function(k){
+    if(k==='theo') return;
+    (chartData[k]||[]).forEach(function(e){
+      var mk=e.year+'-'+String(e.month).padStart(2,'0');
+      monthlyTotals[mk]=(monthlyTotals[mk]||0)+e.profit;
+    });
+  });
+  // adună Theo pe luni
+  (chartData['theo']||[]).forEach(function(e){
+    var mk=e.year+'-'+String(e.month).padStart(2,'0');
+    monthlyTotals[mk]=(monthlyTotals[mk]||0)+e.profit;
+  });
+  var months=Object.keys(monthlyTotals);
+  if(months.length){
+    var avgSum=months.reduce(function(s,k){return s+monthlyTotals[k];},0);
+    avgEl.textContent=fmtMoney(avgSum/months.length);avgEl.style.color=avgSum>=0?'#16a34a':'#dc2626';
   } else {
-    totalEl.textContent='$0';totalEl.style.color='var(--text)';
     avgEl.textContent='$0';avgEl.style.color='var(--text)';
-    bestEl.textContent='$0';bestEl.style.color='var(--text)';
   }
+
+  // Total All-Time (FX fără Theo — Theo e separat)
   var allTimeSum=ALLTIME_BASE;
   Object.keys(chartData).forEach(function(k){
     if(k==='theo') return;
@@ -1824,9 +1847,18 @@ document.getElementById('btn-close-phase').addEventListener('click', function(){
 document.getElementById('btn-confirm-phase').addEventListener('click', function(){
   var newId=document.getElementById('phase-new-id').value.trim();
   if(!newId){alert('Introdu adresa noului cont!');return;}
-  accounts[pendingPhase.idx].phase=pendingPhase.newPhase;
-  accounts[pendingPhase.idx].id=newId;
-  recordPhaseChange(accounts[pendingPhase.idx],pendingPhase.newPhase);
+  var acc=accounts[pendingPhase.idx];
+  acc.phase=pendingPhase.newPhase;
+  acc.id=newId;
+  // reset balance to initial capital when advancing phase (Phase1→2, Phase2→Live)
+  // also reset eval/broker/payouts for the new phase cycle
+  acc.balance=acc.capital;
+  acc.balanceExpr='';
+  acc.eval=0; acc.evalExpr='';
+  acc.broker=0; acc.brokerExpr='';
+  acc.payouts=0; acc.payoutsExpr='';
+  acc.balanceHistory=[];
+  recordPhaseChange(acc,pendingPhase.newPhase);
   document.getElementById('phase-modal').classList.remove('open');
   saveState();
   renderAccounts();
