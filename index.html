@@ -76,13 +76,13 @@ input,select{font-family:'Inter',sans-serif}
 /* TABLE */
 .tbl-head{display:grid;grid-template-columns:2.2fr 1fr 0.8fr 0.8fr 0.7fr 0.85fr 1.1fr 36px;padding:10px 20px;background:var(--surface2);border-bottom:1px solid var(--border)}
 .th{font-size:10px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;font-weight:600}
-.acc-row{display:grid;grid-template-columns:2.2fr 1fr 0.8fr 0.8fr 0.7fr 0.85fr 1.1fr 36px;padding:14px 20px;border-top:1px solid var(--border);align-items:center;cursor:pointer;transition:background 0.15s;background:#fff}
+.acc-row{display:grid;grid-template-columns:2.2fr 1fr 0.8fr 0.8fr 0.7fr 0.85fr 1.1fr 72px;padding:14px 20px;border-top:1px solid var(--border);align-items:center;cursor:pointer;transition:background 0.15s;background:#fff}
 .acc-row:hover{background:#fafbff}
 .acc-row.open{background:#f8f9ff}
 .aname{font-size:12px;color:var(--text);display:flex;align-items:center;gap:7px;font-weight:500}
 .payout-alert{font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;margin-left:6px;white-space:nowrap}
-.ticket-btn{background:none;border:1px solid var(--border2);border-radius:7px;padding:3px 8px;font-size:13px;cursor:pointer;position:relative;color:var(--text2);transition:all 0.15s;line-height:1}
-.ticket-btn:hover{border-color:#22c55e;color:#16a34a;background:#f0fdf4}
+.ticket-btn{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:5px 9px;font-size:14px;cursor:pointer;position:relative;color:var(--text2);transition:all 0.15s;line-height:1;box-shadow:0 1px 3px rgba(15,23,42,0.06)}
+.ticket-btn:hover{border-color:#2563eb;color:#2563eb;background:#eff6ff;box-shadow:0 2px 8px rgba(37,99,235,0.12)}
 .ticket-count{position:absolute;top:-6px;right:-6px;background:#16a34a;color:#fff;font-size:9px;font-weight:800;border-radius:10px;padding:1px 5px;font-family:Inter,sans-serif;min-width:16px;text-align:center}
 /* TICKET MODAL */
 .ticket-modal{display:none;position:fixed;inset:0;z-index:1000;align-items:center;justify-content:center}
@@ -969,8 +969,8 @@ function renderAccounts(){
     html += '<div><span class="cell-val '+(a.payouts>0?'pos':a.payouts<0?'neg':'zer')+'" data-idx="'+idx+'" data-field="payouts" contenteditable="true">$'+a.payouts+'</span></div>';
     html += '<div><span class="cell-val '+(pnl>=0?'pos':'neg')+'" id="pnl-'+idx+'">'+( pnl<0?'-$'+Math.abs(pnl):'$'+pnl)+'</span></div>';
     html += '<div><span class="cell-val bal" data-idx="'+idx+'" data-field="balance" contenteditable="true">$'+a.balance.toLocaleString()+'</span> 🏆</div>';
-    html += '<div style="display:flex;align-items:center;gap:6px">';
-    html += '<button class="ticket-btn" data-idx="'+idx+'" title="Trade Log">📋'+(a.tickets&&a.tickets.length?'<span class="ticket-count">'+a.tickets.length+'</span>':'')+'</button>';
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 4px">';
+    html += '<button class="ticket-btn" data-idx="'+idx+'" title="Trade Log">🔖'+(a.tickets&&a.tickets.length?'<span class="ticket-count">'+a.tickets.length+'</span>':'')+'</button>';
     html += '<span class="chv'+(expanded===idx?' open':'')+'">⌄</span>';
     html += '</div>';
     html += '</div>';
