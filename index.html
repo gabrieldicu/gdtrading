@@ -985,7 +985,7 @@ function renderAccounts(){
       else if(a.phase===1) showTrophy=a.balance>=a.capital*1.08;
       else if(a.phase===2) showTrophy=a.balance>=a.capital*1.05;
 
-      html += '<div style="display:flex;align-items:center;gap:8px"><span class="'+balClass+'" data-idx="'+idx+'" data-field="balance" contenteditable="true">$'+a.balance.toLocaleString()+'</span>'+(showTrophy?' 🏆':'')+' <button class="ticket-btn" data-idx="'+idx+'" title="Trade Log">🔖'+(a.tickets&&a.tickets.length?'<span class="ticket-count">'+a.tickets.length+'</span>':'')+'</button></div>';
+      html += '<div style="display:flex;align-items:center;gap:8px"><span class="'+balClass+'" data-idx="'+idx+'" data-field="balance" contenteditable="true">$'+a.balance.toLocaleString()+'</span><span style="width:20px;text-align:center;display:inline-block">'+(showTrophy?'🏆':'')+'</span><button class="ticket-btn" data-idx="'+idx+'" title="Trade Log">🔖'+(a.tickets&&a.tickets.length?'<span class="ticket-count">'+a.tickets.length+'</span>':'')+'</button></div>';
     html += '<div><span class="chv'+(expanded===idx?' open':'')+'">⌄</span></div>';
     html += '</div>';
     if(expanded===idx){
