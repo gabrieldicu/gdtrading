@@ -124,6 +124,7 @@ input,select{font-family:'Inter',sans-serif}
 
 /* PHASE */
 .phase-select{background:var(--accent-light);border:1px solid #bfdbfe;color:var(--accent);padding:4px 22px 4px 10px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;outline:none;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%232563eb'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 7px center}
+.phase-select.phase2{background:#f5f3ff;border-color:#c4b5fd;color:#7c3aed;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%237c3aed'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 7px center}
 .phase-select.live{background:var(--green-bg);border-color:var(--green-bd);color:var(--green);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2316a34a'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 7px center}
 .phase-select.breached{background:var(--red-bg);border-color:var(--red-bd);color:var(--red);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23dc2626'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 7px center}
 .chv{color:var(--text3);font-size:16px;display:inline-block;transition:transform 0.2s}
@@ -959,7 +960,7 @@ function renderAccounts(){
     else if(payoutAlert==='STOP_WAIT') alertHtml='<span class="payout-alert waiting">⏸ Stop trading, wait the payout</span>';
     else if(phaseAdvance) alertHtml='<span class="payout-alert ready">🎉 Congratulations! → '+phaseAdvance+'</span>';
     html += '<div class="aname"><span class="aicon'+(a.icon==='warn'?' w':'')+'">'+( a.icon==='warn'?'⚠':'⚡')+'</span>'+a.id+alertHtml+'</div>';
-    html += '<div><select class="phase-select'+(isLive?' live':isBreached?' breached':'')+'" data-idx="'+idx+'">';
+    html += '<div><select class="phase-select'+(isLive?' live':isBreached?' breached':a.phase===2?' phase2':'')+'" data-idx="'+idx+'">';
     html += '<option value="1"'+(a.phase===1?' selected':'')+'>Phase 1</option>';
     html += '<option value="2"'+(a.phase===2?' selected':'')+'>Phase 2</option>';
     html += '<option value="live"'+(isLive?' selected':'')+'>Live</option>';
