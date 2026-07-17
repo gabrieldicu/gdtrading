@@ -1992,13 +1992,9 @@ document.getElementById('btn-confirm-phase').addEventListener('click', function(
   var acc=accounts[pendingPhase.idx];
   acc.phase=pendingPhase.newPhase;
   acc.id=newId;
-  // reset balance to initial capital when advancing phase (Phase1→2, Phase2→Live)
-  // also reset eval/broker/payouts for the new phase cycle
+  // reset only balance to initial capital when advancing phase — keep Eval/Broker/Payouts as historical record
   acc.balance=acc.capital;
   acc.balanceExpr='';
-  acc.eval=0; acc.evalExpr='';
-  acc.broker=0; acc.brokerExpr='';
-  acc.payouts=0; acc.payoutsExpr='';
   acc.balanceHistory=[];
   recordPhaseChange(acc,pendingPhase.newPhase);
   document.getElementById('phase-modal').classList.remove('open');
