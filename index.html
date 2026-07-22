@@ -1012,7 +1012,11 @@ function renderAccounts(){
       }
       var potClass=potProfit>0?'g':potProfit<0?'r':'b';
       var potStr=potProfit>0?'+$'+potProfit.toLocaleString():potProfit<0?'-$'+Math.abs(potProfit).toLocaleString():'$0';
-      html += '<div class="pot-bar">'+(initBrokerBal!==null?'<div class="pot-item">BALANȚA BROKER <span class="b">$'+initBrokerBal.toLocaleString()+'</span></div>':'')+'<div class="pot-item">CAPITAL <span class="b">$'+a.capital.toLocaleString()+'</span></div><div class="pot-item">FIRM <span class="b">'+a.firm+'</span></div><div class="pot-item">POTENTIAL PROFIT <span class="'+potClass+'">'+potStr+'</span></div></div>';
+      // Potential Payout = realProfit × 0.8 - 15 (brut, fără costurile de recuperat)
+      var realProfit2=a.balance-a.capital;
+      var potPayout=a.phase==='live'&&realProfit2>0?Math.round(realProfit2*0.8-15):null;
+      var potPayoutHtml=potPayout!==null?'<div class="pot-item">POTENTIAL PAYOUT <span class="g">$'+potPayout.toLocaleString()+'</span></div>':'';
+      html += '<div class="pot-bar">'+(initBrokerBal!==null?'<div class="pot-item">BALANȚA BROKER <span class="b">$'+initBrokerBal.toLocaleString()+'</span></div>':'')+potPayoutHtml+'<div class="pot-item">POTENTIAL PROFIT <span class="'+potClass+'">'+potStr+'</span></div></div>';
       var showChart = (a.phase===1 || a.phase===2);
       html += '<div class="exp-inner'+(showChart?'':' no-chart')+'">';
       if(showChart){
