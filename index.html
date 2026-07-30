@@ -21,9 +21,43 @@ button{cursor:pointer;font-family:'Inter',sans-serif}
 input,select{font-family:'Inter',sans-serif}
 #network-canvas{position:fixed;inset:0;z-index:0;opacity:0.07;pointer-events:none}
 
+/* TRADING OVERVIEW */
+.ov-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding:22px 24px 0}
+.ov-title{font-size:13px;font-weight:800;color:var(--text);letter-spacing:-0.2px;display:flex;align-items:center;gap:8px}
+.ov-title .ov-dot{width:8px;height:8px;border-radius:50%;background:#16a34a;box-shadow:0 0 8px rgba(22,163,74,0.5);animation:ovpulse 2s infinite}
+@keyframes ovpulse{50%{opacity:0.35}}
+.ov-subtitle{font-size:11px;color:var(--text3);font-weight:500}
+.ov-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:stretch;padding:0 24px 24px}
+.ov-zone{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:18px 20px;display:flex;flex-direction:column}
+.ov-zone-title{font-size:9.5px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.ov-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border)}
+.ov-row:last-child{border-bottom:none}
+.ov-row .ov-lbl{font-size:11.5px;color:var(--text2);font-weight:500}
+.ov-row .ov-val{font-size:13px;font-weight:800;color:var(--text)}
+.ov-val.g{color:#16a34a}.ov-val.r{color:#dc2626}.ov-val.b{color:#2563eb}.ov-val.amber{color:#d97706}
+.ov-big{text-align:center;padding:10px 0 14px}
+.ov-big .ov-big-val{font-size:28px;font-weight:800;letter-spacing:-1px;line-height:1}
+.ov-big .ov-big-lbl{font-size:10px;color:var(--text3);font-weight:600;margin-top:4px;text-transform:uppercase;letter-spacing:0.8px}
+.ov-split{display:flex;gap:8px;margin-bottom:14px}
+.ov-split-item{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;text-align:center}
+.ov-split-item .osv{font-size:18px;font-weight:800}.ov-split-item .osl{font-size:9.5px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-top:2px}
+.ov-radar-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:var(--surface);margin-bottom:6px;transition:all 0.15s}
+.ov-radar-item:last-child{margin-bottom:0}
+.ov-radar-item.ready{border-color:#86efac;background:#f0fdf4}
+.ov-radar-item.target{border-color:#bfdbfe;background:#eff6ff}
+.ov-radar-item .ov-acc-id{font-size:11px;font-weight:700;color:var(--text);min-width:70px}
+.ov-radar-item .ov-badge{font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:10px;white-space:nowrap}
+.ov-badge.ready{background:#dcfce7;color:#16a34a}
+.ov-badge.target{background:#dbeafe;color:#2563eb}
+.ov-badge.close{background:#fef3c7;color:#d97706}
+.ov-prog{flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.ov-prog-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,#2563eb,#7c3aed);transition:width 0.4s}
+.ov-prog-fill.g{background:linear-gradient(90deg,#16a34a,#10b981)}
+.ov-empty{font-size:11.5px;color:var(--text3);text-align:center;padding:16px 0;font-style:italic}
+
 /* LOGIN */
 #login-page{display:flex;align-items:center;justify-content:center;min-height:100vh;position:relative;z-index:1;background:linear-gradient(135deg,#1e2130,#252836)}
-.login-card{background:#fff;border-radius:20px;padding:48px 52px;width:440px;max-width:95vw;box-shadow:0 20px 60px rgba(0,0,0,0.3);z-index:2}
+.login-card{background:var(--surface);border-radius:20px;padding:48px 52px;width:440px;max-width:95vw;box-shadow:0 20px 60px rgba(0,0,0,0.3);z-index:2}
 .login-logo{text-align:center;margin-bottom:32px}
 .login-logo-icon{width:64px;height:64px;margin:0 auto 16px;background:linear-gradient(135deg,#2563eb,#7c3aed);border-radius:16px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px;color:#fff;box-shadow:0 8px 24px rgba(37,99,235,0.35)}
 .login-brand{font-size:24px;font-weight:800;color:#0f1117;letter-spacing:-0.5px;margin-bottom:6px}
@@ -60,7 +94,7 @@ input,select{font-family:'Inter',sans-serif}
 .welcome p{font-size:11px;color:var(--text3);margin-top:5px;font-weight:500;letter-spacing:1px;text-transform:uppercase}
 
 /* CARDS */
-.dash-card{background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:20px;box-shadow:0 2px 12px rgba(0,0,0,0.06)}
+.dash-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:20px;box-shadow:0 2px 12px rgba(0,0,0,0.06)}
 .dash-card-header{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:12px;background:linear-gradient(135deg,#f8f9ff,#fff)}
 .user-row{display:flex;align-items:center;gap:12px}
 .avatar{width:38px;height:38px;background:linear-gradient(135deg,#2563eb,#7c3aed);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:15px}
@@ -88,12 +122,12 @@ input,select{font-family:'Inter',sans-serif}
 .ticket-modal{display:none;position:fixed;inset:0;z-index:1000;align-items:center;justify-content:center}
 .ticket-modal.open{display:flex}
 .ticket-overlay{position:absolute;inset:0;background:rgba(15,23,42,0.45);backdrop-filter:blur(4px)}
-.ticket-box{position:relative;z-index:1;background:#fff;border:1px solid var(--border);border-radius:20px;padding:28px;width:400px;max-width:95vw;box-shadow:0 20px 60px rgba(15,23,42,0.15),0 4px 20px rgba(15,23,42,0.08);font-family:Inter,sans-serif}
+.ticket-box{position:relative;z-index:1;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:28px;width:400px;max-width:95vw;box-shadow:0 20px 60px rgba(15,23,42,0.15),0 4px 20px rgba(15,23,42,0.08);font-family:Inter,sans-serif}
 .ticket-box h3{color:var(--text);font-size:15px;font-weight:800;margin-bottom:3px;letter-spacing:-0.3px;display:flex;align-items:center;gap:8px}
 .ticket-box .ticket-sub{color:var(--text3);font-size:12px;font-weight:500;margin-bottom:20px}
 .ticket-input-row{display:flex;gap:8px;margin-bottom:14px}
 .ticket-input-row input{flex:1;background:var(--surface2);border:1px solid var(--border2);color:var(--text);font-family:inherit;font-size:13px;font-weight:500;padding:10px 14px;border-radius:10px;outline:none;transition:all 0.15s}
-.ticket-input-row input:focus{border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px rgba(37,99,235,0.08)}
+.ticket-input-row input:focus{border-color:var(--accent);background:var(--surface);box-shadow:0 0 0 3px rgba(37,99,235,0.08)}
 .ticket-input-row input::placeholder{color:var(--text3)}
 .ticket-add-btn{background:linear-gradient(135deg,#2563eb,#1d4ed8);border:none;color:#fff;font-family:inherit;font-size:12px;font-weight:700;padding:10px 16px;border-radius:10px;cursor:pointer;letter-spacing:0.5px;transition:all 0.15s;white-space:nowrap;box-shadow:0 2px 8px rgba(37,99,235,0.25)}
 .ticket-add-btn:hover{background:linear-gradient(135deg,#1d4ed8,#1e3a8a);transform:translateY(-1px);box-shadow:0 4px 14px rgba(37,99,235,0.35)}
@@ -115,7 +149,7 @@ input,select{font-family:'Inter',sans-serif}
 /* EDITABLE */
 .cell-val{font-size:12px;font-weight:600;cursor:text;padding:3px 6px;border-radius:5px;border:1px solid transparent;transition:all 0.15s;min-width:50px;display:inline-block;text-align:right}
 .cell-val:hover{background:var(--surface2);border-color:var(--border2)}
-.cell-val:focus{outline:none;background:#fff;border-color:var(--accent);box-shadow:0 0 0 2px rgba(37,99,235,0.1);color:var(--text)}
+.cell-val:focus{outline:none;background:var(--surface);border-color:var(--accent);box-shadow:0 0 0 2px rgba(37,99,235,0.1);color:var(--text)}
 .cell-val.neg{color:var(--red)}
 .cell-val.pos{color:var(--green)}
 .cell-val.zer{color:var(--text3)}
@@ -179,11 +213,11 @@ input,select{font-family:'Inter',sans-serif}
 .health-badge{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#22c55e,#16a34a);border:none;color:#fff;padding:8px 18px;border-radius:20px;font-size:12.5px;font-weight:800;margin-bottom:20px;box-shadow:0 4px 12px rgba(22,163,74,0.28)}
 .health-badge.warn{background:linear-gradient(135deg,#fbbf24,#d97706);box-shadow:0 4px 12px rgba(217,119,6,0.28)}
 .health-badge.danger{background:linear-gradient(135deg,#f87171,#dc2626);box-shadow:0 4px 12px rgba(220,38,38,0.28)}
-.health-dot{width:7px;height:7px;border-radius:50%;background:#fff;box-shadow:0 0 8px rgba(255,255,255,0.8)}
+.health-dot{width:7px;height:7px;border-radius:50%;background:var(--surface);box-shadow:0 0 8px rgba(255,255,255,0.8)}
 .health-dot.warn{background:#fff}.health-dot.danger{background:#fff}
 .gauge-wrap{display:flex;align-items:center;gap:20px}
 .exp-metrics-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;flex:1}
-.exp-metric{background:#fff;border:1px solid var(--border);border-radius:14px;padding:16px 18px;box-shadow:0 2px 8px rgba(15,23,42,0.06);transition:all 0.2s}
+.exp-metric{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px 18px;box-shadow:0 2px 8px rgba(15,23,42,0.06);transition:all 0.2s}
 .exp-metric:hover{box-shadow:0 6px 16px rgba(15,23,42,0.1);transform:translateY(-1px)}
 .em-label{font-size:9.5px;color:var(--text3);letter-spacing:1.1px;text-transform:uppercase;margin-bottom:7px;font-weight:700}
 .em-val{font-size:22px;font-weight:800;letter-spacing:-0.4px}
@@ -259,7 +293,7 @@ input,select{font-family:'Inter',sans-serif}
 .rules-hero-icon{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,#2563eb,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 6px 18px rgba(37,99,235,0.3);flex-shrink:0}
 .rules-hero h1{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-0.4px;margin-bottom:3px}
 .rules-hero p{font-size:13px;color:var(--text3);font-weight:500}
-.rules-table-card{background:#fff;border:1px solid var(--border);border-radius:18px;box-shadow:0 4px 20px rgba(15,23,42,0.06);overflow:hidden;margin-bottom:24px;padding:22px}
+.rules-table-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;box-shadow:0 4px 20px rgba(15,23,42,0.06);overflow:hidden;margin-bottom:24px;padding:22px}
 .rules-row{display:grid;grid-template-columns:230px repeat(5,1fr);gap:12px;align-items:stretch;padding:10px 0}
 .rules-row.head{padding:0 0 14px;border-bottom:2px solid var(--border);margin-bottom:6px}
 .rules-row.head .rh-label{font-size:10.5px;color:var(--text3);text-transform:uppercase;letter-spacing:1.2px;font-weight:800;align-self:center}
@@ -286,7 +320,7 @@ input,select{font-family:'Inter',sans-serif}
 
 /* Secondary guideline cards (Striking System / Guidelines) */
 .rules-section-title{font-size:10.5px;color:var(--text3);text-transform:uppercase;letter-spacing:1.6px;font-weight:800;margin:30px 0 12px}
-.guide-card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:20px 22px;margin-bottom:16px;box-shadow:0 2px 10px rgba(15,23,42,0.04)}
+.guide-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px 22px;margin-bottom:16px;box-shadow:0 2px 10px rgba(15,23,42,0.04)}
 .guide-card.tinted{background:#fefbf0;border-color:#fde9b0}
 .guide-card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
 .guide-card-title{display:flex;align-items:center;gap:9px;font-size:14.5px;font-weight:800;color:var(--text)}
@@ -314,7 +348,7 @@ input,select{font-family:'Inter',sans-serif}
 /* MODALS */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,17,23,0.5);z-index:100;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
 .modal-overlay.open{display:flex}
-.modal-box{background:#fff;border:1px solid var(--border);border-radius:16px;width:520px;max-width:95vw;padding:28px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.15)}
+.modal-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;width:520px;max-width:95vw;padding:28px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.15)}
 .modal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
 .modal-ttl{font-size:18px;font-weight:800;color:var(--text)}
 .modal-ttl span{color:var(--accent)}
@@ -337,7 +371,7 @@ input,select{font-family:'Inter',sans-serif}
 .chart-entry-tag button{background:rgba(0,0,0,0.06);border:none;color:#888;font-size:11px;width:16px;height:16px;border-radius:50%;padding:0;cursor:pointer;line-height:1;display:flex;align-items:center;justify-content:center;transition:all 0.15s}
 .chart-entry-tag button:hover{background:var(--red);color:#fff}
 .chart-inp{background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:8px 12px;border-radius:9px;font-size:13px;outline:none;transition:all 0.2s;font-weight:500}
-.chart-inp:focus{border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px rgba(37,99,235,0.1)}
+.chart-inp:focus{border-color:var(--accent);background:var(--surface);box-shadow:0 0 0 3px rgba(37,99,235,0.1)}
 .chart-sel{background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:8px 12px;border-radius:9px;font-size:13px;outline:none;cursor:pointer;font-weight:500;transition:all 0.2s}
 .chart-sel.active-filter{border-color:var(--accent);background:var(--accent-light);color:var(--accent);box-shadow:0 0 0 3px rgba(37,99,235,0.1);font-weight:700}
 .chart-sel:hover{border-color:var(--border2);background:#f0f2f7}
@@ -349,7 +383,7 @@ input,select{font-family:'Inter',sans-serif}
 .profit-icon{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#2563eb,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:0 4px 12px rgba(37,99,235,0.3);flex-shrink:0}
 .profit-title{font-size:15px;font-weight:800;color:var(--text);letter-spacing:-0.2px}
 .profit-subtitle{font-size:10.5px;color:var(--text3);font-weight:600;letter-spacing:0.5px;text-transform:uppercase;margin-top:1px}
-.profit-summary{display:flex;align-items:center;gap:18px;padding:8px 16px;background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
+.profit-summary{display:flex;align-items:center;gap:18px;padding:8px 16px;background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
 .profit-summary-item{text-align:right}
 .profit-summary-label{font-size:9.5px;color:var(--text3);letter-spacing:0.8px;text-transform:uppercase;font-weight:600;margin-bottom:2px}
 .profit-summary-val{font-size:16px;font-weight:800;letter-spacing:-0.3px}
@@ -443,6 +477,11 @@ input,select{font-family:'Inter',sans-serif}
         <div class="th">Balance</div><div class="th"></div>
       </div>
       <div id="acc-list"></div>
+    </div>
+
+    <!-- TRADING OVERVIEW -->
+    <div class="dash-card" id="overview-card">
+      <div id="overview-content"></div>
     </div>
 
     <!-- PROFIT CHART -->
@@ -1088,6 +1127,7 @@ function renderAccounts(){
   updateStats();
   bindCellEvents();
   updateChartSelect();
+  renderOverview();
 }
 
 function bindCellEvents(){
@@ -1566,6 +1606,118 @@ document.querySelectorAll('.tab').forEach(function(tab){
 });
 
 // LOGIN
+function renderOverview(){
+  var el=document.getElementById('overview-content');
+  if(!el) return;
+
+  // only active accounts (Live + Phase 1/2), no breached
+  var active=accounts.filter(function(a){return a.phase!=='breached';});
+  if(!active.length){el.innerHTML='';document.getElementById('overview-card').style.display='none';return;}
+  document.getElementById('overview-card').style.display='';
+
+  // ── ZONE 1: P&L Snapshot ─────────────────────────────────────
+  var totalPnL=0, onProfit=0, onLoss=0, bestAcc=null, worstAcc=null;
+  active.forEach(function(a){
+    var pnl=getPnL(a);
+    totalPnL+=pnl;
+    if(pnl>0) onProfit++; else if(pnl<0) onLoss++;
+    if(!bestAcc||pnl>getPnL(bestAcc)) bestAcc=a;
+    if(!worstAcc||pnl<getPnL(worstAcc)) worstAcc=a;
+  });
+  var pnlClass=totalPnL>0?'g':totalPnL<0?'r':'';
+  var pnlStr=(totalPnL>=0?'+$':'-$')+Math.abs(Math.round(totalPnL)).toLocaleString();
+
+  var z1='<div class="ov-zone">';
+  z1+='<div class="ov-zone-title">📊 P&L Snapshot</div>';
+  z1+='<div class="ov-big"><div class="ov-big-val '+pnlClass+'">'+pnlStr+'</div><div class="ov-big-lbl">P&L Total combinat</div></div>';
+  z1+='<div class="ov-split">';
+  z1+='<div class="ov-split-item"><div class="osv g">'+onProfit+'</div><div class="osl">Pe profit</div></div>';
+  z1+='<div class="ov-split-item"><div class="osv r">'+onLoss+'</div><div class="osl">Pe pierdere</div></div>';
+  z1+='<div class="ov-split-item"><div class="osv b">'+active.length+'</div><div class="osl">Totale</div></div>';
+  z1+='</div>';
+  if(bestAcc) z1+='<div class="ov-row"><span class="ov-lbl">🏆 Cel mai bun</span><span class="ov-val g">'+bestAcc.id.slice(-8)+' ('+(getPnL(bestAcc)>=0?'+$':'-$')+Math.abs(Math.round(getPnL(bestAcc))).toLocaleString()+')</span></div>';
+  if(worstAcc&&worstAcc!==bestAcc) z1+='<div class="ov-row"><span class="ov-lbl">📉 Cel mai slab</span><span class="ov-val r">'+worstAcc.id.slice(-8)+' ('+(getPnL(worstAcc)>=0?'+$':'-$')+Math.abs(Math.round(getPnL(worstAcc))).toLocaleString()+')</span></div>';
+  z1+='</div>';
+
+  // ── ZONE 2: Recovery Tracker ──────────────────────────────────
+  var totalBroker=0, totalEval=0, totalPayouts=0, netPayout=0;
+  active.forEach(function(a){
+    totalBroker+=Math.abs(a.broker);
+    totalEval+=Math.abs(a.eval);
+    totalPayouts+=Math.abs(a.payouts||0);
+    // net payout if paying out today (only live + in profit)
+    if(a.phase==='live'&&a.balance>a.capital){
+      var rp=a.balance-a.capital;
+      var pc=(chartData[a.id]||[]).filter(function(e){return !e.fromPnL;}).length;
+      var pot=pc===0?Math.round(rp*0.8-15-Math.abs(a.broker)-Math.abs(a.eval)):Math.round(rp*0.8-15);
+      if(pot>0) netPayout+=pot;
+    }
+  });
+  var totalCosts=totalBroker+totalEval;
+  var recovered=Math.min(totalPayouts,totalCosts);
+  var remaining=Math.max(0,totalCosts-recovered);
+  var recovPct=totalCosts>0?Math.round(recovered/totalCosts*100):100;
+
+  var z2='<div class="ov-zone">';
+  z2+='<div class="ov-zone-title">💰 Recovery Tracker</div>';
+  z2+='<div class="ov-row"><span class="ov-lbl">Total costuri (eval+broker)</span><span class="ov-val r">-$'+Math.round(totalCosts).toLocaleString()+'</span></div>';
+  z2+='<div class="ov-row"><span class="ov-lbl">Recuperat prin payouts</span><span class="ov-val g">+$'+Math.round(recovered).toLocaleString()+'</span></div>';
+  z2+='<div class="ov-row"><span class="ov-lbl">Rămâne de recuperat</span><span class="ov-val '+(remaining>0?'r':'g')+'">'+( remaining>0?'-$'+Math.round(remaining).toLocaleString():'✓ Recuperat')+'</span></div>';
+  // progress bar
+  z2+='<div style="margin:10px 0 6px"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-bottom:4px"><span>Progres recuperare</span><span>'+recovPct+'%</span></div>';
+  z2+='<div style="height:6px;background:var(--border);border-radius:3px;overflow:hidden"><div style="height:100%;width:'+recovPct+'%;background:linear-gradient(90deg,#16a34a,#10b981);border-radius:3px;transition:width 0.4s"></div></div></div>';
+  z2+='<div class="ov-row"><span class="ov-lbl">Net payout azi (Live)</span><span class="ov-val '+(netPayout>0?'g':'b')+'">'+( netPayout>0?'+$'+Math.round(netPayout).toLocaleString():'$0')+'</span></div>';
+  z2+='</div>';
+
+  // ── ZONE 3: Payout Radar ──────────────────────────────────────
+  var radarItems=[];
+  active.forEach(function(a){
+    var alert=getPayoutAlert(a);
+    var phAlert=getPhaseAdvanceAlert(a);
+    if(alert==='PAYOUT_TIME'){
+      var rp=a.balance-a.capital;
+      var pc=(chartData[a.id]||[]).filter(function(e){return !e.fromPnL;}).length;
+      var pot=pc===0?Math.round(rp*0.8-15-Math.abs(a.broker)-Math.abs(a.eval)):Math.round(rp*0.8-15);
+      radarItems.push({id:a.id.slice(-8),status:'ready',label:'🎉 Payout time!',val:pot>0?'+$'+pot.toLocaleString():'',prog:100});
+    } else if(alert==='STOP_WAIT'){
+      radarItems.push({id:a.id.slice(-8),status:'wait',label:'⏸ Așteaptă payout',val:'',prog:100});
+    } else if(phAlert){
+      radarItems.push({id:a.id.slice(-8),status:'target',label:phAlert.replace('🎉 Congratulations! ',''),val:'',prog:100});
+    } else if(a.phase==='live'&&a.balance>a.capital){
+      // live in profit but not ready yet — show progress to 5% min threshold
+      var prog=Math.min(99,Math.round((a.balance-a.capital)/(a.capital*0.05)*100));
+      radarItems.push({id:a.id.slice(-8),status:'close',label:'Live · '+prog+'% spre payout',val:'',prog:prog});
+    } else if(a.phase===1||a.phase===2){
+      var tPct=a.phase===1?0.08:0.05;
+      var prog2=Math.min(99,Math.max(0,Math.round((a.balance-a.capital)/(a.capital*tPct)*100)));
+      if(prog2>0) radarItems.push({id:a.id.slice(-8),status:'close',label:'Phase '+a.phase+' · '+prog2+'% spre target',val:'',prog:prog2});
+    }
+  });
+
+  var z3='<div class="ov-zone">';
+  z3+='<div class="ov-zone-title">🎯 Payout Radar</div>';
+  if(!radarItems.length){
+    z3+='<div class="ov-empty">Niciun cont nu este aproape de payout momentan</div>';
+  } else {
+    radarItems.sort(function(a,b){return b.prog-a.prog;}).forEach(function(item){
+      var sc=item.status==='ready'?'ready':item.status==='target'?'target':'';
+      z3+='<div class="ov-radar-item '+sc+'">';
+      z3+='<div class="ov-acc-id">···'+item.id+'</div>';
+      z3+='<div class="ov-badge '+(item.status==='ready'?'ready':item.status==='target'?'target':'close')+'">'+item.label+'</div>';
+      z3+='<div class="ov-prog"><div class="ov-prog-fill '+(item.status==='ready'?'g':'')+'" style="width:'+item.prog+'%"></div></div>';
+      if(item.val) z3+='<span style="font-size:11px;font-weight:700;color:#16a34a;white-space:nowrap">'+item.val+'</span>';
+      z3+='</div>';
+    });
+  }
+  z3+='</div>';
+
+  var html='<div class="ov-head">';
+  html+='<div><div class="ov-title"><span class="ov-dot"></span>Trading Overview</div>';
+  html+='<div class="ov-subtitle">'+active.length+' conturi active · actualizat în timp real</div></div></div>';
+  html+='<div class="ov-grid">'+z1+z2+z3+'</div>';
+  el.innerHTML=html;
+}
+
 function renderHedgeCalc(){
   var wrap=document.getElementById('hedge-calc-wrap');
   if(!wrap||wrap._initialized) return;
