@@ -1635,8 +1635,8 @@ function renderOverview(){
   z1+='<div class="ov-split-item"><div class="osv r">'+onLoss+'</div><div class="osl">Pe pierdere</div></div>';
   z1+='<div class="ov-split-item"><div class="osv b">'+active.length+'</div><div class="osl">Totale</div></div>';
   z1+='</div>';
-  if(bestAcc) z1+='<div class="ov-row"><span class="ov-lbl">🏆 Cel mai bun</span><span class="ov-val g">'+bestAcc.id.slice(-8)+' ('+(getPnL(bestAcc)>=0?'+$':'-$')+Math.abs(Math.round(getPnL(bestAcc))).toLocaleString()+')</span></div>';
-  if(worstAcc&&worstAcc!==bestAcc) z1+='<div class="ov-row"><span class="ov-lbl">📉 Cel mai slab</span><span class="ov-val r">'+worstAcc.id.slice(-8)+' ('+(getPnL(worstAcc)>=0?'+$':'-$')+Math.abs(Math.round(getPnL(worstAcc))).toLocaleString()+')</span></div>';
+  if(bestAcc) z1+='<div class="ov-row"><span class="ov-lbl">🏆 Cel mai bun</span><span class="ov-val '+(getPnL(bestAcc)>=0?'g':'r')+'">'+bestAcc.id.slice(-8)+' ('+(getPnL(bestAcc)>=0?'+$':'-$')+Math.abs(Math.round(getPnL(bestAcc))).toLocaleString()+')</span></div>';
+  if(worstAcc&&worstAcc!==bestAcc) z1+='<div class="ov-row"><span class="ov-lbl">📉 Cel mai slab</span><span class="ov-val '+(getPnL(worstAcc)>=0?'g':'r')+'">'+worstAcc.id.slice(-8)+' ('+(getPnL(worstAcc)>=0?'+$':'-$')+Math.abs(Math.round(getPnL(worstAcc))).toLocaleString()+')</span></div>';
   z1+='</div>';
 
   // ── ZONE 2: Recovery Tracker ──────────────────────────────────
