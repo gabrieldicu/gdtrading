@@ -1736,7 +1736,12 @@ function renderOverview(){
       var pot=pc===0?Math.round(rp*0.8-15-Math.abs(a.broker)-Math.abs(a.eval)):Math.round(rp*0.8-15);
       radarItems.push({id:a.id.slice(-8),status:'ready',label:'🎉 Payout time!',val:pot>0?'+$'+pot.toLocaleString():'',prog:100});
     } else if(alert==='STOP_WAIT'){
-      radarItems.push({id:a.id.slice(-8),status:'wait',label:'⏸ Waiting for payout',val:'',prog:100});
+      // calculate days elapsed out of 14 for progress bar
+      var hist2=(a.balanceHistory||[]).slice().sort(function(x,y){return x.date<y.date?-1:1;});
+      var startD=hist2.length?hist2[0].date:null;
+      var elapsed=startD?Math.min(14,Math.max(0,daysBetweenISO(startD,todayISO()))):0;
+      var waitProg=Math.round((elapsed/14)*100);
+      radarItems.push({id:a.id.slice(-8),status:'wait',label:'⏸ Waiting for payout',val:elapsed+'/14 days',prog:waitProg});
     } else if(phAlert){
       radarItems.push({id:a.id.slice(-8),status:'target',label:phAlert.replace('🎉 Congratulations! ',''),val:'',prog:100});
     } else if(a.phase==='live'&&a.balance>a.capital){
