@@ -689,6 +689,20 @@ function resetChartOnly(){
 
 loadState();
 
+// Migration: set brokerSnapshot on existing accounts that don't have it yet.
+// This freezes the current eval+broker total so future broker P&L updates
+// (adding wins/losses mid-phase) don't change the risk target.
+(function migrateBrokerSnapshot(){
+  var changed=false;
+  accounts.forEach(function(a){
+    if(a.brokerSnapshot===undefined && (Math.abs(a.eval)+Math.abs(a.broker))>0){
+      a.brokerSnapshot=Math.abs(a.eval)+Math.abs(a.broker);
+      changed=true;
+    }
+  });
+  if(changed) saveState();
+})();
+
 function evalSumExpr(raw){
   // Safely evaluate simple addition/subtraction expressions like "390+393" or "500-110+20".
   // Only digits, +, -, ., and whitespace are allowed — no eval(), no arbitrary code execution.
