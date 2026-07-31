@@ -744,9 +744,10 @@ function getDaysToMaxLoss(a){
 }
 
 function getRiscBroker(a){
-  var total = Math.abs(a.eval) + Math.abs(a.broker);
+  // Use snapshot frozen at phase start — so adding broker P&L mid-phase doesn't change the risk target
+  var total = a.brokerSnapshot !== undefined ? Math.abs(a.brokerSnapshot) : (Math.abs(a.eval) + Math.abs(a.broker));
   var split = (a.phase==='live' && a.capital===10000) ? (a.tradeSplit||4) : 4;
-  var reward = (a.phase==='live') ? total/split : total/2; // Live: split across N planned trades (selectable only for 10k accounts, default 4); Phase 1/2: split across 2 trades until max loss
+  var reward = (a.phase==='live') ? total/split : total/2;
   return reward*2; // RR 0.5 on broker: risk = 2× the reward target
 }
 
@@ -766,7 +767,7 @@ function getMinBrokerBalance(a){
 }
 
 function getRiscBrokerReward(a){
-  var total = Math.abs(a.eval) + Math.abs(a.broker);
+  var total = a.brokerSnapshot !== undefined ? Math.abs(a.brokerSnapshot) : (Math.abs(a.eval) + Math.abs(a.broker));
   var split = (a.phase==='live' && a.capital===10000) ? (a.tradeSplit||4) : 4;
   return (a.phase==='live') ? total/split : total/2;
 }
@@ -2257,6 +2258,8 @@ document.getElementById('btn-confirm-phase').addEventListener('click', function(
   acc.balance=acc.capital;
   acc.balanceExpr='';
   acc.balanceHistory=[];
+  // freeze broker risk snapshot at phase change so future broker P&L updates don't change the risk target
+  acc.brokerSnapshot=Math.abs(acc.eval)+Math.abs(acc.broker);
   recordPhaseChange(acc,pendingPhase.newPhase);
   document.getElementById('phase-modal').classList.remove('open');
   saveState();
