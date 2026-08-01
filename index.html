@@ -2192,18 +2192,45 @@ function renderLifestyle(){
   h+='</div></div>';
 
   // Milestone bar
-  h+='<div class="ls-milestone">';
-  h+='<div class="ls-milestone-title">📈 Growth Milestone — Road to $5,000/month</div>';
-  h+='<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:8px">';
-  h+='<span style="font-size:28px;font-weight:800;color:#1e3a8a">$'+avg3.toLocaleString()+'</span>';
-  h+='<span style="font-size:13px;color:#64748b">avg/month (last 3 months)</span>';
-  h+='<span style="margin-left:auto;font-size:13px;font-weight:700;color:#2563eb">'+milestonePct+'% of target</span>';
+  // Income Overview — full width card for selected month
+  var fpPct=totalIncome>0?Math.round(fpIncome/totalIncome*100):0;
+  var theoPct2=totalIncome>0?Math.round(theoIncome/totalIncome*100):0;
+  h+='<div class="ls-milestone" style="background:var(--surface);border:1px solid var(--border);margin-bottom:20px">';
+  h+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">';
+  h+='<div class="ls-milestone-title" style="margin-bottom:0">💵 Income Overview — '+MONTHS[selMonth]+' '+selYear+'</div>';
+  h+='<div style="font-size:22px;font-weight:800;color:#16a34a;letter-spacing:-0.5px">$'+totalIncome.toLocaleString()+'</div>';
   h+='</div>';
-  h+='<div class="ls-milestone-prog"><div class="ls-milestone-fill" style="width:'+milestonePct+'%"></div></div>';
-  h+='<div class="ls-milestone-stats">';
-  h+='<span>This month: <b>$'+totalIncome.toLocaleString()+'</b></span>';
-  h+='<span>FP: <b>$'+fpIncome.toLocaleString()+'</b> · Theo: <b>$'+theoIncome.toLocaleString()+'</b></span>';
-  h+=(monthsToTarget>0?'<span>Est. <b>'+monthsToTarget+' months</b> to target at +10%/mo growth</span>':'<span style="color:#16a34a"><b>🎉 Target reached!</b></span>');
+  // Stacked bar
+  h+='<div style="height:14px;border-radius:7px;overflow:hidden;background:var(--border);margin-bottom:10px;display:flex">';
+  if(fpIncome>0) h+='<div style="width:'+fpPct+'%;background:linear-gradient(90deg,#2563eb,#3b82f6);transition:width 0.4s"></div>';
+  if(theoIncome>0) h+='<div style="width:'+theoPct2+'%;background:linear-gradient(90deg,#f59e0b,#f97316);transition:width 0.4s"></div>';
+  h+='</div>';
+  h+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">';
+  // FP block
+  h+='<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:12px 16px">';
+  h+='<div style="font-size:10px;font-weight:700;color:#2563eb;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px">🏦 FP Payouts</div>';
+  h+='<div style="font-size:24px;font-weight:800;color:#1d4ed8;letter-spacing:-0.5px">$'+fpIncome.toLocaleString()+'</div>';
+  h+='<div style="font-size:11px;color:#3b82f6;margin-top:3px">'+fpPct+'% of total</div>';
+  h+='</div>';
+  // Theo block
+  h+='<div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:12px 16px">';
+  h+='<div style="font-size:10px;font-weight:700;color:#d97706;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px">⭐ Theo</div>';
+  h+='<div style="font-size:24px;font-weight:800;color:#d97706;letter-spacing:-0.5px">$'+theoIncome.toLocaleString()+'</div>';
+  h+='<div style="font-size:11px;color:#f59e0b;margin-top:3px">'+theoPct2+'% of total</div>';
+  h+='</div>';
+  // Total + vs prev month
+  h+='<div style="background:#f0fdf4;border:1px solid #86efac;border-radius:10px;padding:12px 16px">';
+  h+='<div style="font-size:10px;font-weight:700;color:#16a34a;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px">✅ Total</div>';
+  h+='<div style="font-size:24px;font-weight:800;color:#15803d;letter-spacing:-0.5px">$'+totalIncome.toLocaleString()+'</div>';
+  var prevM=selMonth-1<0?11:selMonth-1, prevY=selMonth-1<0?selYear-1:selYear;
+  var prevIncome=0;
+  Object.keys(chartData).forEach(function(k){
+    (chartData[k]||[]).filter(function(e){return e.month===prevM&&e.year===prevY&&!e.fromPnL;}).forEach(function(e){prevIncome+=e.profit;});
+  });
+  var diff=totalIncome-prevIncome;
+  h+='<div style="font-size:11px;color:'+(diff>=0?'#16a34a':'#dc2626');
+  h+=';margin-top:3px">'+(diff>=0?'↑ +':' ↓ -')+'$'+Math.abs(diff).toLocaleString()+' vs '+MONTHS[prevM]+'</div>';
+  h+='</div>';
   h+='</div></div>';
 
   // Income + Budget config
