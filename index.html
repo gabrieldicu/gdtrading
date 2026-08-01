@@ -1956,9 +1956,17 @@ function renderBusiness(){
   // Income from trading for selected month
   var tradingIncome=0;
   Object.keys(chartData).forEach(function(k){
-    (chartData[k]||[]).filter(function(e){return e.month===selMonth&&e.year===selYear&&!e.fromPnL;})
+    (chartData[k]||[]).filter(function(e){return e.month===selMonth&&e.year===selYear;})
       .forEach(function(e){tradingIncome+=e.profit;});
   });
+  // Fallback: if no chartData for FP this month, use accounts.payouts directly
+  var chartFpTotal=0;
+  Object.keys(chartData).filter(function(k){return k!=='theo';}).forEach(function(k){
+    (chartData[k]||[]).filter(function(e){return e.month===selMonth&&e.year===selYear;}).forEach(function(e){chartFpTotal+=e.profit;});
+  });
+  if(chartFpTotal===0){
+    accounts.filter(function(a){return a.phase!=='breached';}).forEach(function(a){tradingIncome+=Math.abs(a.payouts||0);});
+  }
   var netProfit=tradingIncome-totalCosts;
 
   var h='';
