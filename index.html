@@ -244,64 +244,148 @@ input,select{font-family:'Inter',sans-serif}
 .inp{background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:10px 13px;border-radius:8px;font-size:14px;width:100%;outline:none;font-weight:500;transition:all 0.2s}
 .inp:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(37,99,235,0.1);background:#fff}
 
-/* HEDGE CALCULATOR — dark theme original */
-#hedge-calc-wrap{
-  --hbg:#050807;--hpanel:#0a0f0d;--hpanel2:#070b09;--hline:#14201b;
-  --hgreen:#39ff9a;--hgreen-dim:#1f7a52;--hamber:#ffb454;--hred:#ff5a5a;
-  --htext:#c9e8d8;--hmuted:#5f7a6e;--hfaint:#2a3a33;
-  background:var(--hbg);color:var(--htext);
-  font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
-  min-height:60vh;padding:22px 28px 40px;
-  background-image:radial-gradient(circle at 50% -10%,rgba(57,255,154,.06),transparent 55%);
-  border-radius:16px;
-}
-#hedge-calc-wrap h1{font-size:15px;letter-spacing:3px;color:var(--hgreen);font-weight:600;display:flex;align-items:center;gap:10px;margin-bottom:4px}
-#hedge-calc-wrap h1::before{content:"";width:8px;height:8px;background:var(--hgreen);border-radius:50%;box-shadow:0 0 8px var(--hgreen);animation:hpulse 2s infinite}
-@keyframes hpulse{50%{opacity:.35}}
-#hedge-calc-wrap .hsub{color:var(--hmuted);font-size:11px;letter-spacing:1px;margin-bottom:18px}
-#hedge-calc-wrap .hmodebar{display:flex;gap:8px;margin-bottom:16px}
-#hedge-calc-wrap .hmode{flex:1;text-align:center;padding:12px;font-size:12px;letter-spacing:2px;background:var(--hpanel2);border:1px solid var(--hline);border-radius:8px;color:var(--hmuted);cursor:pointer;transition:.15s;user-select:none;font-weight:600}
-#hedge-calc-wrap .hmode.active{color:var(--hgreen);border-color:var(--hgreen-dim);background:rgba(57,255,154,.06);box-shadow:0 0 14px rgba(57,255,154,.08)}
-#hedge-calc-wrap .hmode small{display:block;font-size:9px;letter-spacing:1px;color:var(--hfaint);margin-top:3px;font-weight:400}
-#hedge-calc-wrap .hmode.active small{color:var(--hgreen-dim)}
-#hedge-calc-wrap .hwindow{display:none}#hedge-calc-wrap .hwindow.active{display:block}
-#hedge-calc-wrap .hsettings{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;background:var(--hpanel2);border:1px solid var(--hline);border-radius:8px;padding:10px;margin-bottom:14px}
-#hedge-calc-wrap .hsettings .hfield{margin:0}
-#hedge-calc-wrap .htabs{display:flex;gap:6px;margin-bottom:14px}
-#hedge-calc-wrap .htab{flex:1;text-align:center;padding:9px 6px;font-size:11px;letter-spacing:1px;background:var(--hpanel2);border:1px solid var(--hline);border-radius:6px;color:var(--hmuted);cursor:pointer;transition:.15s;user-select:none}
-#hedge-calc-wrap .htab.active{color:var(--hgreen);border-color:var(--hgreen-dim);background:rgba(57,255,154,.05)}
-#hedge-calc-wrap .htab:hover{color:var(--htext)}
-#hedge-calc-wrap .hpanel{background:var(--hpanel);border:1px solid var(--hline);border-radius:8px;padding:16px;margin-bottom:14px}
-#hedge-calc-wrap .hpanel-title{font-size:10px;letter-spacing:2px;color:var(--hgreen-dim);text-transform:uppercase;margin-bottom:13px;font-weight:600}
-#hedge-calc-wrap .hview{display:none}#hedge-calc-wrap .hview.active{display:block}
-#hedge-calc-wrap .hfield{margin-bottom:11px}
-#hedge-calc-wrap label{display:block;font-size:10px;color:var(--hmuted);margin-bottom:4px;letter-spacing:.5px}
-#hedge-calc-wrap label .hint{color:var(--hfaint);font-size:9px}
-#hedge-calc-wrap .hinp{width:100%;background:#040605;border:1px solid var(--hline);color:var(--hgreen);font-family:inherit;font-size:15px;padding:8px 10px;border-radius:5px;outline:none;transition:.15s}
-#hedge-calc-wrap .hinp:focus{border-color:var(--hgreen-dim)}
-#hedge-calc-wrap .hrow{display:grid;gap:10px}#hedge-calc-wrap .hrow.c2{grid-template-columns:1fr 1fr}#hedge-calc-wrap .hrow.c3{grid-template-columns:1fr 1fr 1fr}
-#hedge-calc-wrap .hout{background:#040605;border:1px solid var(--hgreen-dim);border-radius:8px;padding:16px;margin-top:4px}
-#hedge-calc-wrap .hbig{display:flex;align-items:baseline;justify-content:space-between;padding:10px 0;border-bottom:1px dashed var(--hline)}
-#hedge-calc-wrap .hbig:last-child{border-bottom:none}
-#hedge-calc-wrap .hbig .hk{font-size:10px;color:var(--hmuted);letter-spacing:.5px}
-#hedge-calc-wrap .hbig .hv{font-size:24px;color:var(--hgreen);font-weight:600;letter-spacing:1px}
-#hedge-calc-wrap .hbig .hv small{font-size:11px;color:var(--hmuted);margin-left:3px}
-#hedge-calc-wrap .hv.hamber{color:var(--hamber)}#hedge-calc-wrap .hv.hred{color:var(--hred)}
-#hedge-calc-wrap .hbd{margin-top:12px;padding-top:12px;border-top:1px solid var(--hline);font-size:11px;line-height:1.85;color:var(--hmuted)}
-#hedge-calc-wrap .hbd b{color:var(--htext)}#hedge-calc-wrap .hbd .hg{color:var(--hgreen)}#hedge-calc-wrap .hbd .ha{color:var(--hamber)}
-#hedge-calc-wrap .hwarn{font-size:11px;color:var(--hred);background:rgba(255,90,90,.07);border:1px solid rgba(255,90,90,.25);border-radius:6px;padding:9px 11px;margin-top:10px;line-height:1.55;display:none}
-#hedge-calc-wrap .hwarn.show{display:block}
-#hedge-calc-wrap table{width:100%;border-collapse:collapse;margin-top:8px;font-size:11px}
-#hedge-calc-wrap th{text-align:right;color:var(--hfaint);font-weight:600;font-size:9px;letter-spacing:1px;padding:6px 8px;border-bottom:1px solid var(--hline);text-transform:uppercase}
-#hedge-calc-wrap th:first-child{text-align:left}
-#hedge-calc-wrap td{padding:7px 8px;text-align:right;border-bottom:1px solid var(--hline);color:var(--htext)}
-#hedge-calc-wrap td:first-child{text-align:left;color:var(--hmuted)}
-#hedge-calc-wrap .hlot{color:var(--hgreen);font-weight:600}#hedge-calc-wrap .hover2{color:var(--hred)}
-#hedge-calc-wrap tfoot td{border-bottom:none;color:var(--hgreen);font-weight:600;padding-top:10px}
-#hedge-calc-wrap .hbadge{display:inline-block;font-size:10px;padding:3px 8px;border-radius:4px;letter-spacing:1px;background:rgba(57,255,154,.1);color:var(--hgreen);border:1px solid var(--hgreen-dim)}
-#hedge-calc-wrap .hnote{font-size:11px;color:var(--hamber);background:rgba(255,180,84,.06);border:1px solid rgba(255,180,84,.2);border-radius:6px;padding:11px 13px;margin-top:14px;line-height:1.6}
-#hedge-calc-wrap .hnote b{color:var(--hamber)}
+/* BUSINESS SPENDINGS */
+.biz-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+.biz-title{font-size:20px;font-weight:800;color:var(--text);letter-spacing:-0.5px}
+.biz-subtitle{font-size:12px;color:var(--text3);margin-top:2px}
+.biz-month-sel{display:flex;align-items:center;gap:8px}
+.biz-month-sel select{background:var(--surface2);border:1px solid var(--border2);color:var(--text);font-family:inherit;font-size:12px;font-weight:600;padding:6px 10px;border-radius:8px;outline:none;cursor:pointer}
+.biz-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}
+.biz-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px 24px;box-shadow:0 2px 12px rgba(0,0,0,0.05)}
+.biz-card-title{font-size:10px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:7px}
+.biz-table{width:100%;border-collapse:collapse}
+.biz-table th{font-size:9.5px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;padding:0 10px 10px;text-align:left;border-bottom:1px solid var(--border)}
+.biz-table th:last-child{text-align:right}
+.biz-table td{padding:10px 10px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text);vertical-align:middle}
+.biz-table tr:last-child td{border-bottom:none}
+.biz-table td:last-child{text-align:right}
+.biz-badge{display:inline-block;font-size:9.5px;font-weight:700;padding:2px 8px;border-radius:10px;white-space:nowrap}
+.biz-badge.fixed{background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe}
+.biz-badge.variable{background:#fff7ed;color:#d97706;border:1px solid #fed7aa}
+.biz-badge.future{background:#f5f3ff;color:#7c3aed;border:1px solid #c4b5fd}
+.biz-amount{font-weight:700;color:#dc2626}
+.biz-inp{background:var(--surface2);border:1px solid var(--border2);color:var(--text);font-family:inherit;font-size:12px;font-weight:600;padding:4px 8px;border-radius:6px;outline:none;width:90px;text-align:right;transition:all 0.15s}
+.biz-inp:focus{border-color:var(--accent);background:#fff}
+.biz-inp.name{width:130px;text-align:left}
+.biz-del-btn{background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:0 4px;transition:color 0.15s}
+.biz-del-btn:hover{color:#dc2626}
+.biz-add-row{display:flex;gap:8px;align-items:center;margin-top:14px;padding-top:14px;border-top:1px dashed var(--border2);flex-wrap:wrap}
+.biz-add-row select{background:var(--surface2);border:1px solid var(--border2);color:var(--text);font-family:inherit;font-size:12px;padding:5px 8px;border-radius:8px;outline:none;cursor:pointer}
+.biz-add-btn{background:linear-gradient(135deg,#2563eb,#1d4ed8);border:none;color:#fff;font-family:inherit;font-size:11px;font-weight:700;padding:6px 14px;border-radius:8px;cursor:pointer;white-space:nowrap;box-shadow:0 2px 6px rgba(37,99,235,0.25)}
+.biz-add-btn:hover{transform:translateY(-1px)}
+.biz-summary{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px 24px;margin-bottom:20px;box-shadow:0 2px 12px rgba(0,0,0,0.05)}
+.biz-summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:14px}
+.biz-sum-item{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;text-align:center}
+.biz-sum-val{font-size:22px;font-weight:800;color:#dc2626;letter-spacing:-0.5px}
+.biz-sum-lbl{font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-top:3px}
+.biz-net-row{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:linear-gradient(135deg,#f0fdf4,#eff6ff);border:1px solid #bfdbfe;border-radius:12px;margin-top:14px}
+.biz-net-lbl{font-size:13px;font-weight:700;color:var(--text)}
+.biz-net-val{font-size:24px;font-weight:800;letter-spacing:-0.5px}
+.biz-cat-tag{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;padding:2px 7px;border-radius:8px;background:var(--surface2);color:var(--text3);border:1px solid var(--border);margin-right:4px;margin-top:4px}
 
+/* LIFESTYLE */
+.ls-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}
+.ls-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-bottom:20px}
+.ls-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px 24px;box-shadow:0 2px 12px rgba(0,0,0,0.05)}
+.ls-card-title{font-size:10px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:16px;display:flex;align-items:center;gap:7px}
+.ls-income-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
+.ls-income-row:last-child{border-bottom:none}
+.ls-income-lbl{font-size:12px;color:var(--text2);font-weight:500}
+.ls-income-val{font-size:16px;font-weight:800;color:var(--text)}
+.ls-income-val.g{color:#16a34a}.ls-income-val.b{color:#2563eb}.ls-income-val.amber{color:#d97706}
+.ls-big{text-align:center;padding:8px 0 16px}
+.ls-big-val{font-size:36px;font-weight:800;letter-spacing:-1.5px;color:#16a34a;line-height:1}
+.ls-big-lbl{font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:0.8px;margin-top:5px}
+.ls-slider-row{display:flex;align-items:center;gap:12px;margin:10px 0}
+.ls-slider-row label{font-size:11px;color:var(--text2);font-weight:600;white-space:nowrap;min-width:120px}
+.ls-slider-row input[type=range]{flex:1;accent-color:#2563eb;height:4px;cursor:pointer}
+.ls-slider-row .ls-slider-val{font-size:13px;font-weight:800;color:#2563eb;min-width:40px;text-align:right}
+.ls-input-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)}
+.ls-input-row:last-child{border-bottom:none}
+.ls-input-row label{font-size:12px;color:var(--text2);font-weight:500}
+.ls-inp{background:var(--surface2);border:1px solid var(--border2);color:var(--text);font-family:inherit;font-size:13px;font-weight:700;padding:5px 10px;border-radius:8px;outline:none;width:110px;text-align:right;transition:all 0.15s}
+.ls-inp:focus{border-color:var(--accent);background:#fff}
+.ls-cat{display:flex;flex-direction:column;gap:10px}
+.ls-cat-item{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
+.ls-cat-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.ls-cat-name{font-size:13px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:7px}
+.ls-cat-alloc{font-size:12px;font-weight:600;color:var(--text3)}
+.ls-cat-alloc span{font-weight:800;color:var(--text)}
+.ls-prog-wrap{height:7px;background:var(--border);border-radius:4px;overflow:hidden;margin-bottom:8px}
+.ls-prog-bar{height:100%;border-radius:4px;transition:width 0.4s}
+.ls-prog-bar.ok{background:linear-gradient(90deg,#16a34a,#10b981)}
+.ls-prog-bar.warn{background:linear-gradient(90deg,#f59e0b,#d97706)}
+.ls-prog-bar.over{background:linear-gradient(90deg,#dc2626,#ef4444)}
+.ls-cat-nums{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--text3)}
+.ls-cat-nums .spent{font-weight:700;color:var(--text)}
+.ls-cat-actions{display:flex;align-items:center;gap:8px;margin-top:8px}
+.ls-spent-inp{background:var(--surface);border:1px solid var(--border2);color:var(--text);font-family:inherit;font-size:12px;font-weight:600;padding:4px 8px;border-radius:6px;outline:none;width:90px;text-align:right;transition:all 0.15s}
+.ls-spent-inp:focus{border-color:var(--accent)}
+.ls-add-btn{background:linear-gradient(135deg,#2563eb,#1d4ed8);border:none;color:#fff;font-family:inherit;font-size:11px;font-weight:700;padding:5px 12px;border-radius:8px;cursor:pointer}
+.ls-del-btn{background:none;border:1px solid var(--border2);color:var(--text3);font-size:11px;font-weight:600;padding:5px 10px;border-radius:8px;cursor:pointer;transition:all 0.15s}
+.ls-del-btn:hover{border-color:#dc2626;color:#dc2626}
+.ls-milestone{background:linear-gradient(135deg,#f0fdf4,#eff6ff);border:1px solid #bfdbfe;border-radius:16px;padding:22px 24px;margin-bottom:20px}
+.ls-milestone-title{font-size:10px;font-weight:800;color:#2563eb;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px}
+.ls-milestone-prog{height:10px;background:#dbeafe;border-radius:5px;overflow:hidden;margin:10px 0}
+.ls-milestone-fill{height:100%;background:linear-gradient(90deg,#2563eb,#7c3aed);border-radius:5px;transition:width 0.6s}
+.ls-milestone-stats{display:flex;justify-content:space-between;font-size:11px;color:#64748b;margin-top:6px}
+.ls-milestone-stats b{color:#1e3a8a}
+.ls-add-cat{background:none;border:1px dashed var(--border2);color:var(--text3);font-family:inherit;font-size:12px;font-weight:600;padding:10px;border-radius:10px;cursor:pointer;width:100%;margin-top:8px;transition:all 0.15s}
+.ls-add-cat:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+
+/* LIFESTYLE end */
+/* HEDGE CALCULATOR — light theme */
+#hedge-calc-wrap{font-family:Inter,sans-serif;padding:0;background:transparent}
+#hedge-calc-wrap h1{font-size:18px;font-weight:800;color:var(--text);letter-spacing:-0.3px;display:flex;align-items:center;gap:10px;margin-bottom:4px}
+#hedge-calc-wrap h1::before{content:"";width:8px;height:8px;background:#16a34a;border-radius:50%;box-shadow:0 0 8px rgba(22,163,74,0.5);animation:hpulse 2s infinite}
+@keyframes hpulse{50%{opacity:.35}}
+#hedge-calc-wrap .hsub{color:var(--text3);font-size:12px;letter-spacing:0;margin-bottom:20px;font-weight:500}
+#hedge-calc-wrap .hmodebar{display:flex;gap:10px;margin-bottom:16px}
+#hedge-calc-wrap .hmode{flex:1;text-align:center;padding:12px 8px;font-size:12px;letter-spacing:0.5px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text3);cursor:pointer;transition:.15s;user-select:none;font-weight:700}
+#hedge-calc-wrap .hmode:hover{border-color:var(--border2);color:var(--text2)}
+#hedge-calc-wrap .hmode.active{color:#16a34a;border-color:#86efac;background:#f0fdf4;box-shadow:0 2px 8px rgba(22,163,74,0.1)}
+#hedge-calc-wrap .hmode small{display:block;font-size:10px;color:var(--text3);margin-top:2px;font-weight:400;letter-spacing:0}
+#hedge-calc-wrap .hmode.active small{color:#16a34a}
+#hedge-calc-wrap .hwindow{display:none}#hedge-calc-wrap .hwindow.active{display:block}
+#hedge-calc-wrap .hsettings{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:16px}
+#hedge-calc-wrap .hsettings .hfield{margin:0}
+#hedge-calc-wrap .htabs{display:flex;gap:8px;margin-bottom:16px}
+#hedge-calc-wrap .htab{flex:1;text-align:center;padding:10px 6px;font-size:11px;letter-spacing:0.3px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text3);cursor:pointer;transition:.15s;font-weight:600}
+#hedge-calc-wrap .htab:hover{color:var(--text2);border-color:var(--border2)}
+#hedge-calc-wrap .htab.active{color:#2563eb;border-color:#bfdbfe;background:#eff6ff;font-weight:700}
+#hedge-calc-wrap .hpanel{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:14px;box-shadow:0 2px 8px rgba(15,23,42,0.04)}
+#hedge-calc-wrap .hpanel-title{font-size:10px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;margin-bottom:14px;font-weight:800}
+#hedge-calc-wrap .hview{display:none}#hedge-calc-wrap .hview.active{display:block}
+#hedge-calc-wrap .hfield{margin-bottom:12px}
+#hedge-calc-wrap label{display:block;font-size:11px;color:var(--text2);margin-bottom:5px;font-weight:600}
+#hedge-calc-wrap label .hint{color:var(--text3);font-size:10px;font-weight:400}
+#hedge-calc-wrap .hinp{width:100%;background:var(--surface2);border:1px solid var(--border2);color:var(--text);font-family:inherit;font-size:14px;font-weight:600;padding:9px 12px;border-radius:8px;outline:none;transition:.15s}
+#hedge-calc-wrap .hinp:focus{border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px rgba(37,99,235,0.08)}
+#hedge-calc-wrap .hrow{display:grid;gap:12px}#hedge-calc-wrap .hrow.c2{grid-template-columns:1fr 1fr}#hedge-calc-wrap .hrow.c3{grid-template-columns:1fr 1fr 1fr}
+#hedge-calc-wrap .hout{background:linear-gradient(135deg,#f0fdf4,#eff6ff);border:1px solid #bfdbfe;border-radius:12px;padding:18px;margin-top:6px}
+#hedge-calc-wrap .hbig{display:flex;align-items:baseline;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(15,23,42,0.07)}
+#hedge-calc-wrap .hbig:last-child{border-bottom:none;padding-bottom:0}
+#hedge-calc-wrap .hbig .hk{font-size:10px;color:var(--text3);letter-spacing:0.5px;font-weight:700;text-transform:uppercase}
+#hedge-calc-wrap .hbig .hv{font-size:26px;color:#16a34a;font-weight:800;letter-spacing:-0.5px}
+#hedge-calc-wrap .hbig .hv small{font-size:12px;color:var(--text3);margin-left:4px;font-weight:500}
+#hedge-calc-wrap .hv.hamber{color:#d97706}#hedge-calc-wrap .hv.hred{color:#dc2626}
+#hedge-calc-wrap .hbd{margin-top:14px;padding-top:14px;border-top:1px solid rgba(15,23,42,0.07);font-size:12px;line-height:1.9;color:var(--text2);font-family:"SFMono-Regular",Consolas,monospace}
+#hedge-calc-wrap .hbd b{color:var(--text);font-weight:700}
+#hedge-calc-wrap .hbd .hg{color:#16a34a;font-weight:700}
+#hedge-calc-wrap .hbd .ha{color:#d97706;font-weight:700}
+#hedge-calc-wrap .hwarn{font-size:12px;color:#dc2626;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:10px 14px;margin-top:10px;line-height:1.55;display:none;font-weight:600}
+#hedge-calc-wrap .hwarn.show{display:block}
+#hedge-calc-wrap table{width:100%;border-collapse:collapse;margin-top:10px;font-size:12px}
+#hedge-calc-wrap th{text-align:right;color:var(--text3);font-weight:700;font-size:10px;letter-spacing:0.5px;padding:6px 10px;border-bottom:2px solid var(--border);text-transform:uppercase}
+#hedge-calc-wrap th:first-child{text-align:left}
+#hedge-calc-wrap td{padding:9px 10px;text-align:right;border-bottom:1px solid var(--border);color:var(--text);font-weight:500}
+#hedge-calc-wrap td:first-child{text-align:left;color:var(--text2);font-weight:600}
+#hedge-calc-wrap .hlot{color:#16a34a;font-weight:700}
+#hedge-calc-wrap .hover2{color:#dc2626;font-weight:700}
+#hedge-calc-wrap tfoot td{border-bottom:none;color:#16a34a;font-weight:800;padding-top:12px;font-size:13px}
+#hedge-calc-wrap .hbadge{display:inline-block;font-size:10px;padding:3px 9px;border-radius:8px;background:#f0fdf4;color:#16a34a;border:1px solid #86efac;font-weight:700}
+#hedge-calc-wrap .hnote{font-size:12px;color:#92400e;background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:12px 16px;margin-top:16px;line-height:1.65;font-weight:500}
+#hedge-calc-wrap .hnote b{color:#d97706;font-weight:700}
 /* RULES & LIMITS */
 .rules-page{width:100%}
 .rules-hero{display:flex;align-items:center;gap:16px;margin-bottom:28px}
@@ -463,8 +547,10 @@ input,select{font-family:'Inter',sans-serif}
   </div>
   <div class="nav">
     <button class="tab active" data-panel="dashboard">Dashboard</button>
-    <button class="tab" data-panel="calculator">Rules &amp; Limits</button>
+    <button class="tab" data-panel="business">🏢 Business Spendings</button>
+    <button class="tab" data-panel="lifestyle">💰 Lifestyle</button>
     <button class="tab" data-panel="hedge">Hedge Calculator</button>
+    <button class="tab" data-panel="calculator">Rules &amp; Limits</button>
   </div>
 
   <div class="panel active" id="panel-dashboard">
@@ -567,8 +653,16 @@ input,select{font-family:'Inter',sans-serif}
     <div id="rules-limits-content"></div>
   </div>
 
-  <div class="panel" id="panel-hedge" style="padding:0;background:transparent;border:none;box-shadow:none">
+  <div class="panel" id="panel-hedge">
     <div id="hedge-calc-wrap"></div>
+  </div>
+
+  <div class="panel" id="panel-lifestyle">
+    <div id="lifestyle-content"></div>
+  </div>
+
+  <div class="panel" id="panel-business">
+    <div id="business-content"></div>
   </div>
 </div>
 
@@ -812,19 +906,18 @@ function daysBetweenISO(dateA,dateB){
 }
 
 function getPayoutCountdown(a){
-  // Returns countdown info for the scheduled payout date
   if(!a.payoutDate) return null;
   var now=new Date();
   var target=new Date(a.payoutDate);
   if(isNaN(target.getTime())) return null;
   var diffMs=target-now;
   var diffDays=Math.ceil(diffMs/(1000*60*60*24));
-  if(diffDays>3) return null; // show nothing if more than 3 days away
-  if(diffDays===3) return {label:'⏰ 3 days until payout',cls:'days3'};
-  if(diffDays===2) return {label:'⏰ 2 days until payout',cls:'days2'};
-  if(diffDays===1) return {label:'🔔 Tomorrow is payout!',cls:'days1'};
-  if(diffDays===0) return {label:'🎉 Payout time!',cls:'today'};
-  return {label:'⚠️ Date has passed',cls:'overdue'};
+  if(diffDays>3) return null;
+  if(diffDays===3) return {label:'⏰ 3 days until payout',cls:'days3',prog:33};
+  if(diffDays===2) return {label:'⏰ 2 days until payout',cls:'days2',prog:66};
+  if(diffDays===1) return {label:'🔔 Tomorrow is payout',cls:'days1',prog:90};
+  if(diffDays===0) return {label:'🎉 Payout time!',cls:'today',prog:100};
+  return {label:'⚠️ Date has passed',cls:'overdue',prog:100};
 }
 
 function getPayoutAlert(a){
@@ -1673,6 +1766,8 @@ document.querySelectorAll('.tab').forEach(function(tab){
     document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
     tab.classList.add('active');
     document.getElementById('panel-'+tab.getAttribute('data-panel')).classList.add('active');
+    if(tab.getAttribute('data-panel')==='lifestyle') renderLifestyle();
+    if(tab.getAttribute('data-panel')==='business') renderBusiness();
   });
 });
 
@@ -1759,7 +1854,7 @@ function renderOverview(){
       var cd=getPayoutCountdown(a);
       if(cd){
         // countdown replaces generic "Waiting for payout" when date is set and within 3 days
-        radarItems.push({id:a.id.slice(-8),status:cd.cls,label:cd.label,val:'',prog:100,isCountdown:true});
+        radarItems.push({id:a.id.slice(-8),status:cd.cls,label:cd.label,val:'',prog:cd.prog||100,isCountdown:true});
       } else {
         var hist2=(a.balanceHistory||[]).slice().sort(function(x,y){return x.date<y.date?-1:1;});
         var startD=hist2.length?hist2[0].date:null;
@@ -1780,7 +1875,7 @@ function renderOverview(){
     // Add countdown only for non-STOP_WAIT accounts (STOP_WAIT already handled above)
     if(alert!=='STOP_WAIT'){
       var cd2=getPayoutCountdown(a);
-      if(cd2) radarItems.push({id:a.id.slice(-8),status:cd2.cls,label:cd2.label,val:'',prog:100,isCountdown:true});
+      if(cd2) radarItems.push({id:a.id.slice(-8),status:cd2.cls,label:cd2.label,val:'',prog:cd2.prog||100,isCountdown:true});
     }
   });
 
@@ -1796,7 +1891,7 @@ function renderOverview(){
       z3+='<div class="ov-radar-item '+sc+'">';
       z3+='<div class="ov-acc-id">···'+item.id+'</div>';
       z3+='<div class="ov-badge '+badgeCls+'">'+item.label+'</div>';
-      if(!item.isCountdown) z3+='<div class="ov-prog"><div class="ov-prog-fill '+(item.status==='ready'?'g':'')+'" style="width:'+item.prog+'%"></div></div>';
+      z3+='<div class="ov-prog"><div class="ov-prog-fill '+(item.status==='ready'||item.status==='today'?'g':item.status==='days1'?'amber':'')+'" style="width:'+item.prog+'%"></div></div>';
       if(item.val) z3+='<span style="font-size:11px;font-weight:700;color:#16a34a;white-space:nowrap">'+item.val+'</span>';
       z3+='</div>';
     });
@@ -1808,6 +1903,424 @@ function renderOverview(){
   html+='<div class="ov-subtitle">'+active.length+' active accounts · updated in real time</div></div></div>';
   html+='<div class="ov-grid">'+z1+z2+z3+'</div>';
   el.innerHTML=html;
+}
+
+// ── BUSINESS SPENDINGS ─────────────────────────────────────────
+function loadBiz(){
+  var state=JSON.parse(localStorage.getItem('gdtrading_state_v1')||'{}');
+  if(!state.business) state.business={
+    fixed:[
+      {id:'b1',name:'Tradovate (Futures)',category:'futures',amount:99,active:true},
+      {id:'b2',name:'Fusion Markets (Forex)',category:'forex',amount:0,active:true},
+      {id:'b3',name:'Claude AI',category:'software',amount:20,active:true},
+      {id:'b4',name:'FundingPips Eval',category:'prop',amount:0,active:true},
+    ],
+    variable:{},
+  };
+  return state.business;
+}
+function saveBiz(biz){
+  var state=JSON.parse(localStorage.getItem('gdtrading_state_v1')||'{}');
+  state.business=biz;
+  localStorage.setItem('gdtrading_state_v1',JSON.stringify(state));
+}
+
+var BIZ_CATS={
+  prop:{label:'Prop Firm',badge:'fixed',color:'#2563eb'},
+  futures:{label:'Futures',badge:'fixed',color:'#7c3aed'},
+  forex:{label:'Forex',badge:'fixed',color:'#0891b2'},
+  software:{label:'Software',badge:'fixed',color:'#16a34a'},
+  server:{label:'Server/VPS',badge:'fixed',color:'#d97706'},
+  other:{label:'Other',badge:'variable',color:'#6b7280'},
+};
+
+function renderBusiness(){
+  var el=document.getElementById('business-content');
+  if(!el) return;
+  var biz=loadBiz();
+
+  // Selected month/year for variable expenses
+  var now=new Date();
+  var selMonth=parseInt((el.dataset.month!==undefined?el.dataset.month:now.getMonth()));
+  var selYear=parseInt((el.dataset.year!==undefined?el.dataset.year:now.getFullYear()));
+  var monthKey=selYear+'-'+String(selMonth).padStart(2,'0');
+
+  // Get variable expenses for selected month
+  var varExp=biz.variable[monthKey]||[];
+
+  // Calculate totals
+  var fixedTotal=biz.fixed.filter(function(f){return f.active;}).reduce(function(s,f){return s+(f.amount||0);},0);
+  var varTotal=varExp.reduce(function(s,v){return s+(v.amount||0);},0);
+  var totalCosts=fixedTotal+varTotal;
+
+  // Income from trading for selected month
+  var tradingIncome=0;
+  Object.keys(chartData).forEach(function(k){
+    (chartData[k]||[]).filter(function(e){return e.month===selMonth&&e.year===selYear&&!e.fromPnL;})
+      .forEach(function(e){tradingIncome+=e.profit;});
+  });
+  var netProfit=tradingIncome-totalCosts;
+
+  var h='';
+
+  // Header
+  h+='<div class="biz-header">';
+  h+='<div><div class="biz-title">🏢 Business Spendings</div>';
+  h+='<div class="biz-subtitle">Track your monthly business costs — prop, futures, forex, software, servers</div></div>';
+  h+='<div class="biz-month-sel">';
+  h+='<select id="biz-month-sel">';
+  MONTHS.forEach(function(m,i){h+='<option value="'+i+'"'+(i===selMonth?' selected':'')+'>'+m+'</option>';});
+  h+='</select>';
+  h+='<select id="biz-year-sel">';
+  for(var y=2024;y<=now.getFullYear()+1;y++) h+='<option value="'+y+'"'+(y===selYear?' selected':'')+'>'+y+'</option>';
+  h+='</select></div></div>';
+
+  // Summary bar
+  h+='<div class="biz-summary">';
+  h+='<div class="biz-card-title">📊 Monthly Summary — '+MONTHS[selMonth]+' '+selYear;
+  h+='</div>';
+  h+='<div class="biz-summary-grid">';
+  h+='<div class="biz-sum-item"><div class="biz-sum-val">$'+fixedTotal.toLocaleString()+'</div><div class="biz-sum-lbl">Fixed costs</div></div>';
+  h+='<div class="biz-sum-item"><div class="biz-sum-val">$'+varTotal.toLocaleString()+'</div><div class="biz-sum-lbl">Variable costs</div></div>';
+  h+='<div class="biz-sum-item"><div class="biz-sum-val" style="color:#dc2626">$'+totalCosts.toLocaleString()+'</div><div class="biz-sum-lbl">Total costs</div></div>';
+  h+='<div class="biz-sum-item"><div class="biz-sum-val" style="color:'+(tradingIncome>0?'#16a34a':'#9aa3b0')+'">$'+tradingIncome.toLocaleString()+'</div><div class="biz-sum-lbl">Trading income</div></div>';
+  h+='</div>';
+  h+='<div class="biz-net-row">';
+  h+='<div><div class="biz-net-lbl">Net profit after business costs</div><div style="font-size:11px;color:var(--text3)">Trading income − Total costs (informational only)</div></div>';
+  h+='<div class="biz-net-val" style="color:'+(netProfit>=0?'#16a34a':'#dc2626')+'">'+(netProfit>=0?'+':'')+' $'+netProfit.toLocaleString()+'</div>';
+  h+='</div></div>';
+
+  h+='<div class="biz-grid">';
+
+  // ── Fixed costs ──
+  h+='<div class="biz-card">';
+  h+='<div class="biz-card-title">📌 Fixed Monthly Costs<span style="font-size:12px;font-weight:800;color:#dc2626">-$'+fixedTotal.toLocaleString()+'</span></div>';
+  h+='<table class="biz-table"><thead><tr><th>Name</th><th>Category</th><th>$/mo</th><th></th></tr></thead><tbody>';
+  biz.fixed.forEach(function(f){
+    var cat=BIZ_CATS[f.category]||BIZ_CATS.other;
+    h+='<tr>';
+    h+='<td><input class="biz-inp name" data-fix-name="'+f.id+'" value="'+f.name+'"></td>';
+    h+='<td><span class="biz-badge fixed" style="background:'+cat.color+'22;color:'+cat.color+';border-color:'+cat.color+'44">'+cat.label+'</span></td>';
+    h+='<td><input class="biz-inp" data-fix-amt="'+f.id+'" value="'+(f.amount||0)+'" type="number" min="0"></td>';
+    h+='<td><button class="biz-del-btn" data-fix-del="'+f.id+'">✕</button></td>';
+    h+='</tr>';
+  });
+  h+='</tbody></table>';
+  h+='<div class="biz-add-row">';
+  h+='<input class="biz-inp name" id="biz-fix-name" placeholder="Name" style="flex:1">';
+  h+='<select id="biz-fix-cat">';
+  Object.keys(BIZ_CATS).forEach(function(k){h+='<option value="'+k+'">'+BIZ_CATS[k].label+'</option>';});
+  h+='</select>';
+  h+='<input class="biz-inp" id="biz-fix-amt" type="number" min="0" placeholder="$/mo" style="width:80px">';
+  h+='<button class="biz-add-btn" id="biz-fix-add-btn">+ Add fixed</button>';
+  h+='<button class="biz-add-btn" id="biz-restore-btn" style="background:linear-gradient(135deg,#7c3aed,#6d28d9)">↺ Restore defaults</button>';
+  h+='</div></div>';
+
+  // ── Variable costs ──
+  h+='<div class="biz-card">';
+  h+='<div class="biz-card-title">📝 Variable Costs — '+MONTHS[selMonth]+'<span style="font-size:12px;font-weight:800;color:#dc2626">-$'+varTotal.toLocaleString()+'</span></div>';
+  h+='<table class="biz-table"><thead><tr><th>Name</th><th>Category</th><th>Amount</th><th></th></tr></thead><tbody>';
+  if(!varExp.length){
+    h+='<tr><td colspan="4" style="text-align:center;color:var(--text3);font-style:italic;padding:20px">No variable expenses this month</td></tr>';
+  }
+  varExp.forEach(function(v){
+    var cat=BIZ_CATS[v.category]||BIZ_CATS.other;
+    h+='<tr>';
+    h+='<td style="font-weight:600">'+v.name+'</td>';
+    h+='<td><span class="biz-badge variable" style="background:'+cat.color+'22;color:'+cat.color+';border-color:'+cat.color+'44">'+cat.label+'</span></td>';
+    h+='<td class="biz-amount">$'+(v.amount||0).toLocaleString()+'</td>';
+    h+='<td><button class="biz-del-btn" data-var-del="'+v.id+'">✕</button></td>';
+    h+='</tr>';
+  });
+  h+='</tbody></table>';
+  h+='<div class="biz-add-row">';
+  h+='<input class="biz-inp name" id="biz-var-name" placeholder="Name" style="flex:1">';
+  h+='<select id="biz-var-cat">';
+  Object.keys(BIZ_CATS).forEach(function(k){h+='<option value="'+k+'">'+BIZ_CATS[k].label+'</option>';});
+  h+='</select>';
+  h+='<input class="biz-inp" id="biz-var-amt" type="number" min="0" placeholder="$" style="width:80px">';
+  h+='<button class="biz-add-btn" id="biz-var-add-btn">+ Add expense</button>';
+  h+='</div></div>';
+  h+='</div>';
+
+  el.innerHTML=h;
+  el.dataset.month=selMonth;
+  el.dataset.year=selYear;
+
+  // ── Listeners ──
+  // Month/year selectors
+  document.getElementById('biz-month-sel').addEventListener('change',function(){
+    el.dataset.month=this.value; renderBusiness();
+  });
+  document.getElementById('biz-year-sel').addEventListener('change',function(){
+    el.dataset.year=this.value; renderBusiness();
+  });
+
+  // Fixed name edits
+  el.querySelectorAll('[data-fix-name]').forEach(function(inp){
+    inp.addEventListener('change',function(){
+      var f=biz.fixed.find(function(x){return x.id===inp.getAttribute('data-fix-name');});
+      if(f){f.name=inp.value;saveBiz(biz);}
+    });
+  });
+  // Fixed amount edits
+  el.querySelectorAll('[data-fix-amt]').forEach(function(inp){
+    inp.addEventListener('change',function(){
+      var f=biz.fixed.find(function(x){return x.id===inp.getAttribute('data-fix-amt');});
+      if(f){f.amount=Math.max(0,parseFloat(inp.value)||0);saveBiz(biz);renderBusiness();}
+    });
+  });
+  // Fixed delete
+  el.querySelectorAll('[data-fix-del]').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var id=btn.getAttribute('data-fix-del');
+      biz.fixed=biz.fixed.filter(function(x){return x.id!==id;});
+      saveBiz(biz);renderBusiness();
+    });
+  });
+  // Add fixed
+  document.getElementById('biz-fix-add-btn').addEventListener('click',function(){
+    var name=document.getElementById('biz-fix-name').value.trim();
+    var cat=document.getElementById('biz-fix-cat').value;
+    var amt=parseFloat(document.getElementById('biz-fix-amt').value)||0;
+    if(!name) return;
+    biz.fixed.push({id:'b'+Date.now(),name:name,category:cat,amount:amt,active:true});
+    saveBiz(biz);renderBusiness();
+  });
+  // Variable delete
+  el.querySelectorAll('[data-var-del]').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var id=btn.getAttribute('data-var-del');
+      biz.variable[monthKey]=varExp.filter(function(x){return x.id!==id;});
+      saveBiz(biz);renderBusiness();
+    });
+  });
+  // Restore defaults — adds missing default items without deleting existing ones
+  // Restore defaults
+  document.getElementById('biz-restore-btn').addEventListener('click',function(){
+    var DEFAULTS=[
+      {id:'b1',name:'Tradovate (Futures)',category:'futures',amount:99,active:true},
+      {id:'b2',name:'Fusion Markets (Forex)',category:'forex',amount:0,active:true},
+      {id:'b3',name:'Claude AI',category:'software',amount:20,active:true},
+      {id:'b4',name:'FundingPips Eval',category:'prop',amount:0,active:true},
+    ];
+    var existingIds=biz.fixed.map(function(f){return f.id;});
+    var added=0;
+    DEFAULTS.forEach(function(d){
+      if(existingIds.indexOf(d.id)===-1){biz.fixed.push(d);added++;}
+    });
+    saveBiz(biz);renderBusiness();
+    if(added===0) alert('All default items are already present.');
+  });
+  // Add variable
+  document.getElementById('biz-var-add-btn').addEventListener('click',function(){
+    var name=document.getElementById('biz-var-name').value.trim();
+    var cat=document.getElementById('biz-var-cat').value;
+    var amt=parseFloat(document.getElementById('biz-var-amt').value)||0;
+    if(!name) return;
+    if(!biz.variable[monthKey]) biz.variable[monthKey]=[];
+    biz.variable[monthKey].push({id:'v'+Date.now(),name:name,category:cat,amount:amt});
+    saveBiz(biz);renderBusiness();
+  });
+}
+
+function renderLifestyle(){
+  var el=document.getElementById('lifestyle-content');
+  if(!el) return;
+
+  // Load/init lifestyle state
+  var ls=loadLS();
+  var selMonth=new Date().getMonth(), selYear=new Date().getFullYear();
+
+  // ── Income from app data ──
+  var fpIncome=0, theoIncome=0;
+  Object.keys(chartData).forEach(function(k){
+    (chartData[k]||[]).filter(function(e){return e.month===selMonth&&e.year===selYear&&!e.fromPnL;}).forEach(function(e){
+      if(k==='theo') theoIncome+=e.profit; else fpIncome+=e.profit;
+    });
+  });
+  var totalIncome=fpIncome+theoIncome;
+
+  // ── Budget calculation ──
+  var theoPct=ls.theoPct||10;
+  var fpManual=ls.fpManual||0;
+  var theoBudget=Math.round(theoIncome*(theoPct/100));
+  var totalBudget=theoBudget+fpManual;
+
+  // ── Avg monthly (last 3 months for milestone) ──
+  var last3=[];
+  for(var m=0;m<3;m++){
+    var mm=selMonth-m, yy=selYear;
+    if(mm<0){mm+=12;yy--;}
+    var sum=0;
+    Object.keys(chartData).forEach(function(k){
+      (chartData[k]||[]).filter(function(e){return e.month===mm&&e.year===yy&&!e.fromPnL;}).forEach(function(e){sum+=e.profit;});
+    });
+    last3.push(sum);
+  }
+  var avg3=last3.length?Math.round(last3.reduce(function(a,b){return a+b;},0)/last3.length):0;
+  var target5k=5000;
+  var milestonePct=Math.min(100,Math.round((avg3/target5k)*100));
+  var monthsToTarget=avg3>0&&avg3<target5k?Math.ceil((target5k-avg3)/(avg3*0.1)):0;
+
+  // ── Categories ──
+  var cats=ls.cats||[
+    {id:'c1',emoji:'🏠',name:'Necessities',pct:0,spent:0,color:'#2563eb'},
+    {id:'c2',emoji:'📚',name:'Self-development',pct:0,spent:0,color:'#7c3aed'},
+    {id:'c3',emoji:'🎯',name:'Lifestyle',pct:0,spent:0,color:'#f59e0b'},
+    {id:'c4',emoji:'💾',name:'Emergency fund',pct:0,spent:0,color:'#16a34a'},
+  ];
+  var allocTotal=cats.reduce(function(s,c){return s+(c.pct||0);},0);
+
+  // ── RENDER ──
+  var h='';
+
+  // Header
+  h+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px">';
+  h+='<div><div style="font-size:20px;font-weight:800;color:var(--text);letter-spacing:-0.5px">💰 Lifestyle Budget</div>';
+  h+='<div style="font-size:12px;color:var(--text3);margin-top:2px">'+MONTHS[selMonth]+' '+selYear+' · Capital growth mode</div></div>';
+  h+='<div style="background:#f0fdf4;border:1px solid #86efac;border-radius:10px;padding:6px 14px;font-size:11px;font-weight:700;color:#16a34a">🎯 Target: $5,000/mo</div>';
+  h+='</div>';
+
+  // Milestone bar
+  h+='<div class="ls-milestone">';
+  h+='<div class="ls-milestone-title">📈 Growth Milestone — Road to $5,000/month</div>';
+  h+='<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:8px">';
+  h+='<span style="font-size:28px;font-weight:800;color:#1e3a8a">$'+avg3.toLocaleString()+'</span>';
+  h+='<span style="font-size:13px;color:#64748b">avg/month (last 3 months)</span>';
+  h+='<span style="margin-left:auto;font-size:13px;font-weight:700;color:#2563eb">'+milestonePct+'% of target</span>';
+  h+='</div>';
+  h+='<div class="ls-milestone-prog"><div class="ls-milestone-fill" style="width:'+milestonePct+'%"></div></div>';
+  h+='<div class="ls-milestone-stats">';
+  h+='<span>This month: <b>$'+totalIncome.toLocaleString()+'</b></span>';
+  h+='<span>FP: <b>$'+fpIncome.toLocaleString()+'</b> · Theo: <b>$'+theoIncome.toLocaleString()+'</b></span>';
+  h+=(monthsToTarget>0?'<span>Est. <b>'+monthsToTarget+' months</b> to target at +10%/mo growth</span>':'<span style="color:#16a34a"><b>🎉 Target reached!</b></span>');
+  h+='</div></div>';
+
+  // Income + Budget config
+  h+='<div class="ls-grid">';
+
+  // Income card
+  h+='<div class="ls-card">';
+  h+='<div class="ls-card-title">📊 Income this month</div>';
+  h+='<div class="ls-income-row"><span class="ls-income-lbl">FP Payouts</span><span class="ls-income-val b">$'+fpIncome.toLocaleString()+'</span></div>';
+  h+='<div class="ls-income-row"><span class="ls-income-lbl">⭐ Theo</span><span class="ls-income-val amber">$'+theoIncome.toLocaleString()+'</span></div>';
+  h+='<div class="ls-income-row" style="border-top:2px solid var(--border);margin-top:4px;padding-top:12px"><span class="ls-income-lbl" style="font-weight:700;color:var(--text)">Total</span><span class="ls-income-val g">$'+totalIncome.toLocaleString()+'</span></div>';
+  h+='</div>';
+
+  // Budget config card
+  h+='<div class="ls-card">';
+  h+='<div class="ls-card-title">⚙️ Budget allocation</div>';
+  h+='<div class="ls-slider-row"><label>Theo % for lifestyle</label><input type="range" min="5" max="30" value="'+theoPct+'" id="ls-theo-pct"><span class="ls-slider-val" id="ls-theo-pct-val">'+theoPct+'%</span></div>';
+  h+='<div style="background:var(--surface2);border-radius:8px;padding:10px 14px;margin:8px 0;font-size:12px;color:var(--text2)">';
+  h+='Theo budget: <b style="color:#d97706">$'+theoBudget.toLocaleString()+'</b> ('+theoPct+'% × $'+theoIncome.toLocaleString()+')';
+  h+='</div>';
+  h+='<div class="ls-input-row"><label>FP allocation (manual) $</label><input type="number" class="ls-inp" id="ls-fp-manual" value="'+fpManual+'" min="0"></div>';
+  h+='<div style="margin-top:14px;padding-top:14px;border-top:2px solid var(--border);display:flex;justify-content:space-between;align-items:center">';
+  h+='<span style="font-size:12px;font-weight:700;color:var(--text)">Total budget</span>';
+  h+='<span style="font-size:22px;font-weight:800;color:#16a34a">$'+totalBudget.toLocaleString()+'</span>';
+  h+='</div>';
+  h+='<div style="font-size:10px;color:var(--text3);margin-top:4px;text-align:right">FP reinvestit: <b>$'+(Math.max(0,fpIncome-fpManual)).toLocaleString()+'</b></div>';
+  h+='</div>';
+  h+='</div>';
+
+  // Categories
+  h+='<div class="ls-card" style="margin-bottom:20px">';
+  h+='<div class="ls-card-title" style="justify-content:space-between">🗂️ Spending categories ';
+  h+='<span style="font-size:11px;font-weight:600;color:'+(allocTotal>100?'#dc2626':allocTotal===100?'#16a34a':'#d97706')+'">'+allocTotal+'% allocated'+(allocTotal>100?' ⚠️ Over 100%':allocTotal===100?' ✓':'')+'</span></div>';
+  h+='<div class="ls-cat">';
+  cats.forEach(function(cat){
+    var alloc=Math.round(totalBudget*(cat.pct||0)/100);
+    var spent=cat.spent||0;
+    var pct=alloc>0?Math.min(110,Math.round(spent/alloc*100)):0;
+    var barCls=pct>=100?'over':pct>=80?'warn':'ok';
+    h+='<div class="ls-cat-item" id="lscat-'+cat.id+'">';
+    h+='<div class="ls-cat-head">';
+    h+='<div class="ls-cat-name">'+cat.emoji+' '+cat.name+'</div>';
+    h+='<div class="ls-cat-alloc">$<span>'+alloc.toLocaleString()+'</span> budget · <input type="number" class="ls-spent-inp" data-cat="'+cat.id+'" value="'+spent+'" min="0" placeholder="spent"> spent</div>';
+    h+='</div>';
+    h+='<div class="ls-prog-wrap"><div class="ls-prog-bar '+barCls+'" style="width:'+Math.min(100,pct)+'%"></div></div>';
+    h+='<div class="ls-cat-nums"><span>$'+spent.toLocaleString()+' / $'+alloc.toLocaleString()+'</span><span>'+(pct+'%')+(pct>100?' 🔴 over budget':pct>=80?' 🟡 almost full':' 🟢')+'</span></div>';
+    h+='<div class="ls-cat-actions">';
+    h+='<span style="font-size:11px;color:var(--text3)">% of budget:</span>';
+    h+='<input type="number" class="ls-spent-inp" data-pct="'+cat.id+'" value="'+(cat.pct||0)+'" min="0" max="100" style="width:60px">';
+    h+='<span style="font-size:11px;color:var(--text3)">%</span>';
+    h+='<button class="ls-del-btn" data-del="'+cat.id+'">✕ Remove</button>';
+    h+='</div></div>';
+  });
+  h+='</div>';
+  h+='<div style="margin-top:12px;display:flex;gap:8px;align-items:center">';
+  h+='<input type="text" id="ls-new-cat-name" class="ls-inp" placeholder="Category name" style="width:150px;text-align:left">';
+  h+='<input type="text" id="ls-new-cat-emoji" class="ls-inp" placeholder="emoji" style="width:60px;text-align:center">';
+  h+='<button class="ls-add-btn" id="ls-add-cat-btn">+ Add category</button>';
+  h+='</div>';
+  h+='</div>';
+
+  el.innerHTML=h;
+
+  // ── Event listeners ──
+  // Theo pct slider
+  var slider=document.getElementById('ls-theo-pct');
+  if(slider){
+    slider.addEventListener('input',function(){
+      document.getElementById('ls-theo-pct-val').textContent=slider.value+'%';
+      ls.theoPct=parseInt(slider.value); saveLS(ls); renderLifestyle();
+    });
+  }
+  // FP manual
+  var fpInp=document.getElementById('ls-fp-manual');
+  if(fpInp) fpInp.addEventListener('change',function(){ls.fpManual=Math.max(0,parseInt(fpInp.value)||0);saveLS(ls);renderLifestyle();});
+
+  // Category % inputs
+  el.querySelectorAll('[data-pct]').forEach(function(inp){
+    inp.addEventListener('change',function(){
+      var id=inp.getAttribute('data-pct');
+      var cat=ls.cats.find(function(c){return c.id===id;});
+      if(cat){cat.pct=Math.max(0,Math.min(100,parseInt(inp.value)||0));saveLS(ls);renderLifestyle();}
+    });
+  });
+  // Spent inputs
+  el.querySelectorAll('[data-cat]').forEach(function(inp){
+    inp.addEventListener('change',function(){
+      var id=inp.getAttribute('data-cat');
+      var cat=ls.cats.find(function(c){return c.id===id;});
+      if(cat){cat.spent=Math.max(0,parseInt(inp.value)||0);saveLS(ls);renderLifestyle();}
+    });
+  });
+  // Delete category
+  el.querySelectorAll('[data-del]').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var id=btn.getAttribute('data-del');
+      ls.cats=ls.cats.filter(function(c){return c.id!==id;});
+      saveLS(ls);renderLifestyle();
+    });
+  });
+  // Add category
+  var addBtn=document.getElementById('ls-add-cat-btn');
+  if(addBtn) addBtn.addEventListener('click',function(){
+    var name=document.getElementById('ls-new-cat-name').value.trim();
+    var emoji=document.getElementById('ls-new-cat-emoji').value.trim()||'📌';
+    if(!name) return;
+    if(!ls.cats) ls.cats=[];
+    ls.cats.push({id:'c'+Date.now(),emoji:emoji,name:name,pct:0,spent:0});
+    saveLS(ls);renderLifestyle();
+  });
+}
+
+function loadLS(){
+  var state=JSON.parse(localStorage.getItem('gdtrading_state_v1')||'{}');
+  if(!state.lifestyle) state.lifestyle={theoPct:10,fpManual:0,cats:[
+    {id:'c1',emoji:'🏠',name:'Necessities',pct:0,spent:0},
+    {id:'c2',emoji:'📚',name:'Self-development',pct:0,spent:0},
+    {id:'c3',emoji:'🎯',name:'Lifestyle',pct:0,spent:0},
+    {id:'c4',emoji:'💾',name:'Emergency fund',pct:0,spent:0},
+  ]};
+  return state.lifestyle;
+}
+function saveLS(ls){
+  var state=JSON.parse(localStorage.getItem('gdtrading_state_v1')||'{}');
+  state.lifestyle=ls;
+  localStorage.setItem('gdtrading_state_v1',JSON.stringify(state));
 }
 
 function renderHedgeCalc(){
@@ -2124,6 +2637,8 @@ document.getElementById('btn-login').addEventListener('click', function(){
     renderChart();
     renderRulesAndLimits();
     renderHedgeCalc();
+    renderLifestyle();
+    renderBusiness();
   } else {
     document.getElementById('login-error').classList.add('show');
     document.getElementById('login-pass').value='';
