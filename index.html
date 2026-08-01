@@ -2135,12 +2135,19 @@ function renderLifestyle(){
   var selYear=parseInt(el.dataset.year!==undefined&&el.dataset.year!==''?el.dataset.year:now.getFullYear());
 
   // ── Income from app data ──
+  // FP income: from chartData (all entries including P&L sync) for selected month
   var fpIncome=0, theoIncome=0;
   Object.keys(chartData).forEach(function(k){
-    (chartData[k]||[]).filter(function(e){return e.month===selMonth&&e.year===selYear&&!e.fromPnL;}).forEach(function(e){
+    (chartData[k]||[]).filter(function(e){return e.month===selMonth&&e.year===selYear;}).forEach(function(e){
       if(k==='theo') theoIncome+=e.profit; else fpIncome+=e.profit;
     });
   });
+  // If no chartData entries for FP this month, fall back to accounts.payouts total
+  if(fpIncome===0){
+    accounts.filter(function(a){return a.phase!=='breached';}).forEach(function(a){
+      fpIncome+=Math.abs(a.payouts||0);
+    });
+  }
   var totalIncome=fpIncome+theoIncome;
 
   // ── Budget calculation ──
