@@ -913,9 +913,9 @@ function getPayoutCountdown(a){
   var diffMs=target-now;
   var diffDays=Math.ceil(diffMs/(1000*60*60*24));
   if(diffDays>3) return null;
-  if(diffDays===3) return {label:'⏰ 3 days until payout',cls:'days3',prog:33};
+  if(diffDays===3) return {label:'⏰ 3 days until payout',cls:'days3',prog:100};
   if(diffDays===2) return {label:'⏰ 2 days until payout',cls:'days2',prog:66};
-  if(diffDays===1) return {label:'🔔 Tomorrow is payout',cls:'days1',prog:90};
+  if(diffDays===1) return {label:'🔔 Tomorrow is payout',cls:'days1',prog:33};
   if(diffDays===0) return {label:'🎉 Payout time!',cls:'today',prog:100};
   return {label:'⚠️ Date has passed',cls:'overdue',prog:100};
 }
@@ -2130,7 +2130,9 @@ function renderLifestyle(){
 
   // Load/init lifestyle state
   var ls=loadLS();
-  var selMonth=new Date().getMonth(), selYear=new Date().getFullYear();
+  var now=new Date();
+  var selMonth=parseInt(el.dataset.month!==undefined&&el.dataset.month!==''?el.dataset.month:now.getMonth());
+  var selYear=parseInt(el.dataset.year!==undefined&&el.dataset.year!==''?el.dataset.year:now.getFullYear());
 
   // ── Income from app data ──
   var fpIncome=0, theoIncome=0;
@@ -2179,8 +2181,15 @@ function renderLifestyle(){
   h+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px">';
   h+='<div><div style="font-size:20px;font-weight:800;color:var(--text);letter-spacing:-0.5px">💰 Lifestyle Budget</div>';
   h+='<div style="font-size:12px;color:var(--text3);margin-top:2px">'+MONTHS[selMonth]+' '+selYear+' · Capital growth mode</div></div>';
+  h+='<div style="display:flex;align-items:center;gap:8px">';
+  h+='<select id="ls-month-sel" style="background:var(--surface2);border:1px solid var(--border2);color:var(--text);font-family:inherit;font-size:12px;font-weight:600;padding:6px 10px;border-radius:8px;outline:none;cursor:pointer">';
+  MONTHS.forEach(function(m,i){h+='<option value="'+i+'"'+(i===selMonth?' selected':'')+'>'+m+'</option>';});
+  h+='</select>';
+  h+='<select id="ls-year-sel" style="background:var(--surface2);border:1px solid var(--border2);color:var(--text);font-family:inherit;font-size:12px;font-weight:600;padding:6px 10px;border-radius:8px;outline:none;cursor:pointer">';
+  for(var y=2024;y<=now.getFullYear()+1;y++) h+='<option value="'+y+'"'+(y===selYear?' selected':'')+'>'+y+'</option>';
+  h+='</select>';
   h+='<div style="background:#f0fdf4;border:1px solid #86efac;border-radius:10px;padding:6px 14px;font-size:11px;font-weight:700;color:#16a34a">🎯 Target: $5,000/mo</div>';
-  h+='</div>';
+  h+='</div></div>';
 
   // Milestone bar
   h+='<div class="ls-milestone">';
@@ -2259,6 +2268,15 @@ function renderLifestyle(){
   el.innerHTML=h;
 
   // ── Event listeners ──
+  el.dataset.month=selMonth;
+  el.dataset.year=selYear;
+
+  // Month/year selectors
+  var lsMonthSel=document.getElementById('ls-month-sel');
+  var lsYearSel=document.getElementById('ls-year-sel');
+  if(lsMonthSel) lsMonthSel.addEventListener('change',function(){el.dataset.month=this.value;renderLifestyle();});
+  if(lsYearSel) lsYearSel.addEventListener('change',function(){el.dataset.year=this.value;renderLifestyle();});
+
   // Theo pct slider
   var slider=document.getElementById('ls-theo-pct');
   if(slider){
