@@ -333,6 +333,49 @@ input,select{font-family:'Inter',sans-serif}
 .ls-add-cat{background:none;border:1px dashed var(--border2);color:var(--text3);font-family:inherit;font-size:12px;font-weight:600;padding:10px;border-radius:10px;cursor:pointer;width:100%;margin-top:8px;transition:all 0.15s}
 .ls-add-cat:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
 
+/* MONEY FLOW */
+.mf-wallets{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:20px}
+.mf-wallet{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px 18px;position:relative;transition:box-shadow 0.15s}
+.mf-wallet:hover{box-shadow:0 4px 16px rgba(15,23,42,0.08)}
+.mf-wallet-icon{font-size:22px;margin-bottom:8px}
+.mf-wallet-name{font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px}
+.mf-wallet-type{font-size:10px;color:var(--text3);font-weight:500;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px}
+.mf-wallet-bal{font-size:20px;font-weight:800;color:#16a34a;letter-spacing:-0.5px}
+.mf-wallet-bal-inp{width:100%;background:var(--surface2);border:1px solid var(--border2);color:var(--text);font-family:inherit;font-size:16px;font-weight:700;padding:6px 10px;border-radius:8px;outline:none;transition:all 0.15s}
+.mf-wallet-bal-inp:focus{border-color:var(--accent);background:#fff}
+.mf-wallet-del{position:absolute;top:10px;right:10px;background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;opacity:0;transition:opacity 0.15s}
+.mf-wallet:hover .mf-wallet-del{opacity:1}
+.mf-wallet-del:hover{color:#dc2626}
+.mf-add-wallet{background:none;border:1px dashed var(--border2);color:var(--text3);font-family:inherit;font-size:12px;font-weight:600;padding:16px;border-radius:14px;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:6px;min-height:110px}
+.mf-add-wallet:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+.mf-total-bar{background:linear-gradient(135deg,#f0fdf4,#eff6ff);border:1px solid #bfdbfe;border-radius:12px;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.mf-total-lbl{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px}
+.mf-total-val{font-size:24px;font-weight:800;color:#16a34a;letter-spacing:-0.5px}
+.mf-transfer-form{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin-bottom:16px}
+.mf-transfer-form-title{font-size:10px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px}
+.mf-form-row{display:grid;grid-template-columns:1fr 1fr 80px 1fr 1fr auto;gap:10px;align-items:end}
+.mf-form-field label{display:block;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px}
+.mf-form-inp{width:100%;background:var(--surface2);border:1px solid var(--border2);color:var(--text);font-family:inherit;font-size:12px;font-weight:600;padding:8px 10px;border-radius:8px;outline:none;transition:all 0.15s;box-sizing:border-box}
+.mf-form-inp:focus{border-color:var(--accent);background:#fff}
+.mf-form-sel{width:100%;background:var(--surface2);border:1px solid var(--border2);color:var(--text);font-family:inherit;font-size:12px;font-weight:600;padding:8px 10px;border-radius:8px;outline:none;cursor:pointer}
+.mf-add-transfer-btn{background:linear-gradient(135deg,#2563eb,#1d4ed8);border:none;color:#fff;font-family:inherit;font-size:12px;font-weight:700;padding:8px 16px;border-radius:8px;cursor:pointer;white-space:nowrap;height:36px;box-shadow:0 2px 8px rgba(37,99,235,0.25)}
+.mf-add-transfer-btn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(37,99,235,0.35)}
+.mf-transfers-list{display:flex;flex-direction:column;gap:8px}
+.mf-transfer-item{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:grid;grid-template-columns:80px 1fr auto auto 28px;gap:12px;align-items:center;transition:all 0.15s}
+.mf-transfer-item:hover{border-color:var(--border2);box-shadow:0 2px 8px rgba(15,23,42,0.06)}
+.mf-transfer-date{font-size:11px;font-weight:700;color:var(--text3);white-space:nowrap}
+.mf-transfer-flow{display:flex;align-items:center;gap:8px}
+.mf-transfer-wallet{display:inline-flex;align-items:center;gap:5px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:3px 9px;font-size:11px;font-weight:700;color:var(--text)}
+.mf-transfer-arrow{color:var(--text3);font-size:14px}
+.mf-transfer-note{font-size:11px;color:var(--text3);font-style:italic;margin-top:2px}
+.mf-transfer-amount{font-size:16px;font-weight:800;color:#2563eb;white-space:nowrap}
+.mf-transfer-tag{font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px;background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe;white-space:nowrap}
+.mf-transfer-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;opacity:0;transition:opacity 0.15s;padding:0}
+.mf-transfer-item:hover .mf-transfer-del{opacity:1}
+.mf-transfer-del:hover{color:#dc2626}
+.mf-empty{text-align:center;padding:32px;color:var(--text3);font-size:12px;font-style:italic}
+.mf-section-title{font-size:10px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
+
 /* LIFESTYLE end */
 /* HEDGE CALCULATOR — light theme */
 #hedge-calc-wrap{font-family:Inter,sans-serif;padding:0;background:transparent}
@@ -1205,6 +1248,22 @@ function renderAccounts(){
       var realProfit2=a.balance-a.capital;
       var potPayout=a.phase==='live'&&realProfit2>0?Math.round(realProfit2*0.8-15):null;
       var potPayoutHtml=potPayout!==null?'<div class="pot-item">POTENTIAL PAYOUT <span class="g">$'+potPayout.toLocaleString()+'</span></div>':'';
+
+      // Payout count badge — only on Live accounts, left-aligned, premium & discrete
+      var payoutCountHtml='';
+      if(a.phase==='live'){
+        var pCount=(chartData[a.id]||[]).filter(function(e){return !e.fromPnL;}).length;
+        var pcColor=pCount===0?'#9aa3b0':pCount>=2?'#16a34a':'#2563eb';
+        var pcBg=pCount===0?'var(--surface2)':pCount>=2?'#f0fdf4':'#eff6ff';
+        var pcBd=pCount===0?'var(--border)':pCount>=2?'#86efac':'#bfdbfe';
+        var pcLabel=pCount===0?'No payouts yet':pCount===1?'1st payout':''+pCount+' payouts';
+        payoutCountHtml='<div class="pot-item" style="margin-right:auto">'
+          +'<span style="display:inline-flex;align-items:center;gap:7px;background:'+pcBg+';border:1px solid '+pcBd+';border-radius:20px;padding:4px 12px 4px 8px">'
+          +'<span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;background:'+pcColor+';color:#fff;font-size:11px;font-weight:800;border-radius:50%">'+pCount+'</span>'
+          +'<span style="font-size:10px;font-weight:700;color:'+pcColor+';letter-spacing:0.4px">'+pcLabel+'</span>'
+          +'</span></div>';
+      }
+
       // Payout date button
       var pdHtml='<div class="pot-item" style="margin-left:auto">';
       if(a.payoutDate){
@@ -1219,7 +1278,7 @@ function renderAccounts(){
       pdHtml+='<button onclick="savePayoutDate('+idx+')" title="Salvează">✓</button>';
       pdHtml+='<button onclick="clearPayoutDate('+idx+')" title="Șterge">✕</button>';
       pdHtml+='</div></div>';
-      html += '<div class="pot-bar" style="flex-wrap:wrap">'+(initBrokerBal!==null?'<div class="pot-item">BALANȚA BROKER <span class="b">$'+initBrokerBal.toLocaleString()+'</span></div>':'')+potPayoutHtml+'<div class="pot-item">POTENTIAL PROFIT <span class="'+potClass+'">'+potStr+'</span></div>'+pdHtml+'</div>';
+      html += '<div class="pot-bar" style="flex-wrap:wrap">'+payoutCountHtml+(initBrokerBal!==null?'<div class="pot-item">BALANȚA BROKER <span class="b">$'+initBrokerBal.toLocaleString()+'</span></div>':'')+potPayoutHtml+'<div class="pot-item">POTENTIAL PROFIT <span class="'+potClass+'">'+potStr+'</span></div>'+pdHtml+'</div>';
       var showChart = (a.phase===1 || a.phase===2);
       html += '<div class="exp-inner'+(showChart?'':' no-chart')+'">';
       if(showChart){
@@ -2132,6 +2191,177 @@ function renderBusiness(){
   });
 }
 
+// ── MONEY FLOW / WALLET TRACKER ────────────────────────────────
+var MF_WALLET_ICONS={crypto:'🔐',exchange:'🏦',bank:'🏛️',prop:'📈',other:'💼'};
+var MF_WALLET_DEFAULTS=[
+  {id:'w1',name:'Nexo',type:'crypto',icon:'🔐',balance:0},
+  {id:'w2',name:'Binance',type:'exchange',icon:'🏦',balance:0},
+  {id:'w3',name:'Tradovate',type:'prop',icon:'📈',balance:0},
+  {id:'w4',name:'Fusion Markets',type:'prop',icon:'📈',balance:0},
+];
+function loadMF(){
+  var state=JSON.parse(localStorage.getItem('gdtrading_state_v1')||'{}');
+  if(!state.moneyflow) state.moneyflow={wallets:JSON.parse(JSON.stringify(MF_WALLET_DEFAULTS)),transfers:[]};
+  return state.moneyflow;
+}
+function saveMF(mf){
+  var state=JSON.parse(localStorage.getItem('gdtrading_state_v1')||'{}');
+  state.moneyflow=mf;
+  localStorage.setItem('gdtrading_state_v1',JSON.stringify(state));
+}
+
+function renderMoneyFlow(container){
+  var mf=loadMF();
+  var wallets=mf.wallets||[];
+  var transfers=mf.transfers||[];
+  var totalBal=wallets.reduce(function(s,w){return s+(parseFloat(w.balance)||0);},0);
+
+  var h='';
+
+  // Section header
+  h+='<div style="margin-top:28px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between">';
+  h+='<div>';
+  h+='<div style="font-size:17px;font-weight:800;color:var(--text);letter-spacing:-0.3px">💸 Money Flow & Wallets</div>';
+  h+='<div style="font-size:12px;color:var(--text3);margin-top:2px">Track balances and transfers between your wallets</div>';
+  h+='</div>';
+  h+='<div class="mf-total-bar" style="margin:0;padding:10px 18px">';
+  h+='<div><div class="mf-total-lbl">Total across wallets</div></div>';
+  h+='<div class="mf-total-val" style="font-size:20px;margin-left:20px">$'+totalBal.toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:2})+'</div>';
+  h+='</div></div>';
+
+  // Wallets grid
+  h+='<div class="mf-wallets">';
+  wallets.forEach(function(w){
+    h+='<div class="mf-wallet">';
+    h+='<button class="mf-wallet-del" data-wdel="'+w.id+'">✕</button>';
+    h+='<div class="mf-wallet-icon">'+w.icon+'</div>';
+    h+='<div class="mf-wallet-name">'+w.name+'</div>';
+    h+='<div class="mf-wallet-type">'+w.type+'</div>';
+    h+='<input class="mf-wallet-bal-inp" data-wbal="'+w.id+'" type="number" value="'+(w.balance||0)+'" min="0" step="0.01" placeholder="0.00">';
+    h+='</div>';
+  });
+  // Add wallet button
+  h+='<button class="mf-add-wallet" id="mf-add-wallet-btn">＋ Add wallet</button>';
+  h+='</div>';
+
+  // Add wallet form (hidden by default, shown inline)
+  h+='<div id="mf-add-wallet-form" style="display:none;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:16px">';
+  h+='<div style="display:flex;gap:10px;align-items:end;flex-wrap:wrap">';
+  h+='<div class="mf-form-field"><label>Name</label><input class="mf-form-inp" id="mf-w-name" placeholder="e.g. Kraken" style="width:130px"></div>';
+  h+='<div class="mf-form-field"><label>Type</label><select class="mf-form-sel" id="mf-w-type" style="width:120px">';
+  ['crypto','exchange','bank','prop','other'].forEach(function(t){h+='<option value="'+t+'">'+MF_WALLET_ICONS[t]+' '+t+'</option>';});
+  h+='</select></div>';
+  h+='<div class="mf-form-field"><label>Balance $</label><input class="mf-form-inp" id="mf-w-bal" type="number" min="0" step="0.01" placeholder="0" style="width:100px"></div>';
+  h+='<button class="mf-add-transfer-btn" id="mf-w-save-btn">Save wallet</button>';
+  h+='<button style="background:none;border:1px solid var(--border2);color:var(--text3);font-family:inherit;font-size:12px;padding:8px 12px;border-radius:8px;cursor:pointer" id="mf-w-cancel-btn">Cancel</button>';
+  h+='</div></div>';
+
+  // Transfer form
+  h+='<div class="mf-transfer-form">';
+  h+='<div class="mf-transfer-form-title">➕ Log a transfer</div>';
+  h+='<div style="display:flex;gap:10px;align-items:end;flex-wrap:wrap">';
+  h+='<div class="mf-form-field"><label>Date</label><input class="mf-form-inp" id="mf-t-date" type="date" value="'+new Date().toISOString().split("T")[0]+'" style="width:130px"></div>';
+  h+='<div class="mf-form-field"><label>From</label><select class="mf-form-sel" id="mf-t-from" style="width:130px">';
+  wallets.forEach(function(w){h+='<option value="'+w.id+'">'+w.icon+' '+w.name+'</option>';});
+  h+='<option value="external">🌐 External</option>';
+  h+='</select></div>';
+  h+='<div style="padding-bottom:8px;color:var(--text3);font-size:18px">→</div>';
+  h+='<div class="mf-form-field"><label>To</label><select class="mf-form-sel" id="mf-t-to" style="width:130px">';
+  wallets.forEach(function(w){h+='<option value="'+w.id+'">'+w.icon+' '+w.name+'</option>';});
+  h+='<option value="external">🌐 External</option>';
+  h+='</select></div>';
+  h+='<div class="mf-form-field"><label>Amount $</label><input class="mf-form-inp" id="mf-t-amt" type="number" min="0" step="0.01" placeholder="0.00" style="width:110px"></div>';
+  h+='<div class="mf-form-field" style="flex:1"><label>Note / reason</label><input class="mf-form-inp" id="mf-t-note" placeholder="e.g. Theo profits → trading capital" style="min-width:180px"></div>';
+  h+='<button class="mf-add-transfer-btn" id="mf-t-save-btn">+ Log transfer</button>';
+  h+='</div></div>';
+
+  // Transfers list
+  h+='<div class="mf-section-title">📋 Transfer history <span style="font-weight:500;font-size:11px">'+transfers.length+' transfer'+(transfers.length!==1?'s':'')+'</span></div>';
+  if(!transfers.length){
+    h+='<div class="mf-empty">No transfers logged yet. Use the form above to track your first transfer.</div>';
+  } else {
+    h+='<div class="mf-transfers-list">';
+    var sorted=transfers.slice().sort(function(a,b){return b.date.localeCompare(a.date);});
+    sorted.forEach(function(t){
+      var fromW=wallets.find(function(w){return w.id===t.from;})||{name:'External',icon:'🌐'};
+      var toW=wallets.find(function(w){return w.id===t.to;})||{name:'External',icon:'🌐'};
+      var d=new Date(t.date);
+      var dStr=d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+      h+='<div class="mf-transfer-item">';
+      h+='<div class="mf-transfer-date">'+dStr+'</div>';
+      h+='<div><div class="mf-transfer-flow">';
+      h+='<span class="mf-transfer-wallet">'+fromW.icon+' '+fromW.name+'</span>';
+      h+='<span class="mf-transfer-arrow">→</span>';
+      h+='<span class="mf-transfer-wallet">'+toW.icon+' '+toW.name+'</span>';
+      h+='</div>';
+      if(t.note) h+='<div class="mf-transfer-note">'+t.note+'</div>';
+      h+='</div>';
+      h+='<div class="mf-transfer-amount">$'+(parseFloat(t.amount)||0).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:2})+'</div>';
+      h+='<div></div>';
+      h+='<button class="mf-transfer-del" data-tdel="'+t.id+'">✕</button>';
+      h+='</div>';
+    });
+    h+='</div>';
+  }
+
+  container.innerHTML=h;
+
+  // ── Listeners ──
+  // Wallet balance edits
+  container.querySelectorAll('[data-wbal]').forEach(function(inp){
+    inp.addEventListener('change',function(){
+      var w=mf.wallets.find(function(x){return x.id===inp.getAttribute('data-wbal');});
+      if(w){w.balance=parseFloat(inp.value)||0;saveMF(mf);renderMoneyFlow(container);}
+    });
+  });
+  // Wallet delete
+  container.querySelectorAll('[data-wdel]').forEach(function(btn){
+    btn.addEventListener('click',function(e){
+      e.stopPropagation();
+      var id=btn.getAttribute('data-wdel');
+      mf.wallets=mf.wallets.filter(function(x){return x.id!==id;});
+      saveMF(mf);renderMoneyFlow(container);
+    });
+  });
+  // Show add wallet form
+  container.querySelector('#mf-add-wallet-btn').addEventListener('click',function(){
+    container.querySelector('#mf-add-wallet-form').style.display='block';
+  });
+  container.querySelector('#mf-w-cancel-btn').addEventListener('click',function(){
+    container.querySelector('#mf-add-wallet-form').style.display='none';
+  });
+  // Save new wallet
+  container.querySelector('#mf-w-save-btn').addEventListener('click',function(){
+    var name=container.querySelector('#mf-w-name').value.trim();
+    var type=container.querySelector('#mf-w-type').value;
+    var bal=parseFloat(container.querySelector('#mf-w-bal').value)||0;
+    if(!name) return;
+    mf.wallets.push({id:'w'+Date.now(),name:name,type:type,icon:MF_WALLET_ICONS[type]||'💼',balance:bal});
+    saveMF(mf);renderMoneyFlow(container);
+  });
+  // Save transfer
+  container.querySelector('#mf-t-save-btn').addEventListener('click',function(){
+    var date=container.querySelector('#mf-t-date').value;
+    var from=container.querySelector('#mf-t-from').value;
+    var to=container.querySelector('#mf-t-to').value;
+    var amt=parseFloat(container.querySelector('#mf-t-amt').value)||0;
+    var note=container.querySelector('#mf-t-note').value.trim();
+    if(!amt||from===to) return;
+    if(!mf.transfers) mf.transfers=[];
+    mf.transfers.push({id:'t'+Date.now(),date:date,from:from,to:to,amount:amt,note:note});
+    saveMF(mf);renderMoneyFlow(container);
+  });
+  // Delete transfer
+  container.querySelectorAll('[data-tdel]').forEach(function(btn){
+    btn.addEventListener('click',function(e){
+      e.stopPropagation();
+      var id=btn.getAttribute('data-tdel');
+      mf.transfers=mf.transfers.filter(function(x){return x.id!==id;});
+      saveMF(mf);renderMoneyFlow(container);
+    });
+  });
+}
+
 function renderLifestyle(){
   var el=document.getElementById('lifestyle-content');
   if(!el) return;
@@ -2365,6 +2595,12 @@ function renderLifestyle(){
     ls.cats.push({id:'c'+Date.now(),emoji:emoji,name:name,pct:0,spent:0});
     saveLS(ls);renderLifestyle();
   });
+
+  // Render Money Flow section at the bottom of Lifestyle
+  var mfContainer=document.createElement('div');
+  mfContainer.id='mf-section';
+  el.appendChild(mfContainer);
+  renderMoneyFlow(mfContainer);
 }
 
 function loadLS(){
