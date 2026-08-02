@@ -2349,6 +2349,11 @@ function renderMoneyFlow(container){
     if(!amt||from===to) return;
     if(!mf.transfers) mf.transfers=[];
     mf.transfers.push({id:'t'+Date.now(),date:date,from:from,to:to,amount:amt,note:note});
+    // Auto-update wallet balances
+    var fromW=mf.wallets.find(function(w){return w.id===from;});
+    var toW=mf.wallets.find(function(w){return w.id===to;});
+    if(fromW) fromW.balance=Math.max(0,parseFloat(fromW.balance||0)-amt);
+    if(toW) toW.balance=parseFloat(toW.balance||0)+amt;
     saveMF(mf);renderMoneyFlow(container);
   });
   // Delete transfer
@@ -2356,6 +2361,14 @@ function renderMoneyFlow(container){
     btn.addEventListener('click',function(e){
       e.stopPropagation();
       var id=btn.getAttribute('data-tdel');
+      var t=mf.transfers.find(function(x){return x.id===id;});
+      if(t){
+        // Revert wallet balances
+        var fW=mf.wallets.find(function(w){return w.id===t.from;});
+        var tW=mf.wallets.find(function(w){return w.id===t.to;});
+        if(fW) fW.balance=parseFloat(fW.balance||0)+parseFloat(t.amount||0);
+        if(tW) tW.balance=Math.max(0,parseFloat(tW.balance||0)-parseFloat(t.amount||0));
+      }
       mf.transfers=mf.transfers.filter(function(x){return x.id!==id;});
       saveMF(mf);renderMoneyFlow(container);
     });
