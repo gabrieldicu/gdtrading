@@ -57,6 +57,7 @@ input,select{font-family:'Inter',sans-serif}
 .ov-split-item{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;text-align:center}
 .ov-split-item .osv{font-size:18px;font-weight:800}.ov-split-item .osl{font-size:9.5px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-top:2px}
 .ov-radar-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:var(--surface);margin-bottom:6px;transition:all 0.15s}
+.ov-transfers-scroll{max-height:280px;overflow-y:auto;padding-right:2px}
 .ov-radar-item:last-child{margin-bottom:0}
 .ov-radar-item.ready{border-color:#86efac;background:#f0fdf4}
 .ov-radar-item.target{border-color:#bfdbfe;background:#eff6ff}
@@ -2049,6 +2050,7 @@ function renderOverview(){
   if(!radarItems.length){
     z3+='<div class="ov-empty">No accounts close to payout right now</div>';
   } else {
+    z3+='<div class="ov-transfers-scroll">';
     radarItems.sort(function(a,b){return b.prog-a.prog;}).forEach(function(item){
       var sc=item.status==='ready'?'ready':item.status==='target'?'target':'';
       var badgeCls=item.status==='ready'?'ready':item.status==='target'?'target':
@@ -2060,6 +2062,7 @@ function renderOverview(){
       if(item.val) z3+='<span style="font-size:11px;font-weight:700;color:#16a34a;white-space:nowrap">'+item.val+'</span>';
       z3+='</div>';
     });
+    z3+='</div>'; // close scroll div
   }
   z3+='</div>';
 
