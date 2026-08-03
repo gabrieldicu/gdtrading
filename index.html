@@ -1188,9 +1188,9 @@ function renderAccounts(){
       }
     }
     else if(phaseAdvance) alertHtml='<span class="payout-alert ready">🎉 Congratulations! → '+phaseAdvance+'</span>';
-    // Payout date countdown — only shown if not already shown via STOP_WAIT override
+    // Payout date countdown — only shown if no other alert is already displayed
     var cd=getPayoutCountdown(a);
-    if(cd && payoutAlert!=='STOP_WAIT') alertHtml+='<span class="payout-countdown '+cd.cls+'">'+cd.label+'</span>';
+    if(cd && payoutAlert!=='STOP_WAIT' && payoutAlert!=='PAYOUT_TIME' && !phaseAdvance) alertHtml+='<span class="payout-countdown '+cd.cls+'">'+cd.label+'</span>';
     html += '<div class="aname"><span class="aicon'+(a.icon==='warn'?' w':'')+'">'+( a.icon==='warn'?'⚠':'⚡')+'</span>'+a.id+alertHtml+'</div>';
     html += '<div><select class="phase-select'+(isLive?' live':isBreached?' breached':a.phase===2?' phase2':'')+'" data-idx="'+idx+'">';
     html += '<option value="1"'+(a.phase===1?' selected':'')+'>Phase 1</option>';
@@ -1308,10 +1308,63 @@ function renderAccounts(){
       }
       var daysToMax=getDaysToMaxLoss(a);
       var showDaysToMax = daysToMax!==null && !(a.phase==='live' && pnl>=0);
-      html += '<div class="risc-card"><div class="metric-label">RISC PROP ('+(getPropRiskPct(a)*100).toFixed(2)+'% × balance)</div><div class="risc-val">$'+Math.round(riscProp).toLocaleString()+'</div>'+(showDaysToMax?'<div class="risc-sub">~'+Math.round(daysToMax)+' zile până la max loss</div>':'')+'<button class="risc-copy" data-copy="'+Math.round(riscProp)+'" title="Copiază">⧉</button></div>';
+      // ── LOT SIZE CARDS (NAS100 CFD, pip value $10/lot) ──
+      var slPips = a.slPips || 50;
+      var lotRiskPct = a.lotRiskPct !== undefined ? a.lotRiskPct : getPropRiskPct(a)*100;
+      var lotPair = a.lotPair || 'EURUSD';
+
+      // Pip value per lot standard per pair
+      var PIP_VALUES = {
+        'EURUSD':10,'GBPUSD':10,'AUDUSD':10,'NZDUSD':10,
+        'USDJPY':6.5,'USDCHF':10,'USDCAD':7.5,
+        'EURCAD':7.5,'EURGBP':12.5,'EURJPY':6.5,'GBPJPY':6.5,
+        'XAUUSD':100,'XAGUSD':50,
+        'NAS100':10,'US30':10,'SP500':10,
+      };
+      var pipVal = PIP_VALUES[lotPair] || 10;
+
+      var propRiskAmt = a.balance * (lotRiskPct/100);
+      var propLot = slPips > 0 ? Math.round((propRiskAmt / (slPips * pipVal)) * 100) / 100 : 0;
+
+      // Broker Lot: reward to recover ÷ (SL×2 × pipVal)
+      var brokerReward = getRiscBrokerReward(a);
+      var brokerLot = slPips > 0 ? Math.round((brokerReward / (slPips * 2 * pipVal)) * 100) / 100 : 0;
+
+      var inpStyle='background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);color:#fff;font-family:inherit;font-size:12px;font-weight:700;padding:4px 8px;border-radius:6px;outline:none;text-align:center;width:100%;box-sizing:border-box';
+      var selStyle='background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);color:#fff;font-family:inherit;font-size:12px;font-weight:700;padding:4px 8px;border-radius:6px;outline:none;width:100%;box-sizing:border-box;cursor:pointer';
+      var lblStyle='font-size:9px;color:rgba(255,255,255,0.55);font-weight:600;display:block;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.5px';
+
+      // Custom pair picker — native select but with dark option background
+      var pairOpts=Object.keys(PIP_VALUES).map(function(p){
+        return '<option value="'+p+'" style="background:#1e3a5f;color:#fff"'+(p===lotPair?' selected':'')+'>'+p+'</option>';
+      }).join('');
+
+      var propInputsHtml=''
+        +'<div style="margin-top:10px;display:flex;flex-direction:column;gap:7px">'
+        +'<div><label style="'+lblStyle+'">Pair</label>'
+        +'<select class="lot-pair-sel" data-idx="'+idx+'" style="'+selStyle+'">'+pairOpts+'</select></div>'
+        +'<div><label style="'+lblStyle+'">Risk %</label>'
+        +'<input type="number" class="lot-risk-inp" data-idx="'+idx+'" value="'+lotRiskPct.toFixed(1)+'" min="0.1" max="10" step="0.1" style="'+inpStyle+'"></div>'
+        +'<div><label style="'+lblStyle+'">SL (pips)</label>'
+        +'<input type="number" class="sl-pips-inp" data-idx="'+idx+'" value="'+slPips+'" min="1" max="2000" style="'+inpStyle+'"></div>'
+        +'<div style="font-size:9px;color:rgba(255,255,255,0.4);margin-top:2px">pip value: $'+pipVal+'/lot</div>'
+        +'</div>';
+
+      var brokerSubHtml='<div class="risc-sub">Reward: $'+Math.round(brokerReward)+' / trade</div>';
+
+      html += '<div class="risc-card"><div class="metric-label">PROP LOT</div>'
+        +'<div class="risc-val">'+propLot.toFixed(2)+'<span style="font-size:13px;font-weight:500;opacity:0.7"> lot</span></div>'
+        +(showDaysToMax?'<div class="risc-sub">~'+Math.round(daysToMax)+' days to max loss</div>':'')
+        +propInputsHtml
+        +'<button class="risc-copy" data-copy="'+propLot.toFixed(2)+'" title="Copy" style="margin-top:8px">⧉</button></div>';
+
       var isPureProfit = pnl>=0;
       var minBrokerBal = getMinBrokerBalance(a);
-      html += '<div class="risc-card cyan"><div class="metric-label">RISC BROKER'+(isPureProfit?'':' <span style="color:rgba(255,255,255,0.7);font-weight:500">(reward $'+Math.round(riscReward).toLocaleString()+')</span>')+'</div><div class="risc-val cyan'+(isPureProfit?' profit':'')+'">'+(isPureProfit?'No Broker':'$'+Math.round(riscBroker).toLocaleString())+'</div>'+(isPureProfit?'':'<div class="risc-sub">Balanță minimă: $'+Math.round(minBrokerBal).toLocaleString()+'</div>')+(isPureProfit?'':'<button class="risc-copy" data-copy="'+Math.round(riscBroker)+'" title="Copiază">⧉</button>')+'</div>';
+      html += '<div class="risc-card cyan"><div class="metric-label">BROKER LOT <span style="color:rgba(255,255,255,0.6);font-weight:500;font-size:9px">(SL ×2)</span></div>'
+        +'<div class="risc-val cyan'+(isPureProfit?' profit':'')+'">'+(isPureProfit?'No Hedge':brokerLot.toFixed(2)+'<span style="font-size:13px;font-weight:500;opacity:0.7"> lot</span>')+'</div>'
+        +(isPureProfit?'':brokerSubHtml)
+        +(isPureProfit?'':'<button class="risc-copy" data-copy="'+brokerLot.toFixed(2)+'" title="Copy">⧉</button>')
+        +'</div>';
       html += '</div>';
       var bandLabel, currentLabel, currentVal;
       if(a.phase===1 || a.phase===2){
@@ -1354,6 +1407,56 @@ function renderAccounts(){
 }
 
 function bindCellEvents(){
+  // Lot pair selector
+  document.querySelectorAll('.lot-pair-sel').forEach(function(sel){
+    sel.addEventListener('click',function(e){e.stopPropagation();});
+    sel.addEventListener('change',function(e){
+      e.stopPropagation();
+      var idx=parseInt(sel.getAttribute('data-idx'));
+      accounts[idx].lotPair=sel.value;
+      saveState();renderAccounts();
+    });
+  });
+  // SL pips input — per account
+  document.querySelectorAll('.sl-pips-inp').forEach(function(inp){
+    inp.addEventListener('click',function(e){e.stopPropagation();});
+    inp.addEventListener('change',function(e){
+      e.stopPropagation();
+      var idx=parseInt(inp.getAttribute('data-idx'));
+      accounts[idx].slPips=Math.max(1,parseInt(inp.value)||50);
+      saveState();renderAccounts();
+    });
+  });
+  // Prop lot risk %
+  document.querySelectorAll('.lot-risk-inp').forEach(function(inp){
+    inp.addEventListener('click',function(e){e.stopPropagation();});
+    inp.addEventListener('change',function(e){
+      e.stopPropagation();
+      var idx=parseInt(inp.getAttribute('data-idx'));
+      accounts[idx].lotRiskPct=Math.max(0.1,parseFloat(inp.value)||1);
+      saveState();renderAccounts();
+    });
+  });
+  // Broker balance
+  document.querySelectorAll('.broker-bal-inp').forEach(function(inp){
+    inp.addEventListener('click',function(e){e.stopPropagation();});
+    inp.addEventListener('change',function(e){
+      e.stopPropagation();
+      var idx=parseInt(inp.getAttribute('data-idx'));
+      accounts[idx].brokerLotBal=Math.max(0,parseFloat(inp.value)||0);
+      saveState();renderAccounts();
+    });
+  });
+  // Broker risk %
+  document.querySelectorAll('.broker-risk-inp').forEach(function(inp){
+    inp.addEventListener('click',function(e){e.stopPropagation();});
+    inp.addEventListener('change',function(e){
+      e.stopPropagation();
+      var idx=parseInt(inp.getAttribute('data-idx'));
+      accounts[idx].brokerLotRiskPct=Math.max(0.1,parseFloat(inp.value)||1);
+      saveState();renderAccounts();
+    });
+  });
   // Trade split toggle (÷4 / ÷2), only shown for Live 10k accounts
   document.querySelectorAll('.split-btn').forEach(function(btn){
     btn.addEventListener('click', function(e){
@@ -1931,8 +2034,8 @@ function renderOverview(){
       var prog2=Math.min(99,Math.max(0,Math.round((a.balance-a.capital)/(a.capital*tPct)*100)));
       if(prog2>0) radarItems.push({id:a.id.slice(-8),status:'close',label:'Phase '+a.phase+' · '+prog2+'% to target',val:'',prog:prog2});
     }
-    // Add countdown only for non-STOP_WAIT accounts (STOP_WAIT already handled above)
-    if(alert!=='STOP_WAIT'){
+    // Add countdown only if account doesn't already have a primary status shown
+    if(alert!=='STOP_WAIT' && alert!=='PAYOUT_TIME' && !phAlert){
       var cd2=getPayoutCountdown(a);
       if(cd2) radarItems.push({id:a.id.slice(-8),status:cd2.cls,label:cd2.label,val:'',prog:cd2.prog||100,isCountdown:true});
     }
