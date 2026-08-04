@@ -2,6 +2,7 @@
 <html lang="ro">
 <head>
 <meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojNmQyOGQ5Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3R5bGU9InN0b3AtY29sb3I6IzI1NjNlYiIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTQiIGZpbGw9InVybCgjZykiLz4KICA8dGV4dCB4PSIzMiIgeT0iNDQiIGZvbnQtZmFtaWx5PSJJbnRlcixBcmlhbCxzYW5zLXNlcmlmIiBmb250LXNpemU9IjI4IiBmb250LXdlaWdodD0iODAwIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgbGV0dGVyLXNwYWNpbmc9Ii0xIj5HRDwvdGV4dD4KPC9zdmc+">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GDTrading</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -148,7 +149,7 @@ input,select{font-family:'Inter',sans-serif}
 .ticket-add-btn{background:linear-gradient(135deg,#2563eb,#1d4ed8);border:none;color:#fff;font-family:inherit;font-size:12px;font-weight:700;padding:10px 16px;border-radius:10px;cursor:pointer;letter-spacing:0.5px;transition:all 0.15s;white-space:nowrap;box-shadow:0 2px 8px rgba(37,99,235,0.25)}
 .ticket-add-btn:hover{background:linear-gradient(135deg,#1d4ed8,#1e3a8a);transform:translateY(-1px);box-shadow:0 4px 14px rgba(37,99,235,0.35)}
 .ticket-list{max-height:200px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
-.ticket-list:empty::after{content:"Niciun ticket adăugat";color:var(--text3);font-size:12px;text-align:center;padding:20px 0;display:block;font-style:italic}
+.ticket-list:empty::after{content:"No tickets added";color:var(--text3);font-size:12px;text-align:center;padding:20px 0;display:block;font-style:italic}
 .ticket-item{display:flex;align-items:center;justify-content:space-between;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:13px;font-weight:600;color:var(--text);font-family:"SFMono-Regular",Consolas,monospace;transition:all 0.15s}
 .ticket-item:hover{border-color:var(--border2);background:#fff}
 .ticket-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:15px;line-height:1;padding:0 2px;transition:color 0.15s;border-radius:4px}
@@ -170,7 +171,7 @@ input,select{font-family:'Inter',sans-serif}
 .cell-val.neg{color:var(--red)}
 .cell-val.pos{color:var(--green)}
 .cell-val.zer{color:var(--text3)}
-.cell-val.bal{font-weight:700;color:#2563eb} /* albastru: nemodificat azi sau în pierdere */
+.cell-val.bal{font-weight:700;color:#2563eb} /* blue: not edited today or in loss */
 .cell-val.bal.bal-profit{color:#059669} /* verde smarald: editat azi + balance > capital */
 
 /* PHASE */
@@ -586,7 +587,7 @@ input,select{font-family:'Inter',sans-serif}
       <div class="logo-name">GD<span>Trading</span></div>
     </div>
     <div style="display:flex;align-items:center;gap:8px">
-      <button class="btn-out" id="btn-reset-demo" title="Resetează toate datele la valorile demo inițiale">↺ Reset date</button>
+      <button class="btn-out" id="btn-reset-demo" title="Reset all data to initial demo values">↺ Reset date</button>
       <button class="btn-out" id="btn-logout">↪ Logout</button>
     </div>
   </div>
@@ -637,7 +638,7 @@ input,select{font-family:'Inter',sans-serif}
           <div class="profit-icon">📈</div>
           <div>
             <div class="profit-title">Monthly Profit</div>
-            <div class="profit-subtitle">Performanță lunară</div>
+            <div class="profit-subtitle">Monthly performance</div>
           </div>
           <select id="chart-acc-sel" class="chart-sel"></select>
         </div>
@@ -648,7 +649,7 @@ input,select{font-family:'Inter',sans-serif}
           </div>
           <div class="profit-summary-div"></div>
           <div class="profit-summary-item">
-            <div class="profit-summary-label">Medie/lună</div>
+            <div class="profit-summary-label">Avg/month</div>
             <div class="profit-summary-val" id="profit-sum-avg">$0</div>
           </div>
           <div class="profit-summary-div"></div>
@@ -666,12 +667,12 @@ input,select{font-family:'Inter',sans-serif}
             <div class="profit-summary-label">Total All-Time</div>
             <div class="profit-summary-val" id="profit-sum-alltime">$0</div>
           </div>
-          <button id="btn-reset-chart" title="Șterge tot istoricul graficului (conturile NU sunt afectate)" style="background:none;border:none;color:var(--text3);font-size:14px;cursor:pointer;padding:0 0 0 6px;line-height:1">↺</button>
+          <button id="btn-reset-chart" title="Delete full chart history (accounts are NOT affected)" style="background:none;border:none;color:var(--text3);font-size:14px;cursor:pointer;padding:0 0 0 6px;line-height:1">↺</button>
         </div>
       </div>
       <div class="profit-controls">
         <input type="number" id="chart-profit-inp" class="chart-inp" placeholder="Profit ($)" style="width:120px">
-        <select id="chart-payout-acc-sel" class="chart-sel" title="Contul de pe care s-a făcut payout-ul"></select>
+        <select id="chart-payout-acc-sel" class="chart-sel" title="Account from which the payout was made"></select>
         <select id="chart-month-sel" class="chart-sel">
           <option value="0">Ian</option><option value="1">Feb</option><option value="2">Mar</option>
           <option value="3">Apr</option><option value="4">Mai</option><option value="5">Iun</option>
@@ -683,7 +684,7 @@ input,select{font-family:'Inter',sans-serif}
         </select>
         <button class="btn-add" id="btn-add-chart" style="padding:8px 16px;font-size:12px">+ Add</button>
         <div style="width:1px;height:24px;background:var(--border2);margin:0 4px"></div>
-        <button class="btn-add" id="btn-sync-pnl" style="padding:8px 16px;font-size:12px;background:linear-gradient(135deg,#16a34a,#0891b2)" title="Adaugă P&amp;L-ul curent al contului selectat ca intrare pe grafic, în ziua de azi">📍 Adaugă P&L în grafic</button>
+        <button class="btn-add" id="btn-sync-pnl" style="padding:8px 16px;font-size:12px;background:linear-gradient(135deg,#16a34a,#0891b2)" title="Add current P&L of selected account as a chart entry for today">📍 Add P&L to chart</button>
       </div>
       <div class="chart-canvas-wrap">
         <div id="chart-legend" style="display:flex;gap:16px;padding:6px 4px 4px;font-size:11px;font-weight:600"></div>
@@ -720,8 +721,8 @@ input,select{font-family:'Inter',sans-serif}
     </div>
     <p class="modal-desc">Adauga un cont nou. Toate valorile vor fi 0 — le editezi direct din tabel.</p>
     <div class="form-grid">
-      <div class="inp-group form-full"><label class="flabel">Account ID / Adresa cont</label><input class="finp" id="new-id" type="text" placeholder="ex: TDFYSL50881430849"></div>
-      <div class="inp-group"><label class="flabel">Capital cont</label>
+      <div class="inp-group form-full"><label class="flabel">Account ID / Account address</label><input class="finp" id="new-id" type="text" placeholder="ex: TDFYSL50881430849"></div>
+      <div class="inp-group"><label class="flabel">Account capital</label>
         <select class="fselect" id="new-capital">
           <option value="10000">$10,000</option><option value="25000">$25,000</option>
           <option value="50000" selected>$50,000</option><option value="100000">$100,000</option>
@@ -753,7 +754,7 @@ input,select{font-family:'Inter',sans-serif}
     </div>
     <div class="phase-change-info" id="phase-modal-info"></div>
     <div class="inp-group" style="margin-bottom:20px">
-      <label class="flabel">Adresa cont nou</label>
+      <label class="flabel">New account address</label>
       <input class="finp" id="phase-new-id" type="text" placeholder="ex: TDFYSL50881430849">
     </div>
     <button class="btn-submit" id="btn-confirm-phase">✓ Confirm</button>
@@ -765,7 +766,7 @@ input,select{font-family:'Inter',sans-serif}
   <div class="ticket-overlay" id="ticket-overlay"></div>
   <div class="ticket-box">
     <h3>📋 Trade Log — <span id="ticket-modal-acc"></span></h3>
-    <div class="ticket-sub">Notează numărul trade-ului asociat acestui cont</div>
+    <div class="ticket-sub">Note the trade number associated with this account</div>
     <div class="ticket-warn" id="ticket-warn"></div>
     <div class="ticket-input-row">
       <input id="ticket-input" type="text" placeholder="ex: 1234567890" maxlength="30" autocomplete="off">
@@ -794,7 +795,7 @@ var pendingPhase = {idx:null, newPhase:null};
 function saveState(){
   try{
     localStorage.setItem(STORAGE_KEY, JSON.stringify({accounts:accounts, chartData:chartData, savedAt:Date.now()}));
-  }catch(e){ console.warn('Nu s-a putut salva local:', e); }
+  }catch(e){ console.warn('Could not save locally:', e); }
 }
 
 function loadState(){
@@ -807,12 +808,12 @@ function loadState(){
       chartData = parsed.chartData || {};
       return true;
     }
-  }catch(e){ console.warn('Nu s-au putut încărca datele salvate local:', e); }
+  }catch(e){ console.warn('Could not load saved data locally:', e); }
   return false;
 }
 
 function resetToDemoData(){
-  if(!confirm('Sigur vrei să resetezi la datele demo? Tot ce ai introdus (conturi, payouts, grafic) se va pierde definitiv din acest browser.')) return;
+  if(!confirm('Are you sure you want to reset to demo data? Everything you entered (accounts, payouts, chart) will be permanently deleted from this browser.')) return;
   accounts = DEFAULT_ACCOUNTS.map(function(a){return Object.assign({},a);});
   chartData = {};
   saveState();
@@ -820,7 +821,7 @@ function resetToDemoData(){
 }
 
 function resetChartOnly(){
-  if(!confirm('Sigur vrei să ștergi tot istoricul graficului Monthly Profit? Conturile (Eval/Broker/Payouts/Balance) NU sunt afectate.')) return;
+  if(!confirm('Are you sure you want to delete the full Monthly Profit chart history? Accounts (Eval/Broker/Payouts/Balance) are NOT affected.')) return;
   chartData = {};
   saveState();
   renderChart();
@@ -1089,7 +1090,7 @@ function drawBalanceHistory(idx, account){
   ctx.clearRect(0,0,W,H);
 
   if(hist.length<2){
-    var msg = hist.length===0 ? 'Nu există încă date. Se înregistrează la prima editare de Balance.' : 'Mai e nevoie de o zi pentru a desena graficul.';
+    var msg = hist.length===0 ? 'No data yet. Recorded on the first Balance edit.' : 'Mai e nevoie de o zi pentru a desena graficul.';
     ctx.font='12px Inter'; ctx.fillStyle='#5b6478'; ctx.textAlign='center';
     var words=msg.split(' '), lines=[], line='', maxW=W-32;
     for(var i=0;i<words.length;i++){
@@ -1267,7 +1268,7 @@ function renderAccounts(){
       } else if(a.balance<=a.capital){
         potProfit=0;
       } else {
-        var realProfit=a.balance-a.capital; // profitul real față de capitalul inițial
+        var realProfit=a.balance-a.capital; // real profit vs initial capital
         if(payoutsCount===0){
           potProfit=Math.round(realProfit*0.8 - 15 - Math.abs(a.broker) - Math.abs(a.eval));
         } else {
@@ -1307,15 +1308,15 @@ function renderAccounts(){
       }
       pdHtml+='<div class="payout-date-inline" id="payout-date-inp-'+idx+'" style="display:none">';
       pdHtml+='<input type="datetime-local" id="payout-dt-'+idx+'" value="'+(a.payoutDate||'')+'">';
-      pdHtml+='<button onclick="savePayoutDate('+idx+')" title="Salvează">✓</button>';
-      pdHtml+='<button onclick="clearPayoutDate('+idx+')" title="Șterge">✕</button>';
+      pdHtml+='<button onclick="savePayoutDate('+idx+')" title="Save">✓</button>';
+      pdHtml+='<button onclick="clearPayoutDate('+idx+')" title="Delete">✕</button>';
       pdHtml+='</div></div>';
-      html += '<div class="pot-bar" style="flex-wrap:wrap">'+payoutCountHtml+(initBrokerBal!==null?'<div class="pot-item">BALANȚA BROKER <span class="b">$'+initBrokerBal.toLocaleString()+'</span></div>':'')+potPayoutHtml+'<div class="pot-item">POTENTIAL PROFIT <span class="'+potClass+'">'+potStr+'</span></div>'+pdHtml+'</div>';
+      html += '<div class="pot-bar" style="flex-wrap:wrap">'+payoutCountHtml+(initBrokerBal!==null?'<div class="pot-item">BROKER BALANCE <span class="b">$'+initBrokerBal.toLocaleString()+'</span></div>':'')+potPayoutHtml+'<div class="pot-item">POTENTIAL PROFIT <span class="'+potClass+'">'+potStr+'</span></div>'+pdHtml+'</div>';
       var showChart = (a.phase===1 || a.phase===2);
       html += '<div class="exp-inner'+(showChart?'':' no-chart')+'">';
       if(showChart){
         html += '<div class="chart-area">';
-        html += '<div class="bh-legend"><span><span class="dot" style="background:#22d3ee"></span>Balance</span><span><span class="dot" style="background:#fbbf24"></span>Schimbare fază</span></div>';
+        html += '<div class="bh-legend"><span><span class="dot" style="background:#22d3ee"></span>Balance</span><span><span class="dot" style="background:#fbbf24"></span>Phase change</span></div>';
         html += '<div class="bh-canvas-wrap"><canvas id="bh-canvas-'+idx+'"></canvas><div class="bh-tooltip" id="bh-tooltip-'+idx+'"></div></div>';
         html += '</div>';
       }
@@ -1331,12 +1332,12 @@ function renderAccounts(){
       html += '<div class="metrics-title">RISC CALCULATOR <span style="font-size:11px;color:var(--text3)">'+phaseLbl+'</span></div>';
       html += '<div class="risc-grid">';
       var beVal=getBE(a);
-      html += '<div class="risc-card gold"><div class="metric-label">🎯 BE</div><div class="risc-val'+(beVal===null?' profit':'')+'">'+(beVal===null?'Pure Profit':'$'+Math.round(beVal).toLocaleString())+'</div>'+(beVal===null?'':'<button class="risc-copy" data-copy="'+Math.round(beVal)+'" title="Copiază">⧉</button>')+'</div>';
+      html += '<div class="risc-card gold"><div class="metric-label">🎯 BE</div><div class="risc-val'+(beVal===null?' profit':'')+'">'+(beVal===null?'Pure Profit':'$'+Math.round(beVal).toLocaleString())+'</div>'+(beVal===null?'':'<button class="risc-copy" data-copy="'+Math.round(beVal)+'" title="Copy">⧉</button>')+'</div>';
       if(a.phase===1 || a.phase===2){
         var pPct=a.phase===1?0.08:0.05;
         var pTarget=getPhaseTarget(a,pPct);
         var pProgress=getHealthPct(a);
-        html += '<div class="risc-card gold"><div class="metric-label">📈 PHASE '+a.phase+' TARGET</div><div class="risc-val">$'+Math.round(pTarget).toLocaleString()+'</div><div class="risc-sub">'+Math.round(pProgress)+'% din target atins</div><button class="risc-copy" data-copy="'+Math.round(pTarget)+'" title="Copiază">⧉</button></div>';
+        html += '<div class="risc-card gold"><div class="metric-label">📈 PHASE '+a.phase+' TARGET</div><div class="risc-val">$'+Math.round(pTarget).toLocaleString()+'</div><div class="risc-sub">'+Math.round(pProgress)+'% of target reached</div><button class="risc-copy" data-copy="'+Math.round(pTarget)+'" title="Copy">⧉</button></div>';
       }
       var daysToMax=getDaysToMaxLoss(a);
       var showDaysToMax = daysToMax!==null && !(a.phase==='live' && pnl>=0);
@@ -1520,10 +1521,10 @@ function bindCellEvents(){
       };
       if(navigator.clipboard && navigator.clipboard.writeText){
         navigator.clipboard.writeText(val).then(doneFeedback).catch(function(){
-          alert('Nu s-a putut copia automat. Valoare: '+val);
+          alert('Could not copy automatically. Value: '+val);
         });
       } else {
-        alert('Nu s-a putut copia automat. Valoare: '+val);
+        alert('Could not copy automatically. Value: '+val);
       }
     });
   });
@@ -1542,7 +1543,7 @@ function bindCellEvents(){
       pendingPhase = {idx:idx, newPhase: newPhase==='live'?'live':parseInt(newPhase)};
       var titles={1:'Phase 1',2:'Phase 2',live:'Live'};
       document.getElementById('phase-modal-title').textContent='→ '+titles[newPhase];
-      document.getElementById('phase-modal-info').textContent='Ai trecut la '+titles[newPhase]+'! Introdu adresa noului cont primit de la prop firm.';
+      document.getElementById('phase-modal-info').textContent="You've moved to "+titles[newPhase]+"! Enter the new account address received from the prop firm.";
       document.getElementById('phase-new-id').value='';
       document.getElementById('phase-modal').classList.add('open');
     });
@@ -1573,6 +1574,19 @@ function bindCellEvents(){
       accounts[idx][field] = val;
       accounts[idx][field+'Expr'] = raw; // keep the raw expression (e.g. "-130-51-182-166") so it can be continued later
       if(field==='balance') recordBalanceHistory(accounts[idx]);
+      // Auto-reset balance to initial capital when payouts cell is edited
+      if(field==='payouts'){
+        var acc=accounts[idx];
+        var newCount=countPayouts(acc);
+        var prevCount=acc._lastPayoutCount||0;
+        if(newCount>prevCount){
+          // a new payout term was added — reset balance
+          acc.balance=acc.capital;
+          acc.balanceExpr='';
+          acc.balanceHistory=[];
+        }
+        acc._lastPayoutCount=newCount;
+      }
       updateStats();
       saveState();
       if(expanded===idx){
@@ -1606,7 +1620,7 @@ function updateChartSelect(){
 
   var paySel=document.getElementById('chart-payout-acc-sel');
   var curPay=paySel.value;
-  paySel.innerHTML='<option value="">— Cont payout —</option><option value="theo">⭐ Theo\'s payout</option>';
+  paySel.innerHTML='<option value="">— Payout account —</option><option value="theo">⭐ Theo\'s payout</option>';
   for(var i=0;i<accounts.length;i++){
     if(accounts[i].phase==='breached') continue; // skip breached accounts
     if(accounts[i].phase!=='live') continue; // only Live accounts in payout dropdown
@@ -1620,7 +1634,7 @@ function updateChartSelect(){
 
 function addChartEntry(){
   var profit=parseFloat(document.getElementById('chart-profit-inp').value);
-  if(isNaN(profit)){alert('Introdu o valoare!');return;}
+  if(isNaN(profit)){alert('Enter a value!');return;}
   var month=parseInt(document.getElementById('chart-month-sel').value);
   var year=parseInt(document.getElementById('chart-year-sel').value);
   var day=new Date().getDate();
@@ -1669,7 +1683,7 @@ function syncPnLToChart(){
   } else {
     var acc=null;
     for(var i=0;i<accounts.length;i++){ if(accounts[i].id===key){acc=accounts[i];break;} }
-    if(!acc){alert('Selectează un cont valid!');return;}
+    if(!acc){alert('Select a valid account!');return;}
     pnl=getPnL(acc);
     sourceAccounts=[acc.id];
   }
@@ -1678,7 +1692,7 @@ function syncPnLToChart(){
   var alreadyLogged=(chartData[key]||[]).filter(function(e){return e.fromPnL;}).reduce(function(sum,e){return sum+e.profit;},0);
   var newProgress=pnl-alreadyLogged;
   if(newProgress<=0){
-    alert('Nu există profit nou față de ultima sincronizare ('+fmtMoney(alreadyLogged)+' deja înregistrat din P&L curent de '+fmtMoney(pnl)+'). Nu s-a adăugat nimic.');
+    alert('No new profit since last sync ('+fmtMoney(alreadyLogged)+' already recorded from current P&L of '+fmtMoney(pnl)+'). Nothing was added.');
     return;
   }
   var month=parseInt(document.getElementById('chart-month-sel').value);
@@ -1748,7 +1762,7 @@ function renderChart(){
     var ekey=isTheo?'theo':key;
     tags+='<button onclick="removeEntry(\''+ekey+'\','+e.month+','+e.year+','+(e.day||1)+')">✕</button></span>';
   }
-  document.getElementById('chart-tags').innerHTML=tags||'<span style="font-size:12px;color:#999">Niciun profit adăugat. Selectează contul, luna și apasă + Add.</span>';
+  document.getElementById('chart-tags').innerHTML=tags||'<span style="font-size:12px;color:#999">No entries yet. Select account, month and press + Add.</span>';
 
   // ── SUMMARY
   var totalEl=document.getElementById('profit-sum-total'),avgEl=document.getElementById('profit-sum-avg'),
@@ -1802,7 +1816,7 @@ function renderChart(){
   // ── NO DATA
   if(!fxData.length&&!theoData.length){
     ctx.font='600 13px Inter';ctx.fillStyle='#9aa3b0';ctx.textAlign='center';
-    ctx.fillText('Niciun profit înregistrat în '+MONTHS[selMonth]+' '+selYear,W/2,H/2);
+    ctx.fillText('No profit recorded in '+MONTHS[selMonth]+' '+selYear,W/2,H/2);
     canvas._points=[];return;
   }
 
@@ -1995,9 +2009,9 @@ function renderOverview(){
   z1+='<div class="ov-zone-title">📊 P&L Snapshot</div>';
   z1+='<div class="ov-big"><div class="ov-big-val '+pnlClass+'">'+pnlStr+'</div><div class="ov-big-lbl">P&L Total combinat</div></div>';
   z1+='<div class="ov-split">';
-  z1+='<div class="ov-split-item"><div class="osv g">'+onProfit+'</div><div class="osl">Pe profit</div></div>';
-  z1+='<div class="ov-split-item"><div class="osv r">'+onLoss+'</div><div class="osl">Pe pierdere</div></div>';
-  z1+='<div class="ov-split-item"><div class="osv b">'+active.length+'</div><div class="osl">Totale</div></div>';
+  z1+='<div class="ov-split-item"><div class="osv g">'+onProfit+'</div><div class="osl">In profit</div></div>';
+  z1+='<div class="ov-split-item"><div class="osv r">'+onLoss+'</div><div class="osl">In loss</div></div>';
+  z1+='<div class="ov-split-item"><div class="osv b">'+active.length+'</div><div class="osl">Total</div></div>';
   z1+='</div>';
   if(bestAcc) z1+='<div style="margin-top:auto"><div class="ov-row"><span class="ov-lbl">🏆 Best account</span><span class="ov-val '+(getPnL(bestAcc)>=0?'g':'r')+'">'+bestAcc.id.slice(-8)+' ('+(getPnL(bestAcc)>=0?'+$':'-$')+Math.abs(Math.round(getPnL(bestAcc))).toLocaleString()+')</span></div>';
   if(worstAcc&&worstAcc!==bestAcc) z1+='<div class="ov-row"><span class="ov-lbl">📉 Worst account</span><span class="ov-val '+(getPnL(worstAcc)>=0?'g':'r')+'">'+worstAcc.id.slice(-8)+' ('+(getPnL(worstAcc)>=0?'+$':'-$')+Math.abs(Math.round(getPnL(worstAcc))).toLocaleString()+')</span></div>';
@@ -2808,14 +2822,14 @@ function renderHedgeCalc(){
           <div class="hfield"><label>Contracte MNQ</label><input class="hinp" id="hsUnits" type="number" value="12"></div>
           <div class="hfield"><label>SL prop <span class="hint">($)</span></label><input class="hinp" id="hsSL" type="number" value="2000"></div>
         </div>
-        <div class="hfield"><label>Sumă de recuperat <span class="hint">(taxă + costuri, $)</span></label><input class="hinp" id="hsRec" type="number" value="99"></div>
+        <div class="hfield"><label>Amount to recover <span class="hint">(fee + costs, $)</span></label><input class="hinp" id="hsRec" type="number" value="99"></div>
       </div>
       <div class="hout">
         <div class="hbig"><span class="hk">LOT NAS100 DE PUS</span><span class="hv" id="hsLot">—</span></div>
-        <div class="hbig"><span class="hk">PUNCTE PÂNĂ LA SL</span><span class="hv hamber" id="hsPts">—<small>pct</small></span></div>
+        <div class="hbig"><span class="hk">POINTS TO SL</span><span class="hv hamber" id="hsPts">—<small>pct</small></span></div>
         <div class="hbd" id="hsBd"></div>
       </div>
-      <div class="hnote"><b>Reminder:</b> hedge parțial — recuperează suma doar dacă MNQ și NAS parcurg același nr. de puncte. Nu include spread/basis/latență.</div>
+      <div class="hnote"><b>Reminder:</b> partial hedge — recovers the amount only if MNQ and NAS move the same number of points. Does not include spread/basis/latency.</div>
     </div>
     <div class="hwindow" id="hw-complex">
       <div class="htabs">
@@ -2848,7 +2862,7 @@ function renderHedgeCalc(){
           </div>
           <div class="hrow c3">
             <div class="hfield"><label>Deficit $</label><input class="hinp" id="hbgDef" type="number" value="500"></div>
-            <div class="hfield"><label>Total recuperat $</label><input class="hinp" id="hbgTotal" type="number" value="3000"></div>
+            <div class="hfield"><label>Total recovered $</label><input class="hinp" id="hbgTotal" type="number" value="3000"></div>
             <div class="hfield"><label>Small trade $</label><input class="hinp" id="hbgSmall" type="number" value="1200"></div>
           </div>
         </div>
@@ -2858,8 +2872,8 @@ function renderHedgeCalc(){
         <div class="hpanel">
           <div class="hpanel-title">Live — pe zile</div>
           <div class="hrow c2">
-            <div class="hfield"><label>Balanță broker $</label><input class="hinp" id="hdBal" type="number" value="55000"></div>
-            <div class="hfield"><label>Deficit total $</label><input class="hinp" id="hdDef" type="number" value="500"></div>
+            <div class="hfield"><label>Broker balance $</label><input class="hinp" id="hdBal" type="number" value="55000"></div>
+            <div class="hfield"><label>Total deficit $</label><input class="hinp" id="hdDef" type="number" value="500"></div>
           </div>
           <div class="hrow c2">
             <div class="hfield"><label>SL $ / zi</label><input class="hinp" id="hdSL" type="number" value="2000"></div>
@@ -2867,9 +2881,9 @@ function renderHedgeCalc(){
           </div>
         </div>
         <div class="hout">
-          <div class="hbig"><span class="hk">ROOM PÂNĂ LA FLOOR</span><span class="hv hamber" id="hdRoom">—</span></div>
+          <div class="hbig"><span class="hk">ROOM TO FLOOR</span><span class="hv hamber" id="hdRoom">—</span></div>
           <div class="hbig"><span class="hk">SL-URI DISPONIBILE</span><span class="hv" id="hdSlots">—</span></div>
-          <div class="hbd" style="margin-top:10px">Împarte deficitul pe sloturi (editabil):</div>
+          <div class="hbd" style="margin-top:10px">Split deficit across slots (editable):</div>
           <table id="hdTable">
             <thead><tr><th>Slot</th><th>SL $</th><th>Recuperare $</th><th>Ratio</th><th>Broker lot</th></tr></thead>
             <tbody></tbody>
@@ -2892,7 +2906,7 @@ function renderHedgeCalc(){
     var exp=u*C.mnqPt,pts=hptsSL(sl,u,C.mnqPt),lot=hhedgeLot(rec,pts,C.nasPt),ticks=pts*4;
     document.getElementById('hsLot').textContent=lot>0?hf2(lot):'—';
     document.getElementById('hsPts').innerHTML=pts>0?pts.toFixed(1)+'<small>pct</small>':'—';
-    document.getElementById('hsBd').innerHTML='expunere prop: <b class="hg">'+u+' × $'+C.mnqPt+'</b> = <b>$'+hf0(exp)+'/punct</b><br>SL puncte: <b>$'+hf0(sl)+' ÷ $'+hf0(exp)+'</b> = <b class="hg">'+pts.toFixed(1)+' pct</b> ('+ticks.toFixed(0)+' ticks)<br>lot hedge: <b>$'+hf0(rec)+' ÷ ('+pts.toFixed(1)+' × $'+C.nasPt+')</b> = <b class="hg">'+hf2(lot)+' lot</b>';
+    document.getElementById('hsBd').innerHTML='expunere prop: <b class="hg">'+u+' × $'+C.mnqPt+'</b> = <b>$'+hf0(exp)+'/punct</b><br>SL points: <b>$'+hf0(sl)+' ÷ $'+hf0(exp)+'</b> = <b class="hg">'+pts.toFixed(1)+' pct</b> ('+ticks.toFixed(0)+' ticks)<br>lot hedge: <b>$'+hf0(rec)+' ÷ ('+pts.toFixed(1)+' × $'+C.nasPt+')</b> = <b class="hg">'+hf2(lot)+' lot</b>';
   }
   function hcalcP1(){
     var C=hg(),target=+document.getElementById('hp1target').value||0,cons=(+document.getElementById('hp1cons').value||40)/100;
@@ -2903,14 +2917,14 @@ function renderHedgeCalc(){
     var def2=fee+loss1,lot2=hhedgeLot(def2,pts,C.nasPt),loss2=lot2*(capDay/(units*C.mnqPt))*C.nasPt;
     var def3=fee+loss1+loss2,lot3=hhedgeLot(def3,pts,C.nasPt);
     var over=[lot1,lot2,lot3].some(function(l){return l>C.maxLot;});
-    document.getElementById('hp1out').innerHTML='<div class="hbig"><span class="hk">STRUCTURA 3 TRADE-URI</span><span class="hbadge">cons. reală '+realCons.toFixed(1)+'%</span></div><div class="hbd">SL puncte: <b>$'+hf0(sl)+' ÷ ('+units+'×$'+C.mnqPt+')</b> = <b class="hg">'+pts.toFixed(1)+' pct</b><br><br><b>Trade 1</b> — TP $'+hf0(capDay)+' → hedge <b class="hg">'+hf2(lot1)+' lot</b> (recuperă $'+hf0(fee)+')<br><b>Trade 2</b> — TP $'+hf0(capDay)+' → hedge <b class="hg">'+hf2(lot2)+' lot</b> (recuperă $'+hf0(def2)+')<br><b>Trade 3</b> — TP $'+hf0(t3)+' → hedge <b class="hg">'+hf2(lot3)+' lot</b> (recuperă $'+hf0(def3)+')<br><br>profit prop total: <b>$'+hf0(totalProfit)+'</b></div><div class="hwarn'+(over?' show':'')+'"><b>Peste Max Lot '+C.maxLot+'!</b> Reduce units sau acceptă recuperare parțială.</div>';
+    document.getElementById('hp1out').innerHTML='<div class="hbig"><span class="hk">3-TRADE STRUCTURE</span><span class="hbadge">real cons. '+realCons.toFixed(1)+'%</span></div><div class="hbd">SL points: <b>$'+hf0(sl)+' ÷ ('+units+'×$'+C.mnqPt+')</b> = <b class="hg">'+pts.toFixed(1)+' pct</b><br><br><b>Trade 1</b> — TP $'+hf0(capDay)+' → hedge <b class="hg">'+hf2(lot1)+' lot</b> (recovers $'+hf0(fee)+')<br><b>Trade 2</b> — TP $'+hf0(capDay)+' → hedge <b class="hg">'+hf2(lot2)+' lot</b> (recovers $'+hf0(def2)+')<br><b>Trade 3</b> — TP $'+hf0(t3)+' → hedge <b class="hg">'+hf2(lot3)+' lot</b> (recovers $'+hf0(def3)+')<br><br>total prop profit: <b>$'+hf0(totalProfit)+'</b></div><div class="hwarn'+(over?' show':'')+'"><b>Over Max Lot '+C.maxLot+'!</b> Reduce units or accept partial recovery.</div>';
   }
   function hcalcBig(){
     var C=hg(),units=+document.getElementById('hbgUnits').value||0,sl=+document.getElementById('hbgSL').value||0,def=+document.getElementById('hbgDef').value||0;
     var total=+document.getElementById('hbgTotal').value||0,small=+document.getElementById('hbgSmall').value||0;
     var tpOpt=Math.max(0,total-small),pts=hptsSL(sl,units,C.mnqPt),lot=hhedgeLot(def,pts,C.nasPt);
     var ptsTP=units>0?tpOpt/(units*C.mnqPt):0,lossIfWin=lot*ptsTP*C.nasPt,over=lot>C.maxLot;
-    document.getElementById('hbgOut').innerHTML='<div class="hbig"><span class="hk">TP OPTIM</span><span class="hv">$'+hf0(tpOpt)+'</span></div><div class="hbig"><span class="hk">HEDGE LOT</span><span class="hv'+(over?' hred':'')+'">'+hf2(lot)+'<small>lot</small></span></div><div class="hbig"><span class="hk">COST DACĂ PROP CÂȘTIGĂ</span><span class="hv hamber">-$'+hf0(lossIfWin)+'</span></div><div class="hwarn'+(over?' show':'')+'"><b>Peste Max Lot '+C.maxLot+'!</b></div>';
+    document.getElementById('hbgOut').innerHTML='<div class="hbig"><span class="hk">OPTIMAL TP</span><span class="hv">$'+hf0(tpOpt)+'</span></div><div class="hbig"><span class="hk">HEDGE LOT</span><span class="hv'+(over?' hred':'')+'">'+hf2(lot)+'<small>lot</small></span></div><div class="hbig"><span class="hk">COST IF PROP WINS</span><span class="hv hamber">-$'+hf0(lossIfWin)+'</span></div><div class="hwarn'+(over?' show':'')+'"><b>Over Max Lot '+C.maxLot+'!</b></div>';
   }
   function hcalcDays(){
     var C=hg(),bal=+document.getElementById('hdBal').value||0,sl=+document.getElementById('hdSL').value||0;
@@ -2931,8 +2945,8 @@ function renderHedgeCalc(){
     document.getElementById('hdTotSL').textContent='$'+hf0(totSL);
     document.getElementById('hdTotRec').textContent='$'+hf0(totRec);
     var wd=document.getElementById('hdWarn');
-    if(anyOver){wd.classList.add('show');wd.innerHTML='<b>Un slot depășește Max Lot '+C.maxLot+'!</b>';}
-    else if(totRec<def-1){wd.classList.add('show');wd.style.color='#d97706';wd.innerHTML='<b style="color:#d97706">Recuperare incompletă:</b> $'+hf0(totRec)+' din $'+hf0(def)+'.';}
+    if(anyOver){wd.classList.add('show');wd.innerHTML='<b>A slot exceeds Max Lot '+C.maxLot+'!</b>';}
+    else if(totRec<def-1){wd.classList.add('show');wd.style.color='#d97706';wd.innerHTML='<b style="color:#d97706">Incomplete recovery:</b> $'+hf0(totRec)+' din $'+hf0(def)+'.';}
     else wd.classList.remove('show');
   }
   function hcalcAll(){hcalcSimple();hcalcP1();hcalcBig();hcalcDays();}
@@ -2975,7 +2989,7 @@ function renderRulesAndLimits(){
   html+='<div class="rules-table-card">';
 
   // Header row
-  html+='<div class="rules-row head"><div class="rh-label">Regulă</div>';
+  html+='<div class="rules-row head"><div class="rh-label">Rule</div>';
   tiers.forEach(function(t){ html+='<div class="rh-tier">'+t.label+'</div>'; });
   html+='</div>';
 
@@ -2990,10 +3004,10 @@ function renderRulesAndLimits(){
   html+='</div>';
 
   // Inactivity (full-width banner)
-  html+='<div class="rules-inactivity">⏳ <b>Inactivitate:</b> 30 zile fără trade complet = breach (toate mărimile)</div>';
+  html+='<div class="rules-inactivity">⏳ <b>Inactivity:</b> 30 days without a complete trade = breach (all sizes)</div>';
 
   // Official risk per trade idea
-  html+='<div class="rules-row"><div class="rules-rowlabel"><div class="rule-name">✅ Risc per trade idea (oficial)</div><div class="rule-sub">Master · vechea regulă 3%/2%</div></div>';
+  html+='<div class="rules-row"><div class="rules-rowlabel"><div class="rule-name">✅ Risk per trade idea (official)</div><div class="rule-sub">Master · old 3%/2% rule</div></div>';
   tiers.forEach(function(t){
     if(t.officialPct){
       html+='<div class="rule-chip c-muted">'+t.officialNote+'<span class="pct">'+t.officialPct+'</span></div>';
@@ -3004,12 +3018,12 @@ function renderRulesAndLimits(){
   html+='</div>';
 
   // Personal risk plafond
-  html+='<div class="rules-row"><div class="rules-rowlabel"><div class="rule-name">👤 Risc per trade — plafonul tău</div><div class="rule-sub">ales de tine, NU regulă FundingPips</div></div>';
+  html+='<div class="rules-row"><div class="rules-rowlabel"><div class="rule-name">👤 Risk per trade — your cap</div><div class="rule-sub">chosen by you, NOT a FundingPips rule</div></div>';
   tiers.forEach(function(t){
     if(t.personal){
       html+='<div class="rule-chip c-blue">'+t.personal+'<span class="pct">'+t.personalAmt+'</span></div>';
     } else {
-      html+='<div class="rule-chip c-na">limita oficială<br>rămâne '+t.officialPct.split(',')[0]+'</div>';
+      html+='<div class="rule-chip c-na">official limit<br>remains '+t.officialPct.split(',')[0]+'</div>';
     }
   });
   html+='</div>';
@@ -3017,10 +3031,10 @@ function renderRulesAndLimits(){
   html+='</div>';
 
   html+='<div class="rules-warning"><div class="rw-icon">⚠️</div><div class="rw-text">'+
-    '<b>4.4–4.5% NU e o regulă FundingPips</b> — e plafonul de risc personal pe care l-ai ales tu, pus aici doar ca referință. '+
-    'Lasă doar 0.5–0.6% marjă față de Daily Loss Limit (5%) pe un singur trade pierzător în ziua respectivă — orice slippage, spread mai larg, '+
-    'sau un al doilea trade în aceeași zi te poate duce direct în breach. Pe 50K/100K nu se aplică, fiindcă limita oficială de 3%/2% per trade idea '+
-    'rămâne activă (unchanged) și e sub 4.4%.</div></div>';
+    '<b>4.4–4.5% is NOT a FundingPips rule</b> — it is your personal risk cap, included here as a reference only. '+
+    'It leaves only 0.5–0.6% margin vs the Daily Loss Limit (5%) on a single losing trade that day — any slippage, wider spread, '+
+    'or a second trade on the same day can push you straight into breach. Does not apply to 50K/100K, as the official 3%/2% per trade idea limit '+
+    'remains active (unchanged) and is below 4.4%.</div></div>';
 
   // STRIKING SYSTEM
   html+='<div class="rules-section-title">2 Step Standard</div>';
@@ -3194,16 +3208,16 @@ function addTicket(){
   var raw=document.getElementById('ticket-input').value.trim();
   if(!raw) return;
   var warn=document.getElementById('ticket-warn');
-  if(!raw){warn.textContent='Introdu un ticket ID.';warn.classList.add('show');return;}
+  if(!raw){warn.textContent='Enter a ticket ID.';warn.classList.add('show');return;}
   // global uniqueness check
   var existing=getAllTickets(ticketModalIdx);
   if(existing[raw.toLowerCase()]){
-    warn.textContent='⚠ Ticket "'+raw+'" există deja pe contul '+existing[raw.toLowerCase()]+'.';
+    warn.textContent='⚠ Ticket "'+raw+'" already exists on account '+existing[raw.toLowerCase()]+'.';
     warn.classList.add('show');return;
   }
   // duplicate on same account
   if((accounts[ticketModalIdx].tickets||[]).map(function(t){return t.toLowerCase();}).indexOf(raw.toLowerCase())>=0){
-    warn.textContent='⚠ Ticket "'+raw+'" e deja adăugat pe acest cont.';
+    warn.textContent='⚠ Ticket "'+raw+'" is already added to this account.';
     warn.classList.add('show');return;
   }
   warn.classList.remove('show');
@@ -3233,7 +3247,7 @@ document.getElementById('btn-open-add').addEventListener('click', function(){doc
 document.getElementById('btn-close-add').addEventListener('click', function(){document.getElementById('add-modal').classList.remove('open');});
 document.getElementById('btn-confirm-add').addEventListener('click', function(){
   var id=document.getElementById('new-id').value.trim();
-  if(!id){alert('Introdu Account ID!');return;}
+  if(!id){alert('Enter Account ID!');return;}
   var capital=parseInt(document.getElementById('new-capital').value)||50000;
   var phase=document.getElementById('new-phase-init').value;
   var phaseVal=phase==='live'?'live':parseInt(phase);
@@ -3252,7 +3266,7 @@ document.getElementById('btn-confirm-add').addEventListener('click', function(){
 document.getElementById('btn-close-phase').addEventListener('click', function(){document.getElementById('phase-modal').classList.remove('open');renderAccounts();});
 document.getElementById('btn-confirm-phase').addEventListener('click', function(){
   var newId=document.getElementById('phase-new-id').value.trim();
-  if(!newId){alert('Introdu adresa noului cont!');return;}
+  if(!newId){alert('Enter the new account address!');return;}
   var acc=accounts[pendingPhase.idx];
   acc.phase=pendingPhase.newPhase;
   acc.id=newId;
