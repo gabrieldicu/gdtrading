@@ -994,13 +994,19 @@ function getPayoutAlert(a){
     var hist=(a.balanceHistory||[]).slice().sort(function(x,y){return x.date<y.date?-1:1;});
     startDate=hist.length?hist[0].date:null;
   } else {
-    var sorted=entries.slice().sort(function(x,y){
-      var da=x.year+'-'+String(x.month+1).padStart(2,'0')+'-'+String(x.day||1).padStart(2,'0');
-      var db=y.year+'-'+String(y.month+1).padStart(2,'0')+'-'+String(y.day||1).padStart(2,'0');
-      return da<db?1:-1; // most recent first
-    });
-    var last=sorted[0];
-    startDate=last.year+'-'+String(last.month+1).padStart(2,'0')+'-'+String(last.day||1).padStart(2,'0');
+    if(entries.length>0){
+      var sorted=entries.slice().sort(function(x,y){
+        var da=x.year+'-'+String(x.month+1).padStart(2,'0')+'-'+String(x.day||1).padStart(2,'0');
+        var db=y.year+'-'+String(y.month+1).padStart(2,'0')+'-'+String(y.day||1).padStart(2,'0');
+        return da<db?1:-1; // most recent first
+      });
+      var last=sorted[0];
+      startDate=last.year+'-'+String(last.month+1).padStart(2,'0')+'-'+String(last.day||1).padStart(2,'0');
+    } else {
+      // payoutsExpr are termeni dar chartData e gol — folosim balanceHistory ca referinta
+      var hist2=(a.balanceHistory||[]).slice().sort(function(x,y){return x.date<y.date?-1:1;});
+      startDate=hist2.length?hist2[0].date:null;
+    }
   }
   if(!startDate) return 'PAYOUT_TIME'; // no reference date — balance is already above 5%, safe to payout
   var daysSince=daysBetweenISO(startDate,todayISO());
