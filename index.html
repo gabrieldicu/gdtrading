@@ -35,6 +35,7 @@ input,select{font-family:'Inter',sans-serif}
 .payout-countdown.days1{background:#fff7ed;color:#ea580c;border:1px solid #fed7aa}
 .payout-countdown.today{background:#f0fdf4;color:#16a34a;border:1px solid #86efac}
 .payout-countdown.overdue{background:#fef2f2;color:#dc2626;border:1px solid #fecaca}
+.payout-countdown.payout-loss{background:#fffbeb;color:#d97706;border:1px solid #fde68a}
 
 /* TRADING OVERVIEW */
 .ov-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding:22px 24px 0}
@@ -960,7 +961,11 @@ function getPayoutCountdown(a){
   if(diffDays===3) return {label:'⏰ 3 days until payout',cls:'days3',prog:100};
   if(diffDays===2) return {label:'⏰ 2 days until payout',cls:'days2',prog:66};
   if(diffDays===1) return {label:'🔔 Tomorrow is payout',cls:'days1',prog:33};
-  if(diffDays===0) return {label:'🎉 Payout time!',cls:'today',prog:100};
+  if(diffDays===0){
+    // Check if there's actually something to withdraw
+    if(a.balance<a.capital) return {label:'😔 Payout time, nothing to withdraw',cls:'payout-loss',prog:100};
+    return {label:'🎉 Payout time!',cls:'today',prog:100};
+  }
   return {label:'⚠️ Date has passed',cls:'overdue',prog:100};
 }
 
