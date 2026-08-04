@@ -157,6 +157,7 @@ input,select{font-family:'Inter',sans-serif}
 .ticket-close{width:100%;background:none;border:1px solid var(--border2);color:var(--text3);font-family:inherit;font-size:12px;font-weight:600;letter-spacing:0.5px;padding:10px;border-radius:10px;cursor:pointer;transition:all 0.15s}
 .ticket-close:hover{border-color:var(--border);color:var(--text);background:var(--surface2)}
 .payout-alert.ready{background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;box-shadow:0 2px 6px rgba(22,163,74,0.3)}
+.payout-alert.payout-loss{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;box-shadow:0 2px 6px rgba(217,119,6,0.3)}
 .payout-alert.waiting{background:#fef3c7;color:#92400e;border:1px solid #fde68a}
 .aicon{color:var(--accent);font-size:13px}
 .aicon.w{color:var(--red)}
@@ -1177,7 +1178,13 @@ function renderAccounts(){
     var payoutAlert=getPayoutAlert(a);
     var phaseAdvance=getPhaseAdvanceAlert(a);
     var alertHtml='';
-    if(payoutAlert==='PAYOUT_TIME') alertHtml='<span class="payout-alert ready">🎉 It\'s payout time!</span>';
+    if(payoutAlert==='PAYOUT_TIME'){
+      if(a.balance<a.capital){
+        alertHtml='<span class="payout-alert payout-loss">😔 Payout time, nothing to withdraw</span>';
+      } else {
+        alertHtml='<span class="payout-alert ready">🎉 It\'s payout time!</span>';
+      }
+    }
     else if(payoutAlert==='STOP_WAIT'){
       var cd0=getPayoutCountdown(a);
       if(cd0){
@@ -2011,10 +2018,14 @@ function renderOverview(){
     var alert=getPayoutAlert(a);
     var phAlert=getPhaseAdvanceAlert(a);
     if(alert==='PAYOUT_TIME'){
-      var rp=a.balance-a.capital;
-      var pc=(chartData[a.id]||[]).filter(function(e){return !e.fromPnL;}).length;
-      var pot=pc===0?Math.round(rp*0.8-15-Math.abs(a.broker)-Math.abs(a.eval)):Math.round(rp*0.8-15);
-      radarItems.push({id:a.id.slice(-8),status:'ready',label:'🎉 Payout time!',val:pot>0?'+$'+pot.toLocaleString():'',prog:100});
+      if(a.balance<a.capital){
+        radarItems.push({id:a.id.slice(-8),status:'payout-loss',label:'😔 Nothing to withdraw',val:'',prog:100});
+      } else {
+        var rp=a.balance-a.capital;
+        var pc=(chartData[a.id]||[]).filter(function(e){return !e.fromPnL;}).length;
+        var pot=pc===0?Math.round(rp*0.8-15-Math.abs(a.broker)-Math.abs(a.eval)):Math.round(rp*0.8-15);
+        radarItems.push({id:a.id.slice(-8),status:'ready',label:'🎉 Payout time!',val:pot>0?'+$'+pot.toLocaleString():'',prog:100});
+      }
     } else if(alert==='STOP_WAIT'){
       var cd=getPayoutCountdown(a);
       if(cd){
@@ -2052,8 +2063,10 @@ function renderOverview(){
     radarItems.sort(function(a,b){return b.prog-a.prog;}).forEach(function(item){
       var sc=item.status==='ready'?'ready':item.status==='target'?'target':'';
       var badgeCls=item.status==='ready'?'ready':item.status==='target'?'target':
+                   item.status==='payout-loss'?'close':
                    item.status==='today'?'ready':item.status==='days1'||item.status==='days2'||item.status==='days3'?'close':'close';
-      z3+='<div class="ov-radar-item '+sc+'">';
+      var itemStyle=item.status==='payout-loss'?'border-color:#fde68a;background:#fffbeb':'';
+      z3+='<div class="ov-radar-item '+sc+'"'+(itemStyle?' style="'+itemStyle+'"':'')+'>'; 
       z3+='<div class="ov-acc-id">···'+item.id+'</div>';
       z3+='<div class="ov-badge '+badgeCls+'">'+item.label+'</div>';
       z3+='<div class="ov-prog"><div class="ov-prog-fill '+(item.status==='ready'||item.status==='today'?'g':item.status==='days1'?'amber':'')+'" style="width:'+item.prog+'%"></div></div>';
