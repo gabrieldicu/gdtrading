@@ -2019,35 +2019,36 @@ function renderOverview(){
   z1+='</div>';
 
   // ── ZONE 2: Recovery Tracker ──────────────────────────────────
-  var totalBroker=0, totalEval=0, totalPayouts=0, netPayout=0, totalPotPayout=0, totalPotProfit=0;
+  // Recovery is tracked PER ACCOUNT: each account's costs vs its own payouts.
+  // A payout from account A does NOT count toward recovering costs of account B.
+  var totalCosts=0, totalRecovered=0, netPayout=0, totalPotPayout=0, totalPotProfit=0;
   active.forEach(function(a){
-    var pnlA=getPnL(a);
-    // Recovery: only count costs from accounts still in loss — accounts in profit have already recovered
-    if(pnlA<0){
-      totalBroker+=Math.abs(a.broker);
-      totalEval+=Math.abs(a.eval);
+    var accCosts=Math.abs(a.broker)+Math.abs(a.eval);
+    var accPayouts=Math.abs(a.payouts||0);
+    // Always count this account's costs (regardless of whether pnl is pos or neg)
+    // because eval/broker are real costs that need to be recovered via payouts on that same account
+    if(accCosts>0){
+      totalCosts+=accCosts;
+      totalRecovered+=Math.min(accPayouts, accCosts); // can only recover up to what was spent
     }
-    totalPayouts+=Math.abs(a.payouts||0);
     if(a.phase==='live'&&a.balance>a.capital){
       var rp=a.balance-a.capital;
       var pc=countPayouts(a);
       // Potential Payout = realProfit × 0.8 - 15 (brut)
       var pp=Math.round(rp*0.8-15);
       if(pp>0) totalPotPayout+=pp;
-      // Potential Profit = net după recuperarea costurilor
+      // Potential Profit = net after recovering own costs
       var pot=pc===0?Math.round(rp*0.8-15-Math.abs(a.broker)-Math.abs(a.eval)):Math.round(rp*0.8-15);
       if(pot>0){ netPayout+=pot; totalPotProfit+=pot; }
     }
   });
-  var totalCosts=totalBroker+totalEval;
-  var recovered=Math.min(totalPayouts,totalCosts);
-  var remaining=Math.max(0,totalCosts-recovered);
-  var recovPct=totalCosts>0?Math.round(recovered/totalCosts*100):100;
+  var remaining=Math.max(0,totalCosts-totalRecovered);
+  var recovPct=totalCosts>0?Math.round(totalRecovered/totalCosts*100):100;
 
   var z2='<div class="ov-zone">';
   z2+='<div class="ov-zone-title">💰 Recovery Tracker</div>';
-  z2+='<div class="ov-row"><span class="ov-lbl">Costs on loss accounts</span><span class="ov-val r">-$'+Math.round(totalCosts).toLocaleString()+'</span></div>';
-  z2+='<div class="ov-row"><span class="ov-lbl">Recovered via payouts</span><span class="ov-val g">+$'+Math.round(recovered).toLocaleString()+'</span></div>';
+  z2+='<div class="ov-row"><span class="ov-lbl">Total costs (all accounts)</span><span class="ov-val r">-$'+Math.round(totalCosts).toLocaleString()+'</span></div>';
+  z2+='<div class="ov-row"><span class="ov-lbl">Recovered via own payouts</span><span class="ov-val g">+$'+Math.round(totalRecovered).toLocaleString()+'</span></div>';
   z2+='<div class="ov-row"><span class="ov-lbl">Still to recover</span><span class="ov-val '+(remaining>0?'r':'g')+'">'+( remaining>0?'-$'+Math.round(remaining).toLocaleString():'✓ All recovered')+'</span></div>';
   // progress bar
   z2+='<div style="margin:10px 0 6px"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-bottom:4px"><span>Recovery progress</span><span>'+recovPct+'%</span></div>';
