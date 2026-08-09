@@ -1625,6 +1625,14 @@ function renderAccounts(){
             ? '<div style="font-size:9px;color:rgba(255,255,255,0.35);margin-top:2px">Min balance needed: $'+brokerBalNeeded+' (÷0.80)</div>'
             : '');
 
+      // Commission calculation: $5/lot per trade (Fusion Markets)
+      var COMM_PER_LOT = 5;
+      var commPerTrade = Math.round(brokerLotFinal * COMM_PER_LOT * 100) / 100;
+      var commTotal2Trades = Math.round(commPerTrade * 2 * 100) / 100;
+      var grossReward = Math.round(brokerRiskDollar / 2 * 100) / 100;
+      var netReward = Math.round((grossReward - commPerTrade) * 100) / 100;
+      var netTotal = Math.round((brokerRiskDollar - commTotal2Trades) * 100) / 100; // net recovery after 2 wins
+
       var brokerInputsHtml = '<div style="margin-top:10px;display:flex;flex-direction:column;gap:7px">'
         +'<div><label style="'+lblStyle+'">Pair</label>'
         +'<select class="broker-pair-sel" data-idx="'+idx+'" style="'+selStyle+'">'+pairOpts+'</select></div>'
@@ -1635,12 +1643,18 @@ function renderAccounts(){
         +'<div><label style="'+lblStyle+'">SL pips <span style="opacity:0.6;font-weight:400">(= prop ×2)</span></label>'
         +'<input type="number" class="broker-sl-inp" data-idx="'+idx+'" value="'+brokerSlPips+'" min="1" style="'+inpStyle+'"></div>'
         +'<div style="font-size:9px;color:rgba(255,255,255,0.4);margin-top:2px">$'+brokerRiskDollar+' &divide; ('+brokerSlPips+' &times; $'+pipVal+') = <b style="color:rgba(255,255,255,0.8)">'+brokerLotFinal.toFixed(3).replace(/\.?0+$/,'')+' lot</b></div>'
-        +'<div style="font-size:9px;color:rgba(255,255,255,0.35)">2 trades needed &middot; RR 1:0.5 &middot; max 80% balance</div>'
+        // Commission breakdown — subtle but included
+        +'<div style="margin-top:6px;padding:6px 8px;background:rgba(0,0,0,0.15);border-radius:6px;font-size:9px;color:rgba(255,255,255,0.45);line-height:1.8">'
+        +'<div style="display:flex;justify-content:space-between"><span>Commission ($5/lot &times; 2 trades)</span><span style="color:rgba(255,100,100,0.8)">−$'+commTotal2Trades+'</span></div>'
+        +'<div style="display:flex;justify-content:space-between"><span>Net reward / trade</span><span style="color:rgba(180,255,180,0.8)">+$'+netReward+'</span></div>'
+        +'<div style="display:flex;justify-content:space-between;border-top:1px solid rgba(255,255,255,0.1);margin-top:3px;padding-top:3px"><span style="font-weight:700;color:rgba(255,255,255,0.6)">Net recovery (2 wins)</span><span style="font-weight:800;color:'+(netTotal>0?'rgba(134,239,172,0.9)':'rgba(255,100,100,0.8)')+'">'+(netTotal>0?'+':'')+'$'+netTotal+'</span></div>'
+        +'</div>'
+        +'<div style="font-size:9px;color:rgba(255,255,255,0.25);margin-top:2px">2 trades &middot; RR 1:0.5 &middot; max 80% balance</div>'
         +'</div>';
 
       html += '<div class="risc-card cyan"><div class="metric-label">BROKER LOT <span style="color:rgba(255,255,255,0.6);font-weight:500;font-size:9px">(SL ×2)</span></div>'
         +'<div class="risc-val cyan'+(isPureProfit?' profit':'')+'">'+( isPureProfit?'No Hedge':brokerLotFinal.toFixed(3).replace(/\.?0+$/,'')+'<span style="font-size:13px;font-weight:500;opacity:0.7"> lot</span>')+'</div>'
-        +(isPureProfit?'':`<div class="risc-sub">Reward: $${Math.round(brokerRiskDollar/2)} / trade</div>`)
+        +(isPureProfit?'':`<div class="risc-sub">Reward: $${Math.round(brokerRiskDollar/2)} gross &middot; <span style="color:#86efac">$${Math.round(brokerRiskDollar/2 - brokerLotFinal*5)} net</span> / trade</div>`)
         +(!isPureProfit ? brokerInputsHtml : '')
         +(isPureProfit?'':`<button class="risc-copy" data-copy="${brokerLotFinal.toFixed(2)}" title="Copy" style="margin-top:6px">⧉</button>`)
         +'</div>';
