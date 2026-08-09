@@ -45,7 +45,7 @@ input,select{font-family:'Inter',sans-serif}
 @keyframes ovpulse{50%{opacity:0.35}}
 .ov-subtitle{font-size:11px;color:var(--text3);font-weight:500}
 .ov-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:stretch;padding:0 24px 24px}
-.ov-zone{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:18px 20px;display:flex;flex-direction:column;justify-content:space-between}
+.ov-zone{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:18px 20px;display:flex;flex-direction:column;justify-content:flex-start}
 .ov-zone-title{font-size:9.5px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;display:flex;align-items:center;gap:6px}
 .ov-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border)}
 .ov-row:last-child{border-bottom:none}
@@ -118,7 +118,12 @@ input,select{font-family:'Inter',sans-serif}
 .uname{font-size:15px;font-weight:700;color:var(--text)}
 .ustars{color:var(--gold);font-size:13px;margin-left:5px}
 .ustats{font-size:11px;color:var(--text3);margin-top:2px}
-.dbtns{display:flex;gap:8px;flex-wrap:wrap}
+.dbtns{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.broker-bal-widget{display:inline-flex;align-items:center;gap:8px;background:var(--surface2);border:1.5px solid var(--border2);border-radius:10px;padding:6px 12px;transition:border-color 0.15s}
+.broker-bal-widget:hover{border-color:var(--accent)}
+.broker-bal-label{font-size:9.5px;font-weight:800;letter-spacing:0.8px;color:var(--text3);text-transform:uppercase;white-space:nowrap}
+.broker-bal-input{background:transparent;border:none;outline:none;font-size:14px;font-weight:800;color:var(--accent);font-family:inherit;width:120px;text-align:right}
+.broker-bal-input::placeholder{color:var(--border2);font-weight:600}
 .btn-breached{background:var(--red-bg);border:1px solid var(--red-bd);color:var(--red);padding:7px 14px;border-radius:8px;font-size:12px;font-weight:600;transition:all 0.15s}
 .btn-breached:hover{background:#fee2e2}
 .btn-add{background:linear-gradient(135deg,#2563eb,#7c3aed);border:none;color:#fff;padding:7px 16px;border-radius:8px;font-size:12px;font-weight:600;transition:all 0.2s;box-shadow:0 2px 8px rgba(37,99,235,0.25)}
@@ -674,6 +679,10 @@ input,select{font-family:'Inter',sans-serif}
           </div>
         </div>
         <div class="dbtns">
+          <div class="broker-bal-widget" title="Global broker account balance — used to calculate broker lot per account">
+            <span class="broker-bal-label">💼 Broker Balance</span>
+            <input class="broker-bal-input" id="global-broker-bal" type="number" min="0" step="1" placeholder="$0" value="">
+          </div>
           <button class="btn-breached" id="btn-breached">👁 Show Breached</button>
           <button class="btn-add" id="btn-open-add">+ Add Account</button>
         </div>
@@ -842,6 +851,18 @@ input,select{font-family:'Inter',sans-serif}
 
 <script>
 var STORAGE_KEY='gdtrading_state_v1';
+var globalBrokerBalance=0;
+function saveGlobalBrokerBal(val){
+  globalBrokerBalance=val||0;
+  try{localStorage.setItem('gdct_broker_bal',String(globalBrokerBalance));}catch(e){}
+}
+function loadGlobalBrokerBal(){
+  try{
+    var v=localStorage.getItem('gdct_broker_bal');
+    if(v!==null) globalBrokerBalance=parseFloat(v)||0;
+  }catch(e){}
+}
+loadGlobalBrokerBal();
 var ALLTIME_BASE=2020; // profit made before this tracking system existed; always added on top of tracked payouts
 var USERS = [{username:'Gabriel',password:'gabriel2024'},{username:'admin',password:'admin123'},{username:'Stefan',password:'stefan123'},{username:'Andrei',password:'andrei123'}];
 var DEFAULT_ACCOUNTS = [
@@ -983,14 +1004,15 @@ function getRiscBroker(a){
 }
 
 function getInitialBrokerBalance(a){
-  // Fixed lookup table, not a formula — only valid for the account sizes currently traded (10K, 25K).
+  // Use manually entered broker balance if set
+  if(a.brokerBalance!==undefined && a.brokerBalance!==null && a.brokerBalance!=='') return Number(a.brokerBalance);
+  // Fallback: hardcoded lookup table
   if(a.capital===10000) return 300;
   if(a.capital===25000){
     var evalAbs=Math.abs(a.eval);
-    // pick whichever known eval price (142 discount vs 177 full) the account's eval cost is closer to
     return Math.abs(evalAbs-142) <= Math.abs(evalAbs-177) ? 650 : 750;
   }
-  return null; // no known fixed value for other account sizes yet
+  return null;
 }
 
 function getMinBrokerBalance(a){
@@ -1030,21 +1052,22 @@ function daysBetweenISO(dateA,dateB){
 
 function getPayoutCountdown(a){
   if(!a.payoutDate) return null;
-  var now=new Date();
-  var target=new Date(a.payoutDate);
+  var now=new Date(); now.setHours(0,0,0,0);
+  var target=new Date(a.payoutDate); target.setHours(0,0,0,0);
   if(isNaN(target.getTime())) return null;
   var diffMs=target-now;
-  var diffDays=Math.ceil(diffMs/(1000*60*60*24));
-  if(diffDays>3) return null;
-  if(diffDays===3) return {label:'⏰ 3 days until payout',cls:'days3',prog:100};
-  if(diffDays===2) return {label:'⏰ 2 days until payout',cls:'days2',prog:66};
-  if(diffDays===1) return {label:'🔔 Tomorrow is payout',cls:'days1',prog:33};
+  var diffDays=Math.round(diffMs/(1000*60*60*24));
+  if(diffDays<0) return {label:'⚠️ Date has passed',cls:'overdue',prog:100,daysLeft:-1,sortKey:9999};
   if(diffDays===0){
-    // Check if there's actually something to withdraw
-    if(a.balance<a.capital) return {label:'😔 Payout time, nothing to withdraw',cls:'payout-loss',prog:100};
-    return {label:'🎉 Payout time!',cls:'today',prog:100};
+    if(a.balance<a.capital) return {label:'😔 Payout today, nothing to withdraw',cls:'payout-loss',prog:100,daysLeft:0,sortKey:0};
+    return {label:'🎉 Payout today!',cls:'today',prog:100,daysLeft:0,sortKey:0};
   }
-  return {label:'⚠️ Date has passed',cls:'overdue',prog:100};
+  if(diffDays===1) return {label:'🔔 Tomorrow — payout day',cls:'days1',prog:90,daysLeft:1,sortKey:1};
+  if(diffDays===2) return {label:'⏰ 2 days until payout',cls:'days2',prog:80,daysLeft:2,sortKey:2};
+  if(diffDays===3) return {label:'⏰ 3 days until payout',cls:'days3',prog:70,daysLeft:3,sortKey:3};
+  // More than 3 days — still show with days remaining
+  var prog=Math.max(10,Math.round((1-diffDays/30)*100)); // bar fills as date approaches (30-day window)
+  return {label:'📅 '+diffDays+' days until payout',cls:'close',prog:prog,daysLeft:diffDays,sortKey:diffDays};
 }
 
 function getPayoutAlert(a){
@@ -1377,7 +1400,29 @@ function renderAccounts(){
       pdHtml+='<button onclick="clearPayoutDate('+idx+')" title="Delete">✕</button>';
       pdHtml+='</div></div>';
       }
-      html += '<div class="pot-bar" style="flex-wrap:wrap">'+payoutCountHtml+(initBrokerBal!==null?'<div class="pot-item">BROKER BALANCE <span class="b">$'+initBrokerBal.toLocaleString()+'</span></div>':'')+potPayoutHtml+'<div class="pot-item">POTENTIAL PROFIT <span class="'+potClass+'">'+potStr+'</span></div>'+pdHtml+'</div>';
+      // Broker $ Needed — fixed per account size and split setting
+      var brokerNeededHtml = '';
+      if(a.phase==='live'){
+        var currentSplit=(a.capital===10000)?(a.tradeSplit||4):4;
+        // Fixed values: 10K÷4=$300, 10K÷2=$400
+        var neededMap={10000:{4:300,2:400},25000:{4:650,2:850}};
+        var neededVal=(neededMap[a.capital]&&neededMap[a.capital][currentSplit])
+          ? neededMap[a.capital][currentSplit] : null;
+        var altSplit=currentSplit===4?2:4;
+        var altVal=(neededMap[a.capital]&&neededMap[a.capital][altSplit])
+          ? neededMap[a.capital][altSplit] : null;
+        if(neededVal!==null){
+          var brokerNeededColor=globalBrokerBalance>0
+            ?(globalBrokerBalance>=neededVal?'#16a34a':'#dc2626')
+            :'var(--accent)';
+          brokerNeededHtml='<div class="pot-item">'
+            +'<span style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:0.4px">BROKER $ NEEDED</span> '
+            +'<span style="font-size:13px;font-weight:900;color:'+brokerNeededColor+'">$'+neededVal+'</span>'
+            +(altVal!==null?'<span style="font-size:9px;color:var(--text3);margin-left:6px">(÷'+altSplit+' → $'+altVal+')</span>':'')
+            +'</div>';
+        }
+      }
+      html += '<div class="pot-bar" style="flex-wrap:wrap">'+payoutCountHtml+brokerNeededHtml+potPayoutHtml+'<div class="pot-item">POTENTIAL PROFIT <span class="'+potClass+'">'+potStr+'</span></div>'+pdHtml+'</div>';
       var showChart = (a.phase===1 || a.phase===2);
       html += '<div class="exp-inner'+(showChart?'':' no-chart')+'">';
       if(showChart){
@@ -1459,10 +1504,36 @@ function renderAccounts(){
 
       var isPureProfit = pnl>=0;
       var minBrokerBal = getMinBrokerBalance(a);
+      // Broker lot calculation using globalBrokerBalance + per-account loss
+      // Risk$ per account = proportional share of global broker balance based on account's loss vs total loss
+      var accLoss = Math.abs(a.eval) + Math.abs(a.broker); // this account's total cost
+      var totalLossAll = accounts.filter(function(x){return x.phase!=='breached';})
+        .reduce(function(s,x){return s+Math.abs(x.eval)+Math.abs(x.broker);},0);
+      var brokerShare = (globalBrokerBalance>0 && totalLossAll>0 && accLoss>0)
+        ? (accLoss/totalLossAll)*globalBrokerBalance : 0;
+      // brokerRiskDollar: manual override wins, otherwise use proportional share / 2 trades (RR 0.5)
+      var brokerRiskDollar = (a.brokerRiskDollar!==undefined && a.brokerRiskDollar>0)
+        ? a.brokerRiskDollar
+        : (brokerShare>0 ? Math.round(brokerShare/2) : null); // /2 because 2 trades needed at RR0.5
+      var brokerLotFinal = (brokerRiskDollar && slPips>0)
+        ? Math.round((brokerRiskDollar/(slPips*pipVal))*100)/100
+        : brokerLot;
+      var brokerInfoHtml='';
+      if(globalBrokerBalance>0 && !isPureProfit){
+        brokerInfoHtml='<div style="margin-top:8px;background:rgba(255,255,255,0.07);border-radius:7px;padding:8px 10px;font-size:10px;line-height:1.7;color:rgba(255,255,255,0.65)">'
+          +'<div>Broker Bal: <b style="color:#fff">$'+globalBrokerBalance.toLocaleString()+'</b></div>'
+          +'<div>Your share: <b style="color:#fff">$'+Math.round(brokerShare).toLocaleString()+'</b> ('+Math.round(accLoss/totalLossAll*100)+'%)</div>'
+          +'<div>Risk/trade: <b style="color:#fff">$'+Math.round(brokerRiskDollar||0).toLocaleString()+'</b> &divide; '+slPips+' pips = <b style="color:#7dd3fc">'+brokerLotFinal.toFixed(2)+' lot</b></div>'
+          +'<div style="opacity:0.6;font-size:9px;margin-top:2px">2 trades needed (RR 1:0.5)</div>'
+          +'</div>';
+      } else if(!globalBrokerBalance && !isPureProfit){
+        brokerInfoHtml='<div style="margin-top:8px;font-size:9px;color:rgba(255,255,255,0.4)">Set Broker Balance above to auto-calculate</div>';
+      }
       html += '<div class="risc-card cyan"><div class="metric-label">BROKER LOT <span style="color:rgba(255,255,255,0.6);font-weight:500;font-size:9px">(SL ×2)</span></div>'
-        +'<div class="risc-val cyan'+(isPureProfit?' profit':'')+'">'+(isPureProfit?'No Hedge':brokerLot.toFixed(2)+'<span style="font-size:13px;font-weight:500;opacity:0.7"> lot</span>')+'</div>'
+        +'<div class="risc-val cyan'+(isPureProfit?' profit':'')+'">'+(isPureProfit?'No Hedge':brokerLotFinal.toFixed(2)+'<span style="font-size:13px;font-weight:500;opacity:0.7"> lot</span>')+'</div>'
         +(isPureProfit?'':brokerSubHtml)
-        +(isPureProfit?'':'<button class="risc-copy" data-copy="'+brokerLot.toFixed(2)+'" title="Copy">⧉</button>')
+        +brokerInfoHtml
+        +(isPureProfit?'':'<button class="risc-copy" data-copy="'+brokerLotFinal.toFixed(2)+'" title="Copy" style="margin-top:6px">⧉</button>')
         +'</div>';
       html += '</div>';
       var bandLabel, currentLabel, currentVal;
@@ -1546,13 +1617,14 @@ function bindCellEvents(){
       saveState();renderAccounts();
     });
   });
-  // Broker risk %
+  // Broker Risk $ input — saves brokerRiskDollar per account
   document.querySelectorAll('.broker-risk-inp').forEach(function(inp){
     inp.addEventListener('click',function(e){e.stopPropagation();});
     inp.addEventListener('change',function(e){
       e.stopPropagation();
       var idx=parseInt(inp.getAttribute('data-idx'));
-      accounts[idx].brokerLotRiskPct=Math.max(0.1,parseFloat(inp.value)||1);
+      var val=parseFloat(inp.value)||0;
+      accounts[idx].brokerRiskDollar=val>0?val:undefined;
       saveState();renderAccounts();
     });
   });
@@ -1640,6 +1712,7 @@ function bindCellEvents(){
       accounts[idx][field] = val;
       accounts[idx][field+'Expr'] = raw; // keep the raw expression (e.g. "-130-51-182-166") so it can be continued later
       if(field==='balance') recordBalanceHistory(accounts[idx]);
+      // brokerBalance field removed — now calculated automatically
       // Auto-reset balance to initial capital when payouts cell is edited
       if(field==='payouts'){
         var acc=accounts[idx];
@@ -2289,6 +2362,19 @@ function ctSetParam(pi, key, val){
   renderCopyTrading();
 }
 
+// GLOBAL BROKER BALANCE INPUT
+(function(){
+  var inp=document.getElementById('global-broker-bal');
+  if(!inp) return;
+  inp.value=globalBrokerBalance>0?globalBrokerBalance:'';
+  inp.addEventListener('change',function(){
+    saveGlobalBrokerBal(parseFloat(this.value)||0);
+    renderAccounts();
+  });
+  inp.addEventListener('click',function(e){e.stopPropagation();});
+  inp.addEventListener('keydown',function(e){if(e.key==='Enter'){this.blur();}});
+})();
+
 // NAV TABS
 document.querySelectorAll('.tab').forEach(function(tab){
   tab.addEventListener('click', function(){
@@ -2384,41 +2470,46 @@ function renderOverview(){
   active.forEach(function(a){
     var alert=getPayoutAlert(a);
     var phAlert=getPhaseAdvanceAlert(a);
+    var cd=getPayoutCountdown(a);
+
+    // Priority 1: payout date set — always show countdown first
+    if(cd){
+      if(cd.daysLeft===0){
+        var rp=a.balance-a.capital;
+        var pc=countPayouts(a);
+        var pot=pc===0?Math.round(rp*0.8-15-Math.abs(a.broker)-Math.abs(a.eval)):Math.round(rp*0.8-15);
+        radarItems.push({id:a.id.slice(-8),status:cd.cls,label:cd.label,val:pot>0?'+$'+pot.toLocaleString():'',prog:100,sortKey:0});
+      } else {
+        radarItems.push({id:a.id.slice(-8),status:cd.cls,label:cd.label,val:'',prog:cd.prog,sortKey:cd.sortKey});
+      }
+      return; // skip other statuses if date is set
+    }
+
+    // Priority 2: payout alert (no date set)
     if(alert==='PAYOUT_TIME'){
       if(a.balance<a.capital){
-        radarItems.push({id:a.id.slice(-8),status:'payout-loss',label:'😔 Nothing to withdraw',val:'',prog:100});
+        radarItems.push({id:a.id.slice(-8),status:'payout-loss',label:'😔 Nothing to withdraw',val:'',prog:100,sortKey:500});
       } else {
         var rp=a.balance-a.capital;
         var pc=countPayouts(a);
         var pot=pc===0?Math.round(rp*0.8-15-Math.abs(a.broker)-Math.abs(a.eval)):Math.round(rp*0.8-15);
-        radarItems.push({id:a.id.slice(-8),status:'ready',label:'🎉 Payout time!',val:pot>0?'+$'+pot.toLocaleString():'',prog:100});
+        radarItems.push({id:a.id.slice(-8),status:'ready',label:'🎉 Payout time!',val:pot>0?'+$'+pot.toLocaleString():'',prog:100,sortKey:100});
       }
     } else if(alert==='STOP_WAIT'){
-      var cd=getPayoutCountdown(a);
-      if(cd){
-        // countdown replaces generic "Waiting for payout" when date is set and within 3 days
-        radarItems.push({id:a.id.slice(-8),status:cd.cls,label:cd.label,val:'',prog:cd.prog||100,isCountdown:true});
-      } else {
-        var hist2=(a.balanceHistory||[]).slice().sort(function(x,y){return x.date<y.date?-1:1;});
-        var startD=hist2.length?hist2[0].date:null;
-        var elapsed=startD?Math.min(14,Math.max(0,daysBetweenISO(startD,todayISO()))):0;
-        var waitProg=Math.round((elapsed/14)*100);
-        radarItems.push({id:a.id.slice(-8),status:'wait',label:'⏸ Waiting for payout',val:elapsed+'/14 days',prog:waitProg});
-      }
+      var hist2=(a.balanceHistory||[]).slice().sort(function(x,y){return x.date<y.date?-1:1;});
+      var startD=hist2.length?hist2[0].date:null;
+      var elapsed=startD?Math.min(14,Math.max(0,daysBetweenISO(startD,todayISO()))):0;
+      var waitProg=Math.round((elapsed/14)*100);
+      radarItems.push({id:a.id.slice(-8),status:'wait',label:'⏸ Stop trading · '+elapsed+'/14 days',val:'',prog:waitProg,sortKey:200});
     } else if(phAlert){
-      radarItems.push({id:a.id.slice(-8),status:'target',label:phAlert.replace('🎉 Congratulations! ',''),val:'',prog:100});
+      radarItems.push({id:a.id.slice(-8),status:'target',label:phAlert.replace('🎉 Congratulations! ',''),val:'',prog:100,sortKey:150});
     } else if(a.phase==='live'&&a.balance>a.capital){
       var prog=Math.min(99,Math.round((a.balance-a.capital)/(a.capital*0.05)*100));
-      radarItems.push({id:a.id.slice(-8),status:'close',label:'Live · '+prog+'% to payout',val:'',prog:prog});
+      radarItems.push({id:a.id.slice(-8),status:'close',label:'Live · '+prog+'% to payout',val:'',prog:prog,sortKey:300});
     } else if(a.phase===1||a.phase===2){
       var tPct=a.phase===1?0.08:0.05;
       var prog2=Math.min(99,Math.max(0,Math.round((a.balance-a.capital)/(a.capital*tPct)*100)));
-      if(prog2>0) radarItems.push({id:a.id.slice(-8),status:'close',label:'Phase '+a.phase+' · '+prog2+'% to target',val:'',prog:prog2});
-    }
-    // Add countdown only if account doesn't already have a primary status shown
-    if(alert!=='STOP_WAIT' && alert!=='PAYOUT_TIME' && !phAlert){
-      var cd2=getPayoutCountdown(a);
-      if(cd2) radarItems.push({id:a.id.slice(-8),status:cd2.cls,label:cd2.label,val:'',prog:cd2.prog||100,isCountdown:true});
+      if(prog2>0) radarItems.push({id:a.id.slice(-8),status:'close',label:'Phase '+a.phase+' · '+prog2+'% to target',val:'',prog:prog2,sortKey:400});
     }
   });
 
@@ -2427,7 +2518,7 @@ function renderOverview(){
   if(!radarItems.length){
     z3+='<div class="ov-empty">No accounts close to payout right now</div>';
   } else {
-    radarItems.sort(function(a,b){return b.prog-a.prog;}).forEach(function(item){
+    radarItems.sort(function(a,b){return (a.sortKey||999)-(b.sortKey||999);}).forEach(function(item){
       var sc=item.status==='ready'?'ready':item.status==='target'?'target':'';
       var badgeCls=item.status==='ready'?'ready':item.status==='target'?'target':
                    item.status==='payout-loss'?'close':
