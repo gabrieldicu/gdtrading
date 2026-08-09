@@ -681,7 +681,7 @@ input,select{font-family:'Inter',sans-serif}
         <div class="dbtns">
           <div class="broker-bal-widget" title="Global broker account balance — used to calculate broker lot per account">
             <span class="broker-bal-label">💼 Broker Balance</span>
-            <input class="broker-bal-input" id="global-broker-bal" type="number" min="0" step="1" placeholder="$0" value="">
+            <input class="broker-bal-input" id="global-broker-bal" type="text" inputmode="numeric" placeholder="0" value="">
           </div>
           <button class="btn-breached" id="btn-breached">👁 Show Breached</button>
           <button class="btn-add" id="btn-open-add">+ Add Account</button>
@@ -1441,14 +1441,78 @@ function renderAccounts(){
         phaseLbl=a.phase==='live'?'Live · ÷4 trades · RR 0.5':'Phase '+a.phase+' · full amount · RR 0.5';
       }
       html += '<div class="metrics-title">RISK CALCULATOR <span style="font-size:11px;color:var(--text3)">'+phaseLbl+'</span></div>';
-      html += '<div class="risc-grid">';
+      // Grid layout: Phase 1/2 = [stacked gold col] [wider prop] [wider broker]
+      //              Live = [BE] [prop] [broker]
+      var isPhase12 = (a.phase===1||a.phase===2);
+      html += '<div class="risc-grid" style="'+(isPhase12?'grid-template-columns:220px 1fr 1fr':'repeat(auto-fit,minmax(150px,1fr))')+'">';
       var beVal=getBE(a);
-      html += '<div class="risc-card gold"><div class="metric-label">🎯 BE</div><div class="risc-val'+(beVal===null?' profit':'')+'">'+(beVal===null?'Pure Profit':'$'+Math.round(beVal).toLocaleString())+'</div>'+(beVal===null?'':'<button class="risc-copy" data-copy="'+Math.round(beVal)+'" title="Copy">⧉</button>')+'</div>';
-      if(a.phase===1 || a.phase===2){
+      // BE card extras: % recovered, balance target, progress bar
+      var beCardHtml='';
+      if(beVal===null){
+        beCardHtml='<div class="risc-card gold"><div class="metric-label">🎯 BE</div><div class="risc-val profit">Pure Profit</div></div>';
+      } else {
+        var totalLoss=Math.abs(a.eval+a.broker);
+        // % recovered = payouts / beVal
+        var recovered=Math.abs(a.payouts||0);
+        var recPct=beVal>0?Math.min(100,Math.round(recovered/beVal*100)):0;
+        // balance target = capital + beVal (the balance you need to reach to withdraw BE)
+        var balTarget=a.capital+beVal;
+        // progress toward balance target
+        var balProg=beVal>0?Math.min(100,Math.max(0,Math.round((a.balance-a.capital)/beVal*100))):0;
+        // bar color
+        var barColor=recPct>=100?'#22c55e':recPct>=50?'#f59e0b':'#ef4444';
+        beCardHtml='<div class="risc-card gold">'
+          +'<div class="metric-label">🎯 BE</div>'
+          +'<div class="risc-val">$'+Math.round(beVal).toLocaleString()+'</div>'
+          // % recovered
+          +'<div style="margin-top:8px;font-size:10px;color:rgba(255,255,255,0.6);font-weight:600">% RECOVERED</div>'
+          +'<div style="font-size:15px;font-weight:900;color:'+(recPct>=100?'#86efac':recPct>=50?'#fde68a':'#fca5a5')+'">'
+          +recPct+'%'
+          +'<span style="font-size:10px;font-weight:500;opacity:0.7;margin-left:4px">($'+Math.round(recovered).toLocaleString()+' / $'+Math.round(beVal).toLocaleString()+')</span>'
+          +'</div>'
+          // balance target
+          +'<div style="margin-top:6px;font-size:10px;color:rgba(255,255,255,0.6);font-weight:600">BALANCE TARGET</div>'
+          +'<div style="font-size:15px;font-weight:900;color:#fff">$'+Math.round(balTarget).toLocaleString()+'</div>'
+          // progress bar toward balance target
+          +'<div style="margin-top:8px">'
+          +'<div style="display:flex;justify-content:space-between;font-size:9px;color:rgba(255,255,255,0.45);margin-bottom:3px">'
+          +'<span>$'+a.capital.toLocaleString()+'</span><span>$'+Math.round(balTarget).toLocaleString()+'</span>'
+          +'</div>'
+          +'<div style="height:5px;background:rgba(255,255,255,0.15);border-radius:3px;overflow:hidden">'
+          +'<div style="height:100%;width:'+balProg+'%;background:'+barColor+';border-radius:3px;transition:width 0.3s"></div>'
+          +'</div>'
+          +'<div style="font-size:9px;color:rgba(255,255,255,0.4);margin-top:3px;text-align:right">'+balProg+'% of way to BE</div>'
+          +'</div>'
+          +'<button class="risc-copy" data-copy="'+Math.round(beVal)+'" title="Copy" style="margin-top:6px">⧉</button>'
+          +'</div>';
+      }
+      if(isPhase12){
+        // Stacked column: BE on top, Phase Target below
         var pPct=a.phase===1?0.08:0.05;
         var pTarget=getPhaseTarget(a,pPct);
         var pProgress=getHealthPct(a);
-        html += '<div class="risc-card gold"><div class="metric-label">📈 PHASE '+a.phase+' TARGET</div><div class="risc-val">$'+Math.round(pTarget).toLocaleString()+'</div><div class="risc-sub">'+Math.round(pProgress)+'% of target reached</div><button class="risc-copy" data-copy="'+Math.round(pTarget)+'" title="Copy">⧉</button></div>';
+        // Compact BE card for phase 1/2
+        var beCompact = beVal===null
+          ? '<div class="risc-card gold" style="padding:14px 16px"><div class="metric-label" style="font-size:9px">🎯 BE</div><div class="risc-val profit" style="font-size:20px">Pure Profit</div></div>'
+          : '<div class="risc-card gold" style="padding:14px 16px"><div class="metric-label" style="font-size:9px">🎯 BE</div>'
+            +'<div class="risc-val" style="font-size:26px">$'+Math.round(beVal).toLocaleString()+'</div>'
+            +'<button class="risc-copy" data-copy="'+Math.round(beVal)+'" title="Copy" style="margin-top:4px">⧉</button>'
+            +'</div>';
+        var targetCompact = '<div class="risc-card gold" style="padding:14px 16px">'
+          +'<div class="metric-label" style="font-size:9px">📈 PHASE '+a.phase+' TARGET</div>'
+          +'<div class="risc-val" style="font-size:26px">$'+Math.round(pTarget).toLocaleString()+'</div>'
+          // mini progress bar
+          +'<div style="margin-top:6px">'
+          +'<div style="height:4px;background:rgba(255,255,255,0.2);border-radius:2px">'
+          +'<div style="height:100%;width:'+Math.min(100,Math.round(pProgress))+'%;background:rgba(255,255,255,0.8);border-radius:2px"></div>'
+          +'</div>'
+          +'<div style="font-size:9px;color:rgba(255,255,255,0.55);margin-top:3px">'+Math.round(pProgress)+'% of target reached</div>'
+          +'</div>'
+          +'<button class="risc-copy" data-copy="'+Math.round(pTarget)+'" title="Copy" style="margin-top:4px">⧉</button>'
+          +'</div>';
+        html += '<div style="display:flex;flex-direction:column;gap:12px">'+beCompact+targetCompact+'</div>';
+      } else {
+        html += beCardHtml;
       }
       var daysToMax=getDaysToMaxLoss(a);
       var showDaysToMax = daysToMax!==null && !(a.phase==='live' && pnl>=0);
@@ -1468,7 +1532,7 @@ function renderAccounts(){
       var pipVal = PIP_VALUES[lotPair] || 10;
 
       var propRiskAmt = a.balance * (lotRiskPct/100);
-      var propLot = slPips > 0 ? Math.round((propRiskAmt / (slPips * pipVal)) * 100) / 100 : 0;
+      var propLot = slPips > 0 ? Math.round((propRiskAmt / (slPips * pipVal)) * 1000) / 1000 : 0;
 
       // Broker Lot: reward to recover ÷ (SL×2 × pipVal)
       var brokerReward = getRiscBrokerReward(a);
@@ -1497,42 +1561,45 @@ function renderAccounts(){
       var brokerSubHtml='<div class="risc-sub">Reward: $'+Math.round(brokerReward)+' / trade</div>';
 
       html += '<div class="risc-card"><div class="metric-label">PROP LOT</div>'
-        +'<div class="risc-val">'+propLot.toFixed(2)+'<span style="font-size:13px;font-weight:500;opacity:0.7"> lot</span></div>'
+        +'<div class="risc-val">'+propLot.toFixed(3).replace(/\.?0+$/,'')+'<span style="font-size:13px;font-weight:500;opacity:0.7"> lot</span></div>'
         +(showDaysToMax?'<div class="risc-sub">~'+Math.round(daysToMax)+' days to max loss</div>':'')
         +propInputsHtml
         +'<button class="risc-copy" data-copy="'+propLot.toFixed(2)+'" title="Copy" style="margin-top:8px">⧉</button></div>';
 
       var isPureProfit = pnl>=0;
-      var minBrokerBal = getMinBrokerBalance(a);
-      // Broker lot calculation using globalBrokerBalance + per-account loss
-      // Risk$ per account = proportional share of global broker balance based on account's loss vs total loss
-      var accLoss = Math.abs(a.eval) + Math.abs(a.broker); // this account's total cost
-      var totalLossAll = accounts.filter(function(x){return x.phase!=='breached';})
-        .reduce(function(s,x){return s+Math.abs(x.eval)+Math.abs(x.broker);},0);
-      var brokerShare = (globalBrokerBalance>0 && totalLossAll>0 && accLoss>0)
-        ? (accLoss/totalLossAll)*globalBrokerBalance : 0;
-      // brokerRiskDollar: manual override wins, otherwise use proportional share / 2 trades (RR 0.5)
-      var brokerRiskDollar = (a.brokerRiskDollar!==undefined && a.brokerRiskDollar>0)
+
+      // Broker SL = 2x prop SL (bidirectional sync)
+      var brokerSlPips = (a.brokerSlPips !== undefined && a.brokerSlPips !== null) ? a.brokerSlPips : slPips * 2;
+
+      // Broker Risk $ — default = current PnL (what we're trying to recover), editable
+      var pnlAbs = Math.abs(Math.round(pnl));
+      var brokerRiskDollar = (a.brokerRiskDollar !== undefined && a.brokerRiskDollar !== null)
         ? a.brokerRiskDollar
-        : (brokerShare>0 ? Math.round(brokerShare/2) : null); // /2 because 2 trades needed at RR0.5
-      var brokerLotFinal = (brokerRiskDollar && slPips>0)
-        ? Math.round((brokerRiskDollar/(slPips*pipVal))*100)/100
+        : pnlAbs; // default: PnL of this account
+
+      // Broker Lot = Risk$ / (brokerSL × pipVal)
+      var brokerLotFinal = (brokerRiskDollar > 0 && brokerSlPips > 0)
+        ? Math.round((brokerRiskDollar / (brokerSlPips * pipVal)) * 1000) / 1000
         : brokerLot;
-      var brokerInfoHtml='';
-      if(globalBrokerBalance>0 && !isPureProfit){
-        brokerInfoHtml='<div style="margin-top:8px;background:rgba(255,255,255,0.07);border-radius:7px;padding:8px 10px;font-size:10px;line-height:1.7;color:rgba(255,255,255,0.65)">'
-          +'<div>Broker Bal: <b style="color:#fff">$'+globalBrokerBalance.toLocaleString()+'</b></div>'
-          +'<div>Your share: <b style="color:#fff">$'+Math.round(brokerShare).toLocaleString()+'</b> ('+Math.round(accLoss/totalLossAll*100)+'%)</div>'
-          +'<div>Risk/trade: <b style="color:#fff">$'+Math.round(brokerRiskDollar||0).toLocaleString()+'</b> &divide; '+slPips+' pips = <b style="color:#7dd3fc">'+brokerLotFinal.toFixed(2)+' lot</b></div>'
-          +'<div style="opacity:0.6;font-size:9px;margin-top:2px">2 trades needed (RR 1:0.5)</div>'
-          +'</div>';
-      } else if(!globalBrokerBalance && !isPureProfit){
-        brokerInfoHtml='<div style="margin-top:8px;font-size:9px;color:rgba(255,255,255,0.4)">Set Broker Balance above to auto-calculate</div>';
-      }
+
+      var brokerInputsHtml = '<div style="margin-top:10px;display:flex;flex-direction:column;gap:7px">'
+        // Pair — same as prop (no separate picker, shares lotPair)
+        +'<div><label style="'+lblStyle+'">Pair</label>'
+        +'<select class="broker-pair-sel" data-idx="'+idx+'" style="'+selStyle+'">'+pairOpts+'</select></div>'
+        // Risk $ — prestabilit cu PnL, editabil
+        +'<div><label style="'+lblStyle+'">Risk $ <span style="opacity:0.6;font-weight:400">(default: PnL)</span></label>'
+        +'<input type="number" class="broker-risk-dollar-inp" data-idx="'+idx+'" value="'+brokerRiskDollar+'" min="0" step="1" style="'+inpStyle+'"></div>'
+        // SL pips broker = 2x prop, sync bidirecțional
+        +'<div><label style="'+lblStyle+'">SL pips <span style="opacity:0.6;font-weight:400">(= prop ×2)</span></label>'
+        +'<input type="number" class="broker-sl-inp" data-idx="'+idx+'" value="'+brokerSlPips+'" min="1" style="'+inpStyle+'"></div>'
+        +'<div style="font-size:9px;color:rgba(255,255,255,0.4);margin-top:2px">$'+brokerRiskDollar+' &divide; ('+brokerSlPips+' &times; $'+pipVal+') = <b style="color:rgba(255,255,255,0.8)">'+brokerLotFinal.toFixed(3).replace(/\.?0+$/,'')+' lot</b></div>'
+        +'<div style="font-size:9px;color:rgba(255,255,255,0.35)">2 trades needed &middot; RR 1:0.5</div>'
+        +'</div>';
+
       html += '<div class="risc-card cyan"><div class="metric-label">BROKER LOT <span style="color:rgba(255,255,255,0.6);font-weight:500;font-size:9px">(SL ×2)</span></div>'
-        +'<div class="risc-val cyan'+(isPureProfit?' profit':'')+'">'+(isPureProfit?'No Hedge':brokerLotFinal.toFixed(2)+'<span style="font-size:13px;font-weight:500;opacity:0.7"> lot</span>')+'</div>'
-        +(isPureProfit?'':brokerSubHtml)
-        +brokerInfoHtml
+        +'<div class="risc-val cyan'+(isPureProfit?' profit':'')+'">'+(isPureProfit?'No Hedge':brokerLotFinal.toFixed(3).replace(/\.?0+$/,'')+'<span style="font-size:13px;font-weight:500;opacity:0.7"> lot</span>')+'</div>'
+        +(isPureProfit?'':'<div class="risc-sub">Reward: $'+Math.round(brokerRiskDollar/2)+' / trade</div>')
+        +(!isPureProfit ? brokerInputsHtml : '')
         +(isPureProfit?'':'<button class="risc-copy" data-copy="'+brokerLotFinal.toFixed(2)+'" title="Copy" style="margin-top:6px">⧉</button>')
         +'</div>';
       html += '</div>';
@@ -1587,16 +1654,7 @@ function bindCellEvents(){
       saveState();renderAccounts();
     });
   });
-  // SL pips input — per account
-  document.querySelectorAll('.sl-pips-inp').forEach(function(inp){
-    inp.addEventListener('click',function(e){e.stopPropagation();});
-    inp.addEventListener('change',function(e){
-      e.stopPropagation();
-      var idx=parseInt(inp.getAttribute('data-idx'));
-      accounts[idx].slPips=Math.max(1,parseInt(inp.value)||50);
-      saveState();renderAccounts();
-    });
-  });
+  // SL pips — handled below with broker sync
   // Prop lot risk %
   document.querySelectorAll('.lot-risk-inp').forEach(function(inp){
     inp.addEventListener('click',function(e){e.stopPropagation();});
@@ -1628,6 +1686,54 @@ function bindCellEvents(){
       saveState();renderAccounts();
     });
   });
+  // Broker pair selector
+  document.querySelectorAll('.broker-pair-sel').forEach(function(sel){
+    sel.addEventListener('click',function(e){e.stopPropagation();});
+    sel.addEventListener('change',function(e){
+      e.stopPropagation();
+      var idx=parseInt(sel.getAttribute('data-idx'));
+      accounts[idx].lotPair=sel.value; // shares same pair as prop
+      saveState();renderAccounts();
+    });
+  });
+  // Broker Risk $ input
+  document.querySelectorAll('.broker-risk-dollar-inp').forEach(function(inp){
+    inp.addEventListener('click',function(e){e.stopPropagation();});
+    inp.addEventListener('change',function(e){
+      e.stopPropagation();
+      var idx=parseInt(inp.getAttribute('data-idx'));
+      var val=parseFloat(inp.value);
+      accounts[idx].brokerRiskDollar=isNaN(val)?null:Math.max(0,val);
+      saveState();renderAccounts();
+    });
+  });
+  // Broker SL pips — when changed, sync prop SL = brokerSL / 2
+  document.querySelectorAll('.broker-sl-inp').forEach(function(inp){
+    inp.addEventListener('click',function(e){e.stopPropagation();});
+    inp.addEventListener('change',function(e){
+      e.stopPropagation();
+      var idx=parseInt(inp.getAttribute('data-idx'));
+      var brokerSl=Math.max(1,parseInt(inp.value)||2);
+      accounts[idx].brokerSlPips=brokerSl;
+      accounts[idx].slPips=Math.max(1,Math.round(brokerSl/2)); // sync prop = broker/2
+      saveState();renderAccounts();
+    });
+  });
+  // Prop SL pips — when changed, sync broker SL = propSL * 2
+  document.querySelectorAll('.sl-pips-inp').forEach(function(inp){
+    inp.removeEventListener('change',inp._slHandler);
+    inp._slHandler=function(e){
+      e.stopPropagation();
+      var idx=parseInt(inp.getAttribute('data-idx'));
+      var propSl=Math.max(1,parseInt(inp.value)||50);
+      accounts[idx].slPips=propSl;
+      accounts[idx].brokerSlPips=propSl*2; // sync broker = prop*2
+      saveState();renderAccounts();
+    };
+    inp.addEventListener('click',function(e){e.stopPropagation();});
+    inp.addEventListener('change',inp._slHandler);
+  });
+
   // Trade split toggle (÷4 / ÷2), only shown for Live 10k accounts
   document.querySelectorAll('.split-btn').forEach(function(btn){
     btn.addEventListener('click', function(e){
