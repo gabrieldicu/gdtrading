@@ -555,66 +555,63 @@ input,select{font-family:'Inter',sans-serif}
 }
 
 /* ── COPY TRADING ──────────────────────────────────── */
-.ct-page{padding:24px 24px 40px;max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
-.ct-topbar{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
-.ct-title-block{}
-.ct-title{font-size:20px;font-weight:900;color:var(--text);letter-spacing:-0.5px}
-.ct-title span{color:var(--accent)}
-.ct-subtitle{font-size:11px;color:var(--text3);margin-top:3px;font-weight:500}
-.ct-add-btn{display:inline-flex;align-items:center;gap:7px;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:9px 16px;font-size:12px;font-weight:700;cursor:pointer;transition:background 0.15s;white-space:nowrap;flex-shrink:0}
+.ct-welcome{margin-bottom:24px}
+.ct-welcome h2{font-size:26px;font-weight:800;color:var(--text);letter-spacing:-0.5px}
+.ct-welcome h2 span{color:var(--accent)}
+.ct-welcome p{font-size:11px;color:var(--text3);margin-top:5px;font-weight:500;letter-spacing:1px;text-transform:uppercase}
+.ct-add-btn{display:inline-flex;align-items:center;gap:7px;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:9px 18px;font-size:13px;font-weight:700;cursor:pointer;transition:background 0.15s}
 .ct-add-btn:hover{background:#1d4ed8}
-/* Grid of portfolio cards */
-.ct-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(480px,1fr));gap:16px}
-/* Single portfolio card */
-.ct-card{background:var(--surface);border:1.5px solid var(--border2);border-radius:16px;overflow:hidden;transition:box-shadow 0.2s,border-color 0.2s;display:flex;flex-direction:column}
-.ct-card:hover{box-shadow:0 4px 20px rgba(37,99,235,0.08);border-color:#bfdbfe}
-.ct-card-top{background:linear-gradient(135deg,#0f172a,#1e3a5f);padding:16px 18px;display:flex;align-items:center;justify-content:space-between;gap:10px}
-.ct-card-name{background:transparent;border:none;outline:none;font-size:14px;font-weight:800;color:#fff;font-family:inherit;width:180px;letter-spacing:-0.3px}
-.ct-card-name::placeholder{color:rgba(255,255,255,0.35)}
-.ct-card-name:focus{border-bottom:1px solid rgba(255,255,255,0.3)}
-.ct-card-del{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.5);border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.15s}
-.ct-card-del:hover{background:rgba(220,38,38,0.2);border-color:#fca5a5;color:#fca5a5}
-/* Two-column body */
-.ct-card-body{display:grid;grid-template-columns:1fr 1fr;gap:0;flex:1}
-.ct-col{padding:16px 18px;display:flex;flex-direction:column;gap:12px}
-.ct-col:first-child{border-right:1px solid var(--border)}
-.ct-col-label{font-size:9.5px;font-weight:800;letter-spacing:1px;color:var(--text3);text-transform:uppercase;margin-bottom:4px}
-/* Lead selector */
-.ct-lead-sel{display:flex;flex-direction:column;gap:8px}
-.ct-select{background:var(--surface2);border:1.5px solid var(--border2);border-radius:8px;padding:6px 10px;font-size:12px;color:var(--text);font-family:inherit;cursor:pointer;outline:none;width:100%}
+/* Portfolio card — same as dash-card */
+.ct-port-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:20px;box-shadow:0 2px 12px rgba(0,0,0,0.06);width:100%}
+.ct-port-hdr{padding:16px 22px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:linear-gradient(135deg,#f8f9ff,#fff);flex-wrap:wrap;gap:10px}
+.ct-port-hdr-left{display:flex;align-items:center;gap:12px}
+.ct-port-icon{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#1e3a5f,#2563eb);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.ct-port-name-inp{background:transparent;border:none;outline:none;font-size:15px;font-weight:800;color:var(--text);font-family:inherit;letter-spacing:-0.3px;width:200px}
+.ct-port-name-inp:focus{border-bottom:1.5px solid var(--accent)}
+.ct-port-meta{font-size:11px;color:var(--text3);font-weight:500;margin-top:2px}
+.ct-port-del{background:none;border:1px solid #fca5a5;color:#dc2626;border-radius:8px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.15s}
+.ct-port-del:hover{background:#fef2f2}
+/* Port body — 3 columns */
+.ct-port-body{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0}
+.ct-col{padding:20px 22px;display:flex;flex-direction:column;gap:14px}
+.ct-col+.ct-col{border-left:1px solid var(--border)}
+.ct-col-title{font-size:10px;font-weight:800;letter-spacing:1px;color:var(--text3);text-transform:uppercase;margin-bottom:2px}
+/* Lead */
+.ct-select{background:var(--surface2);border:1.5px solid var(--border2);border-radius:8px;padding:7px 10px;font-size:12px;color:var(--text);font-family:inherit;cursor:pointer;outline:none;width:100%}
 .ct-select:focus{border-color:var(--accent)}
-.ct-lead-info{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.ct-badge-lead{display:inline-flex;align-items:center;gap:4px;background:linear-gradient(135deg,#1e3a5f,#2563eb);color:#fff;font-size:9px;font-weight:800;padding:2px 8px;border-radius:20px;letter-spacing:0.5px}
-.ct-acc-cap{font-size:10px;color:var(--text3);font-weight:600}
+.ct-badge-lead{display:inline-flex;align-items:center;gap:4px;background:linear-gradient(135deg,#1e3a5f,#2563eb);color:#fff;font-size:9px;font-weight:800;padding:2px 9px;border-radius:20px;letter-spacing:0.5px}
+.ct-lead-detail{font-size:11px;color:var(--text3);font-weight:600;margin-left:2px}
 /* Followers */
-.ct-followers{display:flex;flex-direction:column;gap:8px}
-.ct-follower-chip{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:10px;border:1.5px solid var(--border);background:var(--surface2);cursor:pointer;transition:all 0.15s;user-select:none;font-size:12px;font-weight:600;color:var(--text2)}
-.ct-follower-chip.active{background:#eff6ff;border-color:#93c5fd;color:#1d4ed8}
-.ct-follower-chip.is-lead{opacity:0.35;cursor:not-allowed}
+.ct-chip{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:10px;border:1.5px solid var(--border);background:var(--surface2);cursor:pointer;transition:all 0.15s;user-select:none}
+.ct-chip.sel{background:#eff6ff;border-color:#93c5fd}
+.ct-chip.is-lead{opacity:0.38;cursor:not-allowed}
 .ct-chip-dot{width:8px;height:8px;border-radius:50%;background:var(--border2);flex-shrink:0;transition:background 0.15s}
-.ct-follower-chip.active .ct-chip-dot{background:#2563eb}
-.ct-chip-lot{margin-left:auto;font-size:11px;font-weight:800;color:var(--text3)}
-.ct-follower-chip.active .ct-chip-lot{color:#2563eb}
-/* Params + result bottom bar */
-.ct-card-footer{border-top:1px solid var(--border);padding:12px 18px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;background:var(--surface2)}
-.ct-param{display:flex;flex-direction:column;gap:3px}
-.ct-param label{font-size:9px;font-weight:800;letter-spacing:0.8px;color:var(--text3);text-transform:uppercase}
-.ct-param-select{background:var(--surface);border:1.5px solid var(--border2);border-radius:7px;padding:4px 8px;font-size:12px;font-weight:700;color:var(--text);font-family:inherit;cursor:pointer;outline:none}
-.ct-param-select:focus{border-color:var(--accent)}
-.ct-param-inp{background:var(--surface);border:1.5px solid var(--border2);border-radius:7px;padding:4px 8px;font-size:12px;font-weight:700;color:var(--text);font-family:inherit;width:72px;outline:none;text-align:center}
-.ct-param-inp:focus{border-color:var(--accent)}
-/* Result stats */
-.ct-stats{margin-left:auto;display:flex;align-items:center;gap:14px}
-.ct-stat{display:flex;flex-direction:column;gap:1px;align-items:flex-end}
-.ct-stat-lbl{font-size:9px;font-weight:800;letter-spacing:0.8px;color:var(--text3);text-transform:uppercase}
-.ct-stat-val{font-size:16px;font-weight:900;color:var(--text);line-height:1}
-.ct-stat-val.blue{color:#2563eb}
-.ct-stat-val.green{color:#16a34a}
-.ct-stat-divider{width:1px;height:32px;background:var(--border)}
-/* Empty state */
-.ct-empty{text-align:center;padding:60px 20px;color:var(--text3);font-size:13px;background:var(--surface);border:1.5px dashed var(--border2);border-radius:16px}
-.ct-empty-icon{font-size:36px;margin-bottom:10px}
-.ct-empty-title{font-weight:700;color:var(--text);margin-bottom:6px;font-size:14px}
+.ct-chip.sel .ct-chip-dot{background:#2563eb}
+.ct-chip-id{font-size:12px;font-weight:700;color:var(--text2);flex:1}
+.ct-chip.sel .ct-chip-id{color:#1d4ed8}
+.ct-chip-lot{font-size:11px;font-weight:800;color:var(--text3)}
+.ct-chip.sel .ct-chip-lot{color:#2563eb}
+/* Params */
+.ct-param-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ct-param-group{display:flex;flex-direction:column;gap:5px}
+.ct-param-group label{font-size:10px;font-weight:700;letter-spacing:0.6px;color:var(--text3);text-transform:uppercase}
+.ct-param-sel,.ct-param-inp{background:var(--surface2);border:1.5px solid var(--border2);border-radius:8px;padding:7px 10px;font-size:13px;font-weight:700;color:var(--text);font-family:inherit;outline:none;width:100%}
+.ct-param-sel:focus,.ct-param-inp:focus{border-color:var(--accent)}
+.ct-param-inp{text-align:center}
+/* Result footer */
+.ct-port-footer{border-top:1px solid var(--border);padding:14px 22px;display:flex;align-items:center;gap:0;background:var(--surface2)}
+.ct-footer-info{font-size:11px;color:var(--text3);font-weight:500;flex:1}
+.ct-result-block{display:flex;align-items:center;gap:24px}
+.ct-res{display:flex;flex-direction:column;gap:2px;align-items:flex-end}
+.ct-res-lbl{font-size:9px;font-weight:800;letter-spacing:0.8px;color:var(--text3);text-transform:uppercase}
+.ct-res-val{font-size:22px;font-weight:900;line-height:1}
+.ct-res-val.b{color:var(--accent)}
+.ct-res-val.g{color:var(--green)}
+.ct-res-divider{width:1px;height:36px;background:var(--border2)}
+/* Empty */
+.ct-empty{text-align:center;padding:60px 20px;color:var(--text3);font-size:13px;background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,0.06)}
+.ct-empty-icon{font-size:40px;margin-bottom:12px}
+.ct-empty-ttl{font-weight:800;color:var(--text);font-size:15px;margin-bottom:6px}
 </style>
 </head>
 <body>
@@ -2070,128 +2067,140 @@ function ctGetLot(acc, riskPct, slPips){
 function renderCopyTrading(){
   var el=document.getElementById('copytrading-content');
   if(!el) return;
-  var activeAccs=accounts.filter(function(a){return a.phase!=='breached';});
-  var html='<div class="ct-page">';
-  html+='<div class="ct-topbar">';
-  html+='<div class="ct-title-block"><div class="ct-title">📡 Copy <span>Trading</span></div>';
-  html+='<div class="ct-subtitle">FundingPips copy portfolios &mdash; automatic lot calculation per account</div></div>';
-  html+='<button class="ct-add-btn" onclick="ctAddPortfolio()">＋ New Portfolio</button>';
+  var html='';
+  // Welcome header — same as dashboard
+  html+='<div class="ct-welcome">';
+  html+='<h2>Copy <span>Trading.</span></h2>';
+  html+='<p>FundingPips portfolios &middot; automatic lot calculation</p>';
+  html+='</div>';
+  // Top-right add button row
+  html+='<div style="display:flex;justify-content:flex-end;margin-bottom:20px;margin-top:-8px">';
+  html+='<button class="ct-add-btn" onclick="ctAddPortfolio()">&#＋; + New Portfolio</button>';
   html+='</div>';
   if(copyPortfolios.length===0){
     html+='<div class="ct-empty"><div class="ct-empty-icon">📡</div>';
-    html+='<div class="ct-empty-title">No portfolios yet</div>';
-    html+='<div>Create a portfolio, set a lead account and pick your followers.</div></div>';
+    html+='<div class="ct-empty-ttl">No portfolios yet</div>';
+    html+='<div>Hit "+ New Portfolio" to create your first copy trading setup.</div></div>';
   } else {
-    html+='<div class="ct-grid">';
     copyPortfolios.forEach(function(port,pi){
-      html+=ctRenderPortfolio(port,pi,activeAccs);
+      html+=ctRenderPortfolio(port,pi);
     });
-    html+='</div>';
   }
-  html+='</div>';
   el.innerHTML=html;
 }
 
-function ctRenderPortfolio(port,pi,activeAccs){
+function ctRenderPortfolio(port,pi){
   var leadAcc=accounts.find(function(a){return a.id===port.leadId;});
   var riskPct=port.riskPct||4.5;
   var slPips=port.slPips||50;
   var pair=port.pair||'EURUSD';
-
-  // compute lot per account
-  function getLot(a){ return ctGetLot(a,riskPct,slPips); }
+  function getLot(a){return ctGetLot(a,riskPct,slPips);}
 
   var allInPort=[];
   if(leadAcc) allInPort.push(leadAcc);
   (port.followerIds||[]).forEach(function(fid){
     var a=accounts.find(function(x){return x.id===fid;});
-    if(a) allInPort.push(a);
+    if(a&&a.id!==port.leadId) allInPort.push(a);
   });
   var totalLot=allInPort.reduce(function(s,a){return s+getLot(a);},0);
+  var activeAccs=accounts.filter(function(a){return a.phase!=='breached';});
 
-  var html='<div class="ct-card">';
+  var html='<div class="ct-port-card">';
 
-  // Top dark bar
-  html+='<div class="ct-card-top">';
-  html+='<input class="ct-card-name" type="text" value="'+port.name+'" placeholder="Portfolio name" onchange="ctRenamePorfolio('+pi+',this.value)">';
-  html+='<button class="ct-card-del" onclick="ctDeletePortfolio('+pi+')">✕ Delete</button>';
+  // Header
+  html+='<div class="ct-port-hdr">';
+  html+='<div class="ct-port-hdr-left">';
+  html+='<div class="ct-port-icon">📡</div>';
+  html+='<div>';
+  html+='<input class="ct-port-name-inp" type="text" value="'+port.name+'" placeholder="Portfolio name" onchange="ctRenamePorfolio('+pi+',this.value)">';
+  html+='<div class="ct-port-meta">'+allInPort.length+' account'+(allInPort.length!==1?'s':'')+' &middot; '+pair+' &middot; '+riskPct+'% risk &middot; '+slPips+' pips SL</div>';
+  html+='</div></div>';
+  html+='<button class="ct-port-del" onclick="ctDeletePortfolio('+pi+')">&#x2715; Delete</button>';
   html+='</div>';
 
-  // Two-column body
-  html+='<div class="ct-card-body">';
+  // 3-col body
+  html+='<div class="ct-port-body">';
 
-  // LEFT: Lead + params
+  // COL 1: Lead
   html+='<div class="ct-col">';
-  html+='<div>';
-  html+='<div class="ct-col-label">Lead Account</div>';
-  html+='<div class="ct-lead-sel">';
+  html+='<div class="ct-col-title">Lead Account</div>';
   html+='<select class="ct-select" onchange="ctSetLead('+pi+',this.value)">';
-  html+='<option value="">\u2014 Select lead \u2014</option>';
-  accounts.filter(function(a){return a.phase!=='breached';}).forEach(function(a){
+  html+='<option value="">\u2014 Select lead account \u2014</option>';
+  activeAccs.forEach(function(a){
     var sel=a.id===port.leadId?' selected':'';
-    html+='<option value="'+a.id+'"'+sel+'>\u00b7\u00b7\u00b7'+a.id.slice(-8)+' \u00b7 '+a.phase+' \u00b7 $'+a.capital.toLocaleString()+'</option>';
+    html+='<option value="'+a.id+'"'+sel+'>\u00b7\u00b7\u00b7'+a.id.slice(-8)+' \u2022 '+a.phase.toUpperCase()+' \u2022 $'+a.capital.toLocaleString()+'</option>';
   });
   html+='</select>';
   if(leadAcc){
-    html+='<div class="ct-lead-info">';
+    html+='<div style="display:flex;align-items:center;gap:8px;margin-top:2px">';
     html+='<span class="ct-badge-lead">\u2605 LEAD</span>';
-    html+='<span class="ct-acc-cap">$'+leadAcc.capital.toLocaleString()+' capital &middot; '+getLot(leadAcc).toFixed(2)+' lot</span>';
+    html+='<span class="ct-lead-detail">$'+leadAcc.capital.toLocaleString()+' capital &middot; <b>'+getLot(leadAcc).toFixed(2)+' lot</b></span>';
     html+='</div>';
+  } else {
+    html+='<div style="font-size:11px;color:var(--text3);margin-top:4px">Select a lead account to begin.</div>';
   }
   html+='</div>';
+
+  // COL 2: Followers
+  html+='<div class="ct-col">';
+  html+='<div class="ct-col-title">Follower Accounts</div>';
+  activeAccs.forEach(function(a){
+    var isLead=a.id===port.leadId;
+    var isSel=(port.followerIds||[]).indexOf(a.id)!==-1;
+    var cls='ct-chip'+(isSel?' sel':'')+(isLead?' is-lead':'');
+    var oc=isLead?'':' onclick="ctToggleFollower('+pi+',this.dataset.aid)" data-aid="'+a.id+'"';
+    html+='<div class="'+cls+'"'+oc+'>';
+    html+='<span class="ct-chip-dot"></span>';
+    html+='<span class="ct-chip-id">\u00b7\u00b7\u00b7'+a.id.slice(-8)+(isLead?' <span style="font-size:9px;opacity:0.5">(lead)</span>':'')+'</span>';
+    html+='<span class="ct-chip-lot">'+getLot(a).toFixed(2)+' lot</span>';
+    html+='</div>';
+  });
   html+='</div>';
 
-  // Params inside left col
-  html+='<div style="margin-top:auto">';
-  html+='<div class="ct-col-label" style="margin-bottom:8px">Trade Parameters</div>';
-  html+='<div style="display:flex;gap:8px;flex-wrap:wrap">';
-  html+='<div class="ct-param"><label>Pair</label>';
-  html+='<select class="ct-param-select" data-pi="'+pi+'" onchange="ctSetParam(+this.dataset.pi,\'pair\',this.value)">';
-  ['EURUSD','GBPUSD','USDJPY','XAUUSD','NAS100','US30'].forEach(function(p){
+  // COL 3: Trade params
+  html+='<div class="ct-col">';
+  html+='<div class="ct-col-title">Trade Parameters</div>';
+  html+='<div class="ct-param-group"><label>Pair</label>';
+  html+='<select class="ct-param-sel" data-pi="'+pi+'" onchange="ctSetParam(+this.dataset.pi,\'pair\',this.value)">';
+  ['EURUSD','GBPUSD','USDJPY','XAUUSD','NAS100','US30','GBPJPY','AUDUSD'].forEach(function(p){
     html+='<option value="'+p+'"'+(p===pair?' selected':'')+'>'+p+'</option>';
   });
   html+='</select></div>';
-  html+='<div class="ct-param"><label>Risk %</label>';
+  html+='<div class="ct-param-row">';
+  html+='<div class="ct-param-group"><label>Risk %</label>';
   html+='<input class="ct-param-inp" type="number" step="0.1" min="0.1" max="10" value="'+riskPct+'" data-pi="'+pi+'" onchange="ctSetParam(+this.dataset.pi,\'riskPct\',+this.value)"></div>';
-  html+='<div class="ct-param"><label>SL pips</label>';
+  html+='<div class="ct-param-group"><label>SL (pips)</label>';
   html+='<input class="ct-param-inp" type="number" step="1" min="1" value="'+slPips+'" data-pi="'+pi+'" onchange="ctSetParam(+this.dataset.pi,\'slPips\',+this.value)"></div>';
-  html+='</div></div>';
   html+='</div>';
-
-  // RIGHT: Followers list
-  html+='<div class="ct-col">';
-  html+='<div class="ct-col-label">Follower Accounts</div>';
-  html+='<div class="ct-followers">';
-  var nonBreached=accounts.filter(function(a){return a.phase!=='breached';});
-  if(nonBreached.length===0){
-    html+='<div style="font-size:12px;color:var(--text3)">No active accounts.</div>';
-  } else {
-    nonBreached.forEach(function(a){
-      var isLead=a.id===port.leadId;
-      var isActive=(port.followerIds||[]).indexOf(a.id)!==-1;
-      var cls='ct-follower-chip'+(isActive?' active':'')+(isLead?' is-lead':'');
-      var oc=isLead?'':' onclick="ctToggleFollower('+pi+',this.dataset.aid)" data-aid="'+a.id+'"';
-      var lot=getLot(a);
-      html+='<div class="'+cls+'"'+oc+'>';
-      html+='<span class="ct-chip-dot"></span>';
-      html+='<span>\u00b7\u00b7\u00b7'+a.id.slice(-8)+'</span>';
-      if(isLead) html+='<span style="font-size:9px;opacity:0.5;margin-left:2px">(lead)</span>';
-      html+='<span class="ct-chip-lot">'+lot.toFixed(2)+' lot</span>';
-      html+='</div>';
-    });
+  // Quick info
+  if(leadAcc){
+    var pipVal=10;
+    var exampleLot=ctGetLot(leadAcc,riskPct,slPips);
+    html+='<div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-top:auto">';
+    html+='<div style="font-size:9px;font-weight:800;letter-spacing:0.8px;color:var(--text3);text-transform:uppercase;margin-bottom:6px">Lot formula (10K account)</div>';
+    html+='<div style="font-size:11px;color:var(--text2);line-height:1.6">$'+leadAcc.capital.toLocaleString()+' &times; '+riskPct+'% &divide; ('+slPips+' &times; $'+pipVal+')<br>';
+    html+='= <b style="color:var(--accent)">'+exampleLot.toFixed(2)+' lot</b> per 10K account</div>';
+    html+='</div>';
   }
-  html+='</div></div>';
-  html+='</div>'; // card-body
+  html+='</div>';
+  html+='</div>'; // port-body
 
-  // Footer bar: stats
-  html+='<div class="ct-card-footer">';
-  html+='<div style="font-size:11px;color:var(--text3)">'+allInPort.length+' account'+(allInPort.length!==1?'s':'')+' &middot; '+pair+' &middot; '+riskPct+'% risk &middot; '+slPips+' pips SL</div>';
-  html+='<div class="ct-stats">';
-  html+='<div class="ct-stat"><div class="ct-stat-lbl">Prop Lots Total</div><div class="ct-stat-val blue">'+totalLot.toFixed(2)+'</div></div>';
-  html+='<div class="ct-stat-divider"></div>';
-  html+='<div class="ct-stat"><div class="ct-stat-lbl">Broker Hedge Lot</div><div class="ct-stat-val green">'+totalLot.toFixed(2)+'</div></div>';
+  // Footer
+  html+='<div class="ct-port-footer">';
+  html+='<div class="ct-footer-info">';
+  if(allInPort.length>0){
+    html+=allInPort.length+' account'+(allInPort.length!==1?'s':'')+' &middot; ';
+    allInPort.forEach(function(a,i){
+      html+=(i>0?' + ':'')+'\u00b7\u00b7\u00b7'+a.id.slice(-8);
+    });
+  } else { html+='No accounts selected yet'; }
   html+='</div>';
+  html+='<div class="ct-result-block">';
+  html+='<div class="ct-res"><div class="ct-res-lbl">Prop Lots Total</div><div class="ct-res-val b">'+totalLot.toFixed(2)+'</div></div>';
+  html+='<div class="ct-res-divider"></div>';
+  html+='<div class="ct-res"><div class="ct-res-lbl">Broker Hedge Lot</div><div class="ct-res-val g">'+totalLot.toFixed(2)+'</div></div>';
   html+='</div>';
+  html+='</div>'; // footer
 
   html+='</div>'; // card
   return html;
