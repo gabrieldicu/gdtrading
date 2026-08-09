@@ -1297,8 +1297,10 @@ function renderAccounts(){
           +'</span></div>';
       }
 
-      // Payout date button
-      var pdHtml='<div class="pot-item" style="margin-left:auto">';
+      // Payout date button — only on Live accounts
+      var pdHtml='';
+      if(a.phase==='live'){
+      pdHtml='<div class="pot-item" style="margin-left:auto">';
       if(a.payoutDate){
         var pdDate=new Date(a.payoutDate);
         var pdStr=pdDate.toLocaleDateString('ro-RO',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
@@ -1311,6 +1313,7 @@ function renderAccounts(){
       pdHtml+='<button onclick="savePayoutDate('+idx+')" title="Save">✓</button>';
       pdHtml+='<button onclick="clearPayoutDate('+idx+')" title="Delete">✕</button>';
       pdHtml+='</div></div>';
+      }
       html += '<div class="pot-bar" style="flex-wrap:wrap">'+payoutCountHtml+(initBrokerBal!==null?'<div class="pot-item">BROKER BALANCE <span class="b">$'+initBrokerBal.toLocaleString()+'</span></div>':'')+potPayoutHtml+'<div class="pot-item">POTENTIAL PROFIT <span class="'+potClass+'">'+potStr+'</span></div>'+pdHtml+'</div>';
       var showChart = (a.phase===1 || a.phase===2);
       html += '<div class="exp-inner'+(showChart?'':' no-chart')+'">';
@@ -1329,7 +1332,7 @@ function renderAccounts(){
       } else {
         phaseLbl=a.phase==='live'?'Live · ÷4 trades · RR 0.5':'Phase '+a.phase+' · full amount · RR 0.5';
       }
-      html += '<div class="metrics-title">RISC CALCULATOR <span style="font-size:11px;color:var(--text3)">'+phaseLbl+'</span></div>';
+      html += '<div class="metrics-title">RISK CALCULATOR <span style="font-size:11px;color:var(--text3)">'+phaseLbl+'</span></div>';
       html += '<div class="risc-grid">';
       var beVal=getBE(a);
       html += '<div class="risc-card gold"><div class="metric-label">🎯 BE</div><div class="risc-val'+(beVal===null?' profit':'')+'">'+(beVal===null?'Pure Profit':'$'+Math.round(beVal).toLocaleString())+'</div>'+(beVal===null?'':'<button class="risc-copy" data-copy="'+Math.round(beVal)+'" title="Copy">⧉</button>')+'</div>';
@@ -1404,13 +1407,13 @@ function renderAccounts(){
         var tPct = a.phase===1?0.08:0.05;
         var tVal = getPhaseTarget(a,tPct) - Math.max(0, a.capital-a.balance); // the pure phase target (8%/5%), excluding deficit makeup
         bandLabel = '$0 → $'+Math.round(a.capital*tPct).toLocaleString()+' (Phase '+a.phase+' target)';
-        currentLabel = 'Profit curent';
+        currentLabel = 'Current profit';
         var curProfit = a.balance - a.capital;
         currentVal = (curProfit>=0?'$':'-$')+Math.abs(Math.round(curProfit)).toLocaleString();
       } else {
         var maxLossVal = Math.abs(a.eval)+Math.abs(a.broker);
         bandLabel = '-$'+maxLossVal.toLocaleString()+' → $0 (Breakeven)';
-        currentLabel = 'P&L curent';
+        currentLabel = 'Current P&L';
         var pnlNow = getPnL(a);
         currentVal = (pnlNow>=0?'$':'-$')+Math.abs(Math.round(pnlNow)).toLocaleString();
       }
