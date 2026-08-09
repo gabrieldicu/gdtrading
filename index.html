@@ -2442,26 +2442,19 @@ function ctRenderPortfolio(port,pi){
     '-$'+maxDailyLoss.toLocaleString(),
     'across all '+allInPort.length+' accounts');
 
-  // Broker Lot
-  var brokerLotLabel = brokerCappedCT ? '⚠ Broker Lot (capped 80%)' : 'Broker Lot (1 trade)';
-  var brokerLotSub = '$'+totalPnLAbs+' PnL ÷ ('+brokerSlCT+' × $'+pipValCT+')';
-  if(brokerCappedCT) brokerLotSub = 'Capped: $'+brokerRiskCT+' of $'+totalPnLAbs+' requested';
-  html+=statCard('var(--surface2)',brokerCappedCT?'#fca5a5':'var(--border)',brokerCappedCT?'#dc2626':'var(--accent)',
-    brokerLotLabel,
-    brokerLotCT > 0 ? brokerLotCT.toFixed(3).replace(/\.?0+$/,'')+' lot' : '—',
+  // Broker Lot — with commission baked into subtitle
+  var brokerBd = brokerCappedCT ? '#fca5a5' : 'var(--border)';
+  var brokerCol = brokerCappedCT ? 'var(--red)' : 'var(--green)';
+  var brokerLotSub = brokerLotCT>0
+    ? '$'+totalPnLAbs+' ÷ '+brokerSlCT+'p · −$'+commCT+' comm · net $'+netRecoveryCT
+    : 'Set Broker Balance above';
+  if(brokerCappedCT) brokerLotSub = '⚠ Capped $'+brokerRiskCT+' (80%) · −$'+commCT+' comm';
+  html+=statCard('var(--surface2)', brokerBd, brokerCol,
+    'Broker Lot (1 trade)',
+    brokerLotCT>0 ? brokerLotCT.toFixed(3).replace(/\.?0+$/,'')+' lot' : '—',
     brokerLotSub);
 
-  html+='</div>';
-
-  // Commission + net recovery row
-  if(brokerLotCT > 0){
-    html+='<div style="padding:8px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;font-size:10px;line-height:1.8">';
-    html+='<div style="display:flex;justify-content:space-between"><span style="color:var(--text3)">Commission ($5/lot × 2 trades)</span><span style="color:var(--red);font-weight:700">−$'+commCT+'</span></div>';
-    html+='<div style="display:flex;justify-content:space-between;border-top:1px solid var(--border);padding-top:4px;margin-top:2px"><span style="color:var(--text2);font-weight:700">Net recovery (2 wins)</span><span style="color:'+(netRecoveryCT>0?'var(--green)':'var(--red)')+';font-weight:800">'+(netRecoveryCT>0?'+':'')+'$'+netRecoveryCT+'</span></div>';
-    html+='</div>';
-  }
-  html+='</div></div>';
-  html+='</div>';
+  html+='</div></div></div>';
 
   // COL 2: Followers
   html+='<div class="ct-col">';
