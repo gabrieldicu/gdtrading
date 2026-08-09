@@ -213,8 +213,8 @@ input,select{font-family:'Inter',sans-serif}
 .split-btn:hover{color:var(--text2)}
 .split-btn.active{background:var(--accent);color:#fff;box-shadow:0 1px 4px rgba(37,99,235,0.3)}
 .metrics-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
-.risc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;margin-bottom:30px}
-.risc-card{position:relative;border-radius:18px;padding:20px 20px 18px;transition:all 0.22s;box-shadow:0 4px 14px rgba(37,99,235,0.18);background:linear-gradient(150deg,#3b5bfa,#2541c4);overflow:hidden}
+.risc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;margin-bottom:30px;align-items:stretch}
+.risc-card{position:relative;border-radius:18px;padding:20px 20px 18px;transition:all 0.22s;box-shadow:0 4px 14px rgba(37,99,235,0.18);background:linear-gradient(150deg,#3b5bfa,#2541c4);overflow:hidden;box-sizing:border-box;height:100%}
 .risc-card::after{content:'';position:absolute;top:-30%;right:-20%;width:140px;height:140px;background:radial-gradient(circle,rgba(255,255,255,0.16),transparent 70%);pointer-events:none}
 .risc-card:hover{box-shadow:0 10px 26px rgba(37,99,235,0.28);transform:translateY(-2px)}
 .risc-card.cyan{background:linear-gradient(150deg,#06b6d4,#0e7490);box-shadow:0 4px 14px rgba(8,145,178,0.22)}
@@ -1491,26 +1491,88 @@ function renderAccounts(){
         var pPct=a.phase===1?0.08:0.05;
         var pTarget=getPhaseTarget(a,pPct);
         var pProgress=getHealthPct(a);
-        // Compact BE card for phase 1/2
+        // ── BE card details ──
+        var beRemaining = beVal!==null ? Math.max(0, beVal - Math.abs(a.payouts||0)) : 0;
+        var beBalTarget = beVal!==null ? a.capital + beVal : null;
+        var beBalProg = (beVal!==null && beVal>0) ? Math.min(100,Math.max(0,Math.round((a.balance-a.capital)/beVal*100))) : 0;
+        // Trades needed at RR 0.5 (broker): risk=2×reward → need 2 wins; at RR 2 (prop): 1 win
+        var tradesProp = beVal!==null ? Math.ceil(beVal / (a.balance*(lotRiskPct/100)*2)) : null;
+        var tradesBroker = beVal!==null ? 2 : null; // always 2 at RR 0.5
+
+        var rowStyle='display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.1);font-size:11px';
+        var lblS='color:rgba(255,255,255,0.55);font-weight:600';
+        var valS='color:#fff;font-weight:800';
+
         var beCompact = beVal===null
-          ? '<div class="risc-card gold" style="padding:14px 16px"><div class="metric-label" style="font-size:9px">🎯 BE</div><div class="risc-val profit" style="font-size:20px">Pure Profit</div></div>'
-          : '<div class="risc-card gold" style="padding:14px 16px"><div class="metric-label" style="font-size:9px">🎯 BE</div>'
-            +'<div class="risc-val" style="font-size:26px">$'+Math.round(beVal).toLocaleString()+'</div>'
-            +'<button class="risc-copy" data-copy="'+Math.round(beVal)+'" title="Copy" style="margin-top:4px">⧉</button>'
+          ? '<div class="risc-card gold" style="padding:16px 18px;display:flex;flex-direction:column;gap:8px"><div class="metric-label" style="font-size:9px">🎯 BE</div><div class="risc-val profit" style="font-size:22px">Pure Profit</div><div style="font-size:10px;color:rgba(255,255,255,0.5)">No costs to recover</div></div>'
+          : '<div class="risc-card gold" style="padding:16px 18px;display:flex;flex-direction:column;gap:0">'
+            +'<div class="metric-label" style="font-size:9px">🎯 BREAKEVEN</div>'
+            +'<div class="risc-val" style="font-size:26px;margin-bottom:8px">$'+Math.round(beVal).toLocaleString()+'</div>'
+            // Still to recover
+            +'<div style="'+rowStyle+'"><span style="'+lblS+'">Still to recover</span><span style="'+valS+';color:'+(beRemaining<=0?'#86efac':'#fde68a')+'">'+(beRemaining<=0?'✓ Done':'$'+Math.round(beRemaining).toLocaleString())+'</span></div>'
+            // Balance target
+            +'<div style="'+rowStyle+'"><span style="'+lblS+'">Balance target</span><span style="'+valS+'">$'+Math.round(beBalTarget).toLocaleString()+'</span></div>'
+            // Gap to target
+            +'<div style="'+rowStyle+';border-bottom:none"><span style="'+lblS+'">Gap</span><span style="'+valS+';color:'+(a.balance>=beBalTarget?'#86efac':'#fca5a5')+'">'+(a.balance>=beBalTarget?'+$0':'−$'+Math.round(beBalTarget-a.balance).toLocaleString())+'</span></div>'
+            // Progress bar
+            +'<div style="margin-top:8px">'
+            +'<div style="display:flex;justify-content:space-between;font-size:9px;color:rgba(255,255,255,0.4);margin-bottom:3px"><span>$'+a.capital.toLocaleString()+'</span><span>$'+Math.round(beBalTarget).toLocaleString()+'</span></div>'
+            +'<div style="height:5px;background:rgba(255,255,255,0.15);border-radius:3px;overflow:hidden">'
+            +'<div style="height:100%;width:'+beBalProg+'%;background:'+(beBalProg>=100?'#22c55e':beBalProg>=50?'#f59e0b':'#ef4444')+';border-radius:3px"></div>'
+            +'</div>'
+            +'<div style="font-size:9px;color:rgba(255,255,255,0.4);margin-top:2px;text-align:right">'+beBalProg+'% to BE</div>'
+            +'</div>'
+            // Trades needed
+            +'<div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.1);display:grid;grid-template-columns:1fr 1fr;gap:6px">'
+            +'<div style="background:rgba(255,255,255,0.1);border-radius:8px;padding:6px 8px;text-align:center">'
+            +'<div style="font-size:9px;color:rgba(255,255,255,0.5);font-weight:700">PROP WINS</div>'
+            +'<div style="font-size:16px;font-weight:900;color:#fff">'+( tradesProp!==null?tradesProp:'—')+'</div>'
+            +'<div style="font-size:8px;color:rgba(255,255,255,0.4)">at RR 1:2</div>'
+            +'</div>'
+            +'<div style="background:rgba(255,255,255,0.1);border-radius:8px;padding:6px 8px;text-align:center">'
+            +'<div style="font-size:9px;color:rgba(255,255,255,0.5);font-weight:700">BROKER WINS</div>'
+            +'<div style="font-size:16px;font-weight:900;color:#fff">2</div>'
+            +'<div style="font-size:8px;color:rgba(255,255,255,0.4)">at RR 1:0.5</div>'
+            +'</div>'
+            +'</div>'
+            +'<button class="risc-copy" data-copy="'+Math.round(beVal)+'" title="Copy" style="margin-top:8px">⧉</button>'
             +'</div>';
-        var targetCompact = '<div class="risc-card gold" style="padding:14px 16px">'
+
+        // ── Phase Target card details ──
+        var remaining = Math.max(0, pTarget - Math.max(0, a.balance - a.capital));
+        var maxDD = a.capital * (a.phase===1 ? 0.10 : 0.08); // max drawdown before breach
+        var ddUsed = Math.max(0, a.capital - a.balance);
+        var ddLeft = Math.max(0, maxDD - ddUsed);
+        // Days estimate: based on avg daily profit from balance history
+        var bHist = (a.balanceHistory||[]).slice().sort(function(x,y){return x.date<y.date?-1:1;});
+        var avgDaily = 0;
+        if(bHist.length>=2){
+          var firstBal=bHist[0].balance, lastBal=bHist[bHist.length-1].balance;
+          var days=Math.max(1,bHist.length-1);
+          avgDaily=Math.max(0,(lastBal-firstBal)/days);
+        }
+        var daysEst = (avgDaily>0 && remaining>0) ? Math.ceil(remaining/avgDaily) : null;
+
+        var targetCompact = '<div class="risc-card gold" style="padding:16px 18px;display:flex;flex-direction:column;gap:0">'
           +'<div class="metric-label" style="font-size:9px">📈 PHASE '+a.phase+' TARGET</div>'
-          +'<div class="risc-val" style="font-size:26px">$'+Math.round(pTarget).toLocaleString()+'</div>'
-          // mini progress bar
-          +'<div style="margin-top:6px">'
-          +'<div style="height:4px;background:rgba(255,255,255,0.2);border-radius:2px">'
-          +'<div style="height:100%;width:'+Math.min(100,Math.round(pProgress))+'%;background:rgba(255,255,255,0.8);border-radius:2px"></div>'
+          +'<div class="risc-val" style="font-size:26px;margin-bottom:8px">$'+Math.round(pTarget).toLocaleString()+'</div>'
+          // Still needed
+          +'<div style="'+rowStyle+'"><span style="'+lblS+'">Still needed</span><span style="'+valS+';color:'+(remaining<=0?'#86efac':'#fde68a')+'">'+( remaining<=0?'✓ Reached':'$'+Math.round(remaining).toLocaleString())+'</span></div>'
+          // Max drawdown left
+          +'<div style="'+rowStyle+'"><span style="'+lblS+'">DD room left</span><span style="'+valS+';color:'+(ddLeft<maxDD*0.2?'#fca5a5':ddLeft<maxDD*0.5?'#fde68a':'#86efac')+'">$'+Math.round(ddLeft).toLocaleString()+'</span></div>'
+          // Days estimate
+          +'<div style="'+rowStyle+';border-bottom:none"><span style="'+lblS+'">Days est.</span><span style="'+valS+'">'+( daysEst!==null?'~'+daysEst+' days':'—')+'</span></div>'
+          // Progress bar
+          +'<div style="margin-top:8px">'
+          +'<div style="display:flex;justify-content:space-between;font-size:9px;color:rgba(255,255,255,0.4);margin-bottom:3px"><span>0%</span><span>100%</span></div>'
+          +'<div style="height:5px;background:rgba(255,255,255,0.15);border-radius:3px;overflow:hidden">'
+          +'<div style="height:100%;width:'+Math.min(100,Math.round(pProgress))+'%;background:'+(pProgress>=80?'#22c55e':pProgress>=40?'#f59e0b':'#ef4444')+';border-radius:3px"></div>'
           +'</div>'
-          +'<div style="font-size:9px;color:rgba(255,255,255,0.55);margin-top:3px">'+Math.round(pProgress)+'% of target reached</div>'
+          +'<div style="font-size:9px;color:rgba(255,255,255,0.4);margin-top:2px;text-align:right">'+Math.round(pProgress)+'% of target</div>'
           +'</div>'
-          +'<button class="risc-copy" data-copy="'+Math.round(pTarget)+'" title="Copy" style="margin-top:4px">⧉</button>'
+          +'<button class="risc-copy" data-copy="'+Math.round(pTarget)+'" title="Copy" style="margin-top:8px">⧉</button>'
           +'</div>';
-        html += '<div style="display:flex;flex-direction:column;gap:12px">'+beCompact+targetCompact+'</div>';
+        html += '<div style="display:flex;flex-direction:column;gap:12px;height:100%">'+beCompact+targetCompact+'</div>';
       } else {
         html += beCardHtml;
       }
@@ -1573,34 +1635,53 @@ function renderAccounts(){
 
       // Broker Risk $ — default = current PnL (what we're trying to recover), editable
       var pnlAbs = Math.abs(Math.round(pnl));
-      var brokerRiskDollar = (a.brokerRiskDollar !== undefined && a.brokerRiskDollar !== null)
+      var brokerRiskRaw = (a.brokerRiskDollar !== undefined && a.brokerRiskDollar !== null)
         ? a.brokerRiskDollar
         : pnlAbs; // default: PnL of this account
+
+      // 80% cap — Fusion Markets max percent at risk
+      var MAX_BROKER_RISK_PCT = 0.80;
+      var brokerMaxAllowed = globalBrokerBalance > 0 ? Math.floor(globalBrokerBalance * MAX_BROKER_RISK_PCT) : null;
+      var brokerRiskCapped = brokerMaxAllowed !== null && brokerRiskRaw > brokerMaxAllowed;
+      var brokerRiskDollar = brokerRiskCapped ? brokerMaxAllowed : brokerRiskRaw;
 
       // Broker Lot = Risk$ / (brokerSL × pipVal)
       var brokerLotFinal = (brokerRiskDollar > 0 && brokerSlPips > 0)
         ? Math.round((brokerRiskDollar / (brokerSlPips * pipVal)) * 1000) / 1000
         : brokerLot;
 
+      // Min broker balance needed for this risk amount
+      var brokerBalNeeded = brokerRiskDollar > 0 ? Math.ceil(brokerRiskDollar / MAX_BROKER_RISK_PCT) : null;
+
+      // Warning if capped
+      var capWarningHtml = brokerRiskCapped
+        ? '<div style="background:rgba(239,68,68,0.2);border:1px solid rgba(239,68,68,0.4);border-radius:6px;padding:5px 8px;font-size:9px;color:#fca5a5;margin-top:4px">'
+          +'⚠ Capped at $'+brokerMaxAllowed+' (80% of $'+globalBrokerBalance+'). Requested: $'+brokerRiskRaw+'.'
+          +'</div>'
+        : (brokerBalNeeded && globalBrokerBalance > 0 && globalBrokerBalance >= brokerBalNeeded)
+          ? '<div style="font-size:9px;color:rgba(134,239,172,0.8);margin-top:2px">✓ Balance sufficient ($'+globalBrokerBalance+' &ge; $'+brokerBalNeeded+' needed)</div>'
+          : (brokerBalNeeded && !globalBrokerBalance
+            ? '<div style="font-size:9px;color:rgba(255,255,255,0.35);margin-top:2px">Min balance needed: $'+brokerBalNeeded+' (÷0.80)</div>'
+            : '');
+
       var brokerInputsHtml = '<div style="margin-top:10px;display:flex;flex-direction:column;gap:7px">'
-        // Pair — same as prop (no separate picker, shares lotPair)
         +'<div><label style="'+lblStyle+'">Pair</label>'
         +'<select class="broker-pair-sel" data-idx="'+idx+'" style="'+selStyle+'">'+pairOpts+'</select></div>'
-        // Risk $ — prestabilit cu PnL, editabil
-        +'<div><label style="'+lblStyle+'">Risk $ <span style="opacity:0.6;font-weight:400">(default: PnL)</span></label>'
-        +'<input type="number" class="broker-risk-dollar-inp" data-idx="'+idx+'" value="'+brokerRiskDollar+'" min="0" step="1" style="'+inpStyle+'"></div>'
-        // SL pips broker = 2x prop, sync bidirecțional
+        +'<div><label style="'+lblStyle+'">Risk $ <span style="opacity:0.6;font-weight:400">(default: PnL · max 80%)</span></label>'
+        +'<input type="number" class="broker-risk-dollar-inp" data-idx="'+idx+'" value="'+brokerRiskRaw+'" min="0" step="1" style="'+inpStyle+(brokerRiskCapped?';border-color:rgba(239,68,68,0.7)':'')+'">'
+        +capWarningHtml
+        +'</div>'
         +'<div><label style="'+lblStyle+'">SL pips <span style="opacity:0.6;font-weight:400">(= prop ×2)</span></label>'
         +'<input type="number" class="broker-sl-inp" data-idx="'+idx+'" value="'+brokerSlPips+'" min="1" style="'+inpStyle+'"></div>'
         +'<div style="font-size:9px;color:rgba(255,255,255,0.4);margin-top:2px">$'+brokerRiskDollar+' &divide; ('+brokerSlPips+' &times; $'+pipVal+') = <b style="color:rgba(255,255,255,0.8)">'+brokerLotFinal.toFixed(3).replace(/\.?0+$/,'')+' lot</b></div>'
-        +'<div style="font-size:9px;color:rgba(255,255,255,0.35)">2 trades needed &middot; RR 1:0.5</div>'
+        +'<div style="font-size:9px;color:rgba(255,255,255,0.35)">2 trades needed &middot; RR 1:0.5 &middot; max 80% balance</div>'
         +'</div>';
 
       html += '<div class="risc-card cyan"><div class="metric-label">BROKER LOT <span style="color:rgba(255,255,255,0.6);font-weight:500;font-size:9px">(SL ×2)</span></div>'
-        +'<div class="risc-val cyan'+(isPureProfit?' profit':'')+'">'+(isPureProfit?'No Hedge':brokerLotFinal.toFixed(3).replace(/\.?0+$/,'')+'<span style="font-size:13px;font-weight:500;opacity:0.7"> lot</span>')+'</div>'
-        +(isPureProfit?'':'<div class="risc-sub">Reward: $'+Math.round(brokerRiskDollar/2)+' / trade</div>')
+        +'<div class="risc-val cyan'+(isPureProfit?' profit':'')+'">'+( isPureProfit?'No Hedge':brokerLotFinal.toFixed(3).replace(/\.?0+$/,'')+'<span style="font-size:13px;font-weight:500;opacity:0.7"> lot</span>')+'</div>'
+        +(isPureProfit?'':`<div class="risc-sub">Reward: $${Math.round(brokerRiskDollar/2)} / trade</div>`)
         +(!isPureProfit ? brokerInputsHtml : '')
-        +(isPureProfit?'':'<button class="risc-copy" data-copy="'+brokerLotFinal.toFixed(2)+'" title="Copy" style="margin-top:6px">⧉</button>')
+        +(isPureProfit?'':`<button class="risc-copy" data-copy="${brokerLotFinal.toFixed(2)}" title="Copy" style="margin-top:6px">⧉</button>`)
         +'</div>';
       html += '</div>';
       var bandLabel, currentLabel, currentVal;
