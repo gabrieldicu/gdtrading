@@ -964,8 +964,10 @@ function getBE(a){
   var pnl=getPnL(a);
   if(pnl>=0) return null; // Pure Profit — breakeven already reached
   var loss=Math.abs(a.eval+a.broker);
-  if(a.phase===1 || a.phase===2) return loss; // no payout happens in Phase 1/2, so no 80% split applies
-  return (loss/0.80)+18; // Live: payout split (80%) + ~$15-20 processing fee buffer
+  var beNeeded = (a.phase===1 || a.phase===2) ? loss : (loss/0.80)+18;
+  // If payouts already cover the BE amount — Pure Profit
+  if(Math.abs(a.payouts||0) >= beNeeded) return null;
+  return beNeeded;
 }
 
 function getPhaseTarget(a,pct){
