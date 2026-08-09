@@ -2128,7 +2128,8 @@ function ctRenderPortfolio(port,pi){
   html+='<option value="">\u2014 Select lead account \u2014</option>';
   activeAccs.forEach(function(a){
     var sel=a.id===port.leadId?' selected':'';
-    html+='<option value="'+a.id+'"'+sel+'>\u00b7\u00b7\u00b7'+a.id.slice(-8)+' \u2022 '+a.phase.toUpperCase()+' \u2022 $'+a.capital.toLocaleString()+'</option>';
+    var phaseStr=(a.phase===1?'PHASE 1':a.phase===2?'PHASE 2':String(a.phase).toUpperCase());
+    html+='<option value="'+a.id+'"'+sel+'>\u00b7\u00b7\u00b7'+a.id.slice(-8)+' \u2022 '+phaseStr+' \u2022 $'+a.capital.toLocaleString()+'</option>';
   });
   html+='</select>';
   if(leadAcc){
