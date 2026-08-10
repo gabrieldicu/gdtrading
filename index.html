@@ -2412,49 +2412,63 @@ function ctRenderPortfolio(port,pi){
   var potDailyNet = Math.round(potDailyGross * 0.8 - 15 * allInPort.length);
   var maxDailyLoss = Math.round(allInPort.reduce(function(s,a){ return s + (a.capital * riskPct/100); }, 0));
 
-  var statCard = function(bg, bd, col, lbl, val, sub){
-    return '<div style="background:'+bg+';border:1px solid '+bd+';border-radius:10px;padding:10px 12px">'
-      +'<div style="font-size:9px;font-weight:800;letter-spacing:0.8px;color:'+col+';text-transform:uppercase;margin-bottom:3px">'+lbl+'</div>'
-      +'<div style="font-size:16px;font-weight:900;color:'+col+'">'+val+'</div>'
-      +'<div style="font-size:10px;color:'+col+';opacity:0.7">'+sub+'</div>'
-      +'</div>';
-  };
+  // Current saved values for the two editable fields
+  var ctLeadBal = port.leadBalance || '';
+  var ctBrokerPnL = port.brokerPnL || '';
 
-  html+='<div style="margin-top:auto;display:flex;flex-direction:column;gap:8px">';
-  html+='<div style="font-size:9.5px;font-weight:800;letter-spacing:1px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">Portfolio Stats</div>';
-  html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
+  // If broker PnL is set — recalculate broker lot from it
+  var brokerPnLVal = parseFloat(ctBrokerPnL) || 0;
+  if(brokerPnLVal > 0){
+    var brokerRiskFromInput = brokerPnLVal;
+    if(brokerMaxCT !== null && brokerRiskFromInput > brokerMaxCT){
+      brokerCappedCT = true;
+      brokerRiskFromInput = brokerMaxCT;
+    }
+    brokerRiskCT = brokerRiskFromInput;
+    brokerLotCT = (brokerSlCT > 0) ? Math.round((brokerRiskCT / (brokerSlCT * pipValCT)) * 1000) / 1000 : 0;
+    commCT = Math.round(brokerLotCT * 5 * 2 * 100) / 100;
+    netRecoveryCT = Math.round((brokerRiskCT - commCT) * 100) / 100;
+  }
 
-  // Prop Lot (lead only)
-  html+=statCard('var(--surface2)','var(--border)','var(--accent)',
-    'Prop Lot (lead)',
-    propLotDisplay.toFixed(3).replace(/\.?0+$/,'')+' lot',
-    'followers copy · '+pair);
+  // Per-account broker share (brokerPnL / nr conturi)
+  var brokerPerAcc = (brokerPnLVal > 0 && allInPort.length > 0)
+    ? Math.round(brokerPnLVal / allInPort.length)
+    : null;
 
-  // Win/trade prop
-  html+=statCard('var(--green-bg)','var(--green-bd)','var(--green)',
-    'Win/trade (2RR)',
-    '+$'+Math.round(potDailyGross).toLocaleString(),
-    '~$'+potDailyNet.toLocaleString()+' after fees');
+  var inpStyle2 = 'width:100%;box-sizing:border-box;background:var(--surface);border:1.5px solid var(--border2);'
+    +'border-radius:8px;padding:8px 10px;font-size:15px;font-weight:800;color:var(--text);font-family:inherit;outline:none;'
+    +'margin-top:4px;transition:border-color 0.15s';
+  var lblStyle2 = 'font-size:9px;font-weight:800;letter-spacing:0.8px;color:var(--text3);text-transform:uppercase';
 
-  // Loss/trade prop
-  html+=statCard('var(--red-bg)','var(--red-bd)','var(--red)',
-    'Loss/trade',
-    '-$'+maxDailyLoss.toLocaleString(),
-    'across all '+allInPort.length+' accounts');
+  html+='<div style="margin-top:auto;display:flex;flex-direction:column;gap:10px">';
 
-  // Broker Lot — with commission baked into subtitle
-  var brokerBd = brokerCappedCT ? '#fca5a5' : 'var(--border)';
-  var brokerCol = brokerCappedCT ? 'var(--red)' : 'var(--green)';
-  var brokerLotSub = brokerLotCT>0
-    ? '$'+totalPnLAbs+' ÷ '+brokerSlCT+'p · −$'+commCT+' comm · net $'+netRecoveryCT
-    : 'Set Broker Balance above';
-  if(brokerCappedCT) brokerLotSub = '⚠ Capped $'+brokerRiskCT+' (80%) · −$'+commCT+' comm';
-  html+=statCard('var(--surface2)', brokerBd, brokerCol,
-    'Broker Lot (1 trade)',
-    brokerLotCT>0 ? brokerLotCT.toFixed(3).replace(/\.?0+$/,'')+' lot' : '—',
-    brokerLotSub);
+  // ── BALANCE LEAD ──
+  html+='<div style="background:var(--surface2);border:1.5px solid var(--border2);border-radius:10px;padding:12px 14px">';
+  html+='<div style="'+lblStyle2+'">📊 Lead Balance</div>';
+  html+='<input type="text" inputmode="numeric" class="ct-lead-bal-inp" data-pi="'+pi+'" placeholder="$10,000" value="'+ctLeadBal+'" style="'+inpStyle2+'">';
+  html+='<div style="font-size:9px;color:var(--text3);margin-top:4px">Updates balance for lead + all followers in dashboard</div>';
+  html+='</div>';
 
-  html+='</div></div></div>';
+  // ── BROKER P&L ──
+  var brokerBorder = brokerCappedCT ? '1.5px solid #fca5a5' : '1.5px solid var(--border2)';
+  html+='<div style="background:var(--surface2);border:'+brokerBorder+';border-radius:10px;padding:12px 14px">';
+  html+='<div style="'+lblStyle2+'">💼 Broker P&L (total)</div>';
+  html+='<input type="text" inputmode="numeric" class="ct-broker-pnl-inp" data-pi="'+pi+'" placeholder="e.g. 198" value="'+ctBrokerPnL+'" style="'+inpStyle2+'">';
+  if(brokerPnLVal > 0){
+    html+='<div style="margin-top:6px;font-size:10px;color:var(--text2);line-height:1.7">';
+    html+='<span style="color:var(--text3)">Per account:</span> <b style="color:var(--red)">−$'+brokerPerAcc+'</b> &nbsp;';
+    html+='<span style="color:var(--text3)">Broker lot:</span> <b style="color:var(--accent)">'+brokerLotCT.toFixed(3).replace(/\.?0+$/,'')+'</b>';
+    if(brokerCappedCT) html+=' <span style="color:var(--red);font-size:9px">(⚠ capped 80%)</span>';
+    html+='<br><span style="color:var(--text3)">Commission:</span> <b style="color:var(--red)">−$'+commCT+'</b> &nbsp;';
+    html+='<span style="color:var(--text3)">Net recovery:</span> <b style="color:var(--green)">$'+netRecoveryCT+'</b>';
+    html+='</div>';
+  } else {
+    html+='<div style="font-size:9px;color:var(--text3);margin-top:4px">Divided by '+allInPort.length+' accounts → updates broker cell in dashboard</div>';
+  }
+  html+='</div>';
+
+  html+='</div>'; // close inner flex
+  html+='</div>'; // close ct-col 1
 
   // COL 2: Followers
   html+='<div class="ct-col">';
@@ -2561,6 +2575,68 @@ function ctSetParam(pi, key, val){
   saveCopyPortfolios();
   renderCopyTrading();
 }
+
+// COPY TRADING — Lead Balance + Broker PnL inputs
+(function(){
+  // Lead Balance input → updates balance of lead + all followers in accounts[]
+  document.querySelectorAll('.ct-lead-bal-inp').forEach(function(inp){
+    inp.addEventListener('click',function(e){e.stopPropagation();});
+    inp.addEventListener('change',function(e){
+      e.stopPropagation();
+      var pi=parseInt(inp.getAttribute('data-pi'));
+      var port=copyPortfolios[pi];
+      if(!port) return;
+      var val=parseFloat(inp.value.replace(/[^0-9.]/g,''))||0;
+      port.leadBalance=val>0?val:'';
+      saveCopyPortfolios();
+      // Update balance in dashboard for lead + all followers
+      var allIds=[port.leadId].concat(port.followerIds||[]).filter(Boolean);
+      allIds.forEach(function(id){
+        var acc=accounts.find(function(a){return a.id===id;});
+        if(acc && val>0){
+          acc.balance=val;
+          acc.balanceExpr=String(val);
+          recordBalanceHistory(acc);
+        }
+      });
+      saveState();
+      renderAccounts();
+      renderCopyTrading();
+    });
+    inp.addEventListener('keydown',function(e){if(e.key==='Enter') this.blur();});
+  });
+
+  // Broker PnL input → divides by nr accounts → updates broker cell of each account
+  document.querySelectorAll('.ct-broker-pnl-inp').forEach(function(inp){
+    inp.addEventListener('click',function(e){e.stopPropagation();});
+    inp.addEventListener('change',function(e){
+      e.stopPropagation();
+      var pi=parseInt(inp.getAttribute('data-pi'));
+      var port=copyPortfolios[pi];
+      if(!port) return;
+      var val=parseFloat(inp.value.replace(/[^0-9.-]/g,''))||0;
+      port.brokerPnL=val!==0?val:'';
+      saveCopyPortfolios();
+      // Distribute broker PnL evenly across all accounts in portfolio
+      var allIds=[port.leadId].concat(port.followerIds||[]).filter(Boolean);
+      var nAccs=allIds.length;
+      if(nAccs>0 && val!==0){
+        var perAcc=Math.round(val/nAccs);
+        allIds.forEach(function(id){
+          var acc=accounts.find(function(a){return a.id===id;});
+          if(acc){
+            acc.broker=-Math.abs(perAcc); // broker P&L is always a loss (negative)
+            acc.brokerExpr=String(-Math.abs(perAcc));
+          }
+        });
+        saveState();
+        renderAccounts();
+      }
+      renderCopyTrading();
+    });
+    inp.addEventListener('keydown',function(e){if(e.key==='Enter') this.blur();});
+  });
+})();
 
 // GLOBAL BROKER BALANCE INPUT
 (function(){
