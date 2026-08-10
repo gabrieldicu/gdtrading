@@ -2623,8 +2623,10 @@ function ctSetParam(pi, key, val){
           allIds.forEach(function(id){
             var acc=accounts.find(function(a){return a.id===id;});
             if(acc){
-              acc.broker=-Math.abs(perAcc);
-              acc.brokerExpr=String(-Math.abs(perAcc));
+              // Keep sign as entered: negative = loss, positive = profit
+              var signedPerAcc = val < 0 ? -Math.abs(perAcc) : Math.abs(perAcc);
+              acc.broker=signedPerAcc;
+              acc.brokerExpr=String(signedPerAcc);
             }
           });
           saveState();
