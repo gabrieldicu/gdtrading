@@ -2578,64 +2578,66 @@ function ctSetParam(pi, key, val){
 
 // COPY TRADING — Lead Balance + Broker PnL inputs
 (function(){
-  // Lead Balance input → updates balance of lead + all followers in accounts[]
-  document.querySelectorAll('.ct-lead-bal-inp').forEach(function(inp){
-    inp.addEventListener('click',function(e){e.stopPropagation();});
-    inp.addEventListener('change',function(e){
-      e.stopPropagation();
-      var pi=parseInt(inp.getAttribute('data-pi'));
-      var port=copyPortfolios[pi];
-      if(!port) return;
-      var val=parseFloat(inp.value.replace(/[^0-9.]/g,''))||0;
-      port.leadBalance=val>0?val:'';
-      saveCopyPortfolios();
-      // Update balance in dashboard for lead + all followers
-      var allIds=[port.leadId].concat(port.followerIds||[]).filter(Boolean);
-      allIds.forEach(function(id){
-        var acc=accounts.find(function(a){return a.id===id;});
-        if(acc && val>0){
-          acc.balance=val;
-          acc.balanceExpr=String(val);
-          recordBalanceHistory(acc);
-        }
-      });
-      saveState();
-      renderAccounts();
-      renderCopyTrading();
+  // Use event delegation on copytrading-content — survives re-renders
+  var ctContent=document.getElementById('copytrading-content');
+  if(ctContent){
+    ctContent.addEventListener('click',function(e){
+      if(e.target.classList.contains('ct-lead-bal-inp')||
+         e.target.classList.contains('ct-broker-pnl-inp')) e.stopPropagation();
     });
-    inp.addEventListener('keydown',function(e){if(e.key==='Enter') this.blur();});
-  });
-
-  // Broker PnL input → divides by nr accounts → updates broker cell of each account
-  document.querySelectorAll('.ct-broker-pnl-inp').forEach(function(inp){
-    inp.addEventListener('click',function(e){e.stopPropagation();});
-    inp.addEventListener('change',function(e){
-      e.stopPropagation();
-      var pi=parseInt(inp.getAttribute('data-pi'));
-      var port=copyPortfolios[pi];
-      if(!port) return;
-      var val=parseFloat(inp.value.replace(/[^0-9.-]/g,''))||0;
-      port.brokerPnL=val!==0?val:'';
-      saveCopyPortfolios();
-      // Distribute broker PnL evenly across all accounts in portfolio
-      var allIds=[port.leadId].concat(port.followerIds||[]).filter(Boolean);
-      var nAccs=allIds.length;
-      if(nAccs>0 && val!==0){
-        var perAcc=Math.round(val/nAccs);
+    ctContent.addEventListener('change',function(e){
+      var inp=e.target;
+      if(inp.classList.contains('ct-lead-bal-inp')){
+        e.stopPropagation();
+        var pi=parseInt(inp.getAttribute('data-pi'));
+        var port=copyPortfolios[pi];
+        if(!port) return;
+        var val=parseFloat(inp.value.replace(/[^0-9.]/g,''))||0;
+        port.leadBalance=val>0?val:'';
+        saveCopyPortfolios();
+        var allIds=[port.leadId].concat(port.followerIds||[]).filter(Boolean);
         allIds.forEach(function(id){
           var acc=accounts.find(function(a){return a.id===id;});
-          if(acc){
-            acc.broker=-Math.abs(perAcc); // broker P&L is always a loss (negative)
-            acc.brokerExpr=String(-Math.abs(perAcc));
+          if(acc&&val>0){
+            acc.balance=val;
+            acc.balanceExpr=String(val);
+            recordBalanceHistory(acc);
           }
         });
         saveState();
         renderAccounts();
+        renderCopyTrading();
       }
-      renderCopyTrading();
+      if(inp.classList.contains('ct-broker-pnl-inp')){
+        e.stopPropagation();
+        var pi=parseInt(inp.getAttribute('data-pi'));
+        var port=copyPortfolios[pi];
+        if(!port) return;
+        var val=parseFloat(inp.value.replace(/[^0-9.-]/g,''))||0;
+        port.brokerPnL=val!==0?val:'';
+        saveCopyPortfolios();
+        var allIds=[port.leadId].concat(port.followerIds||[]).filter(Boolean);
+        var nAccs=allIds.length;
+        if(nAccs>0&&val!==0){
+          var perAcc=Math.round(val/nAccs);
+          allIds.forEach(function(id){
+            var acc=accounts.find(function(a){return a.id===id;});
+            if(acc){
+              acc.broker=-Math.abs(perAcc);
+              acc.brokerExpr=String(-Math.abs(perAcc));
+            }
+          });
+          saveState();
+          renderAccounts();
+        }
+        renderCopyTrading();
+      }
     });
-    inp.addEventListener('keydown',function(e){if(e.key==='Enter') this.blur();});
-  });
+    ctContent.addEventListener('keydown',function(e){
+      if(e.key==='Enter'&&(e.target.classList.contains('ct-lead-bal-inp')||
+         e.target.classList.contains('ct-broker-pnl-inp'))) e.target.blur();
+    });
+  }
 })();
 
 // GLOBAL BROKER BALANCE INPUT
