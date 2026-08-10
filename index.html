@@ -1320,7 +1320,7 @@ function renderAccounts(){
     html += '<option value="breached"'+(isBreached?' selected':'')+'>Breached</option>';
     html += '</select></div>';
     html += '<div><span class="cell-val neg" data-idx="'+idx+'" data-field="eval" contenteditable="true">'+(a.eval<0?'-$'+Math.abs(a.eval):'$'+a.eval)+'</span></div>';
-    html += '<div><span class="cell-val neg" data-idx="'+idx+'" data-field="broker" contenteditable="true">'+(a.broker<0?'-$'+Math.abs(a.broker):'$'+a.broker)+'</span></div>';
+    html += '<div><span class="cell-val '+(a.broker<0?'neg':a.broker>0?'pos':'zer')+'" data-idx="'+idx+'" data-field="broker" contenteditable="true">'+(a.broker<0?'-$'+Math.abs(a.broker):'$'+a.broker)+'</span></div>';
     html += '<div><span class="cell-val '+(a.payouts>0?'pos':a.payouts<0?'neg':'zer')+'" data-idx="'+idx+'" data-field="payouts" contenteditable="true">$'+a.payouts+'</span></div>';
     html += '<div><span class="cell-val '+(pnl>=0?'pos':'neg')+'" id="pnl-'+idx+'">'+( pnl<0?'-$'+Math.abs(pnl):'$'+pnl)+'</span></div>';
       // Balance color:
