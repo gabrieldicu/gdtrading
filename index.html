@@ -2421,10 +2421,14 @@ function ctRenderPortfolio(port,pi){
   // Evaluate broker PnL expression (e.g. "99+99-33") like dashboard cells
   var brokerPnLVal = evalSumExpr(String(ctBrokerPnL)) || 0;
 
-  // Still to recover = total prop PnL loss - broker PnL recovered
-  var totalPropLoss = Math.abs(Math.min(0, allInPort.reduce(function(s,a){return s+getPnL(a);},0)));
-  // brokerPnLVal positive = gain on broker = reduces what's left to recover
-  var stillToRecoverVal = Math.max(0, totalPropLoss - Math.abs(brokerPnLVal));
+  // Total cost = eval + broker costs across all accounts (what we need to recover)
+  // eval = prop firm fee, broker = hedge losses accumulated
+  var totalCosts = allInPort.reduce(function(s,a){
+    return s + Math.abs(a.eval||0) + Math.abs(a.broker||0);
+  }, 0);
+  // Still to recover = total costs - what broker has gained back
+  var stillToRecoverVal = Math.max(0, Math.round(totalCosts) - Math.round(Math.abs(brokerPnLVal)));
+  var totalPropLoss = totalCosts; // for display
 
   // Broker lot calculated from stillToRecover (not brokerPnLVal)
   // RR 1:0.5 → risk per trade = stillToRecover (we need 2 wins to fully recover)
@@ -2469,7 +2473,11 @@ function ctRenderPortfolio(port,pi){
   html+='<input type="text" class="ct-broker-pnl-inp" data-pi="'+pi+'" placeholder="0" value="'+brokerPnLDisplay+'" style="'+inpStyle2+'">';
   if(brokerPnLEval !== 0){
     html+='<div style="margin-top:5px;display:flex;align-items:center;justify-content:space-between">';
-    html+='<span style="font-size:9px;color:var(--text3)">= <b style="font-size:13px;color:var(--text)">$'+Math.round(Math.abs(brokerPnLEval))+'</b> &nbsp;÷'+allInPort.length+' = <b style="color:var(--red)">$'+Math.round(Math.abs(brokerPnLEval)/allInPort.length)+'/cont</b></span>';
+    html+='<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">';
+    html+='<span style="font-size:12px;font-weight:900;color:var(--text)">= $'+Math.round(Math.abs(brokerPnLEval))+'</span>';
+    html+='<span style="font-size:9px;color:var(--text3)">÷ '+allInPort.length+' conturi</span>';
+    html+='<span style="font-size:12px;font-weight:900;color:var(--red)">= $'+Math.round(Math.abs(brokerPnLEval)/allInPort.length)+' / cont</span>';
+    html+='</div>';
     if(brokerCappedCT) html+='<span style="font-size:9px;color:var(--red)">⚠ 80% cap</span>';
     html+='</div>';
   } else {
