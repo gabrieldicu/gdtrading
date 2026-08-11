@@ -1981,7 +1981,7 @@ function syncPnLToChart(){
     pnl=0;
     for(var i=0;i<accounts.length;i++){
       var p=getPnL(accounts[i]);
-      if(p>0){ pnl+=p; sourceAccounts.push(accounts[i].id); } // only positive accounts contribute; losses are ignored, not subtracted
+      if(p!==0){ pnl+=p; sourceAccounts.push(accounts[i].id); } // toate conturile contribuie, profit sau pierdere
     }
   } else {
     var acc=null;
@@ -1990,12 +1990,11 @@ function syncPnLToChart(){
     pnl=getPnL(acc);
     sourceAccounts=[acc.id];
   }
-  // Only the NEW progress since the last sync should be recorded, not the account's raw total P&L —
-  // otherwise repeated clicks would re-count profit that was already logged on a previous click.
+  // Doar progresul NOU față de ultima sincronizare se înregistrează (poate fi pozitiv sau negativ)
   var alreadyLogged=(chartData[key]||[]).filter(function(e){return e.fromPnL;}).reduce(function(sum,e){return sum+e.profit;},0);
   var newProgress=pnl-alreadyLogged;
-  if(newProgress<=0){
-    alert('No new profit since last sync ('+fmtMoney(alreadyLogged)+' already recorded from current P&L of '+fmtMoney(pnl)+'). Nothing was added.');
+  if(newProgress===0){
+    alert('No change since last sync ('+fmtMoney(alreadyLogged)+' already recorded from current P&L of '+fmtMoney(pnl)+'). Nothing was added.');
     return;
   }
   var month=parseInt(document.getElementById('chart-month-sel').value);
