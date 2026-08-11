@@ -2421,12 +2421,10 @@ function ctRenderPortfolio(port,pi){
   // Evaluate broker PnL expression (e.g. "99+99-33") like dashboard cells
   var brokerPnLVal = evalSumExpr(String(ctBrokerPnL)) || 0;
 
-  // Total cost = eval + broker costs across all accounts (what we need to recover)
-  // eval = prop firm fee, broker = hedge losses accumulated
-  var totalCosts = allInPort.reduce(function(s,a){
-    return s + Math.abs(a.eval||0) + Math.abs(a.broker||0);
-  }, 0);
-  // Still to recover = total costs - what broker has gained back
+  // Total costs = only eval (prop firm fees) — broker is the hedge, not a cost
+  // brokerPnLVal = what the broker has recovered (positive number entered by user)
+  var totalCosts = allInPort.reduce(function(s,a){ return s + Math.abs(a.eval||0); }, 0);
+  // Still to recover = eval costs - broker gains
   var stillToRecoverVal = Math.max(0, Math.round(totalCosts) - Math.round(Math.abs(brokerPnLVal)));
   var totalPropLoss = totalCosts; // for display
 
@@ -2468,9 +2466,10 @@ function ctRenderPortfolio(port,pi){
   html+='<div style="background:var(--surface2);border:'+brokerBorder+';border-radius:10px;padding:12px 14px">';
   html+='<div style="'+lblStyle2+'">💼 Broker P&L (total)</div>';
   // Show expression + evaluated result
-  var brokerPnLDisplay = ctBrokerPnL || '';
+  // Show evaluated result in input (not raw expression)
   var brokerPnLEval = brokerPnLVal;
-  html+='<input type="text" class="ct-broker-pnl-inp" data-pi="'+pi+'" placeholder="0" value="'+brokerPnLDisplay+'" style="'+inpStyle2+'">';
+  var brokerPnLDisplay = brokerPnLEval !== 0 ? String(Math.round(Math.abs(brokerPnLEval))) : '';
+  html+='<input type="text" inputmode="numeric" class="ct-broker-pnl-inp" data-pi="'+pi+'" placeholder="0" value="'+brokerPnLDisplay+'" style="'+inpStyle2+'">';
   if(brokerPnLEval !== 0){
     html+='<div style="margin-top:5px;display:flex;align-items:center;justify-content:space-between">';
     html+='<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">';
@@ -2674,6 +2673,8 @@ function ctSetParam(pi, key, val){
         }
         var val=evalSumExpr(newExpr);
         port.brokerPnL=(!isNaN(val)&&newExpr!=='')?newExpr:'';
+        // Show evaluated result in input so user sees the sum
+        if(!isNaN(val) && newExpr!=='') inp.value=String(Math.round(val));
         saveCopyPortfolios();
         var allIds=[port.leadId].concat(port.followerIds||[]).filter(Boolean);
         var nAccs=allIds.length;
