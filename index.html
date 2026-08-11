@@ -1837,9 +1837,23 @@ function bindCellEvents(){
       var idx = parseInt(sel.getAttribute('data-idx'));
       var newPhase = sel.value;
       if(newPhase==='breached'){
+        var breachedId=accounts[idx].id;
         accounts[idx].phase='breached'; accounts[idx].icon='warn';
         recordPhaseChange(accounts[idx],'breached');
         saveState();
+        // Reset Broker P&L on any Copy Trading portfolio that includes this account
+        var portfoliosChanged=false;
+        copyPortfolios.forEach(function(port){
+          var inPort = port.leadId===breachedId || (port.followerIds||[]).indexOf(breachedId)!==-1;
+          if(inPort && port.brokerPnL){
+            port.brokerPnL='';
+            portfoliosChanged=true;
+          }
+        });
+        if(portfoliosChanged){
+          saveCopyPortfolios();
+          renderCopyTrading();
+        }
         renderAccounts(); return;
       }
       pendingPhase = {idx:idx, newPhase: newPhase==='live'?'live':parseInt(newPhase)};
