@@ -2416,22 +2416,29 @@ function ctRenderPortfolio(port,pi){
   var ctLeadBal = port.leadBalance || '';
   var ctBrokerPnL = port.brokerPnL || '';
 
-  // If broker PnL is set — recalculate broker lot from it
-  var brokerPnLVal = parseFloat(ctBrokerPnL) || 0;
-  if(brokerPnLVal > 0){
-    var brokerRiskFromInput = brokerPnLVal;
-    if(brokerMaxCT !== null && brokerRiskFromInput > brokerMaxCT){
-      brokerCappedCT = true;
-      brokerRiskFromInput = brokerMaxCT;
-    }
-    brokerRiskCT = brokerRiskFromInput;
-    brokerLotCT = (brokerSlCT > 0) ? Math.round((brokerRiskCT / (brokerSlCT * pipValCT)) * 1000) / 1000 : 0;
-    commCT = Math.round(brokerLotCT * 5 * 2 * 100) / 100;
-    netRecoveryCT = Math.round((brokerRiskCT - commCT) * 100) / 100;
-  }
+  // Evaluate broker PnL expression (e.g. "99+99-33") like dashboard cells
+  var brokerPnLVal = evalSumExpr(String(ctBrokerPnL)) || 0;
 
-  // Per-account broker share (brokerPnL / nr conturi)
-  var brokerPerAcc = (brokerPnLVal > 0 && allInPort.length > 0)
+  // Still to recover = total prop PnL loss - broker gains so far
+  var totalPropLoss = Math.abs(Math.min(0, allInPort.reduce(function(s,a){return s+getPnL(a);},0)));
+  var ctStillToRecover = port.stillToRecover !== undefined ? port.stillToRecover : totalPropLoss;
+  var stillToRecoverVal = Math.max(0, ctStillToRecover);
+
+  // Broker lot calculated from stillToRecover (not brokerPnLVal)
+  // RR 1:0.5 → risk per trade = stillToRecover (we need 2 wins to fully recover)
+  // If 1 trade already won: keep same risk or bump slightly for commissions
+  var brokerRiskForLot = stillToRecoverVal > 0 ? stillToRecoverVal : (Math.abs(brokerPnLVal) || totalPnLAbs);
+  if(brokerMaxCT !== null && brokerRiskForLot > brokerMaxCT){
+    brokerCappedCT = true;
+    brokerRiskForLot = brokerMaxCT;
+  }
+  brokerRiskCT = brokerRiskForLot;
+  brokerLotCT = (brokerRiskCT > 0 && brokerSlCT > 0) ? Math.round((brokerRiskCT / (brokerSlCT * pipValCT)) * 1000) / 1000 : 0;
+  commCT = Math.round(brokerLotCT * 5 * 2 * 100) / 100;
+  netRecoveryCT = Math.round((brokerRiskCT - commCT) * 100) / 100;
+
+  // Per-account broker share from expression value
+  var brokerPerAcc = (brokerPnLVal !== 0 && allInPort.length > 0)
     ? Math.round(brokerPnLVal / allInPort.length)
     : null;
 
@@ -2464,6 +2471,27 @@ function ctRenderPortfolio(port,pi){
     html+='</div>';
   } else {
     html+='<div style="font-size:9px;color:var(--text3);margin-top:4px">Divided by '+allInPort.length+' accounts → updates broker cell in dashboard</div>';
+  }
+  html+='</div>';
+
+  // ── STILL TO RECOVER ──
+  var strColor = stillToRecoverVal <= 0 ? 'var(--green)' : stillToRecoverVal < totalPropLoss*0.5 ? 'var(--gold)' : 'var(--red)';
+  var strBorder = stillToRecoverVal <= 0 ? '1.5px solid var(--green-bd)' : '1.5px solid var(--border2)';
+  html+='<div style="background:var(--surface2);border:'+strBorder+';border-radius:10px;padding:12px 14px">';
+  html+='<div style="'+lblStyle2+'">🎯 Still to recover</div>';
+  html+='<input type="text" inputmode="numeric" class="ct-still-recover-inp" data-pi="'+pi+'"'
+    +' placeholder="auto" value="'+(port.stillToRecover!==undefined?port.stillToRecover:'')+'"'
+    +' style="'+inpStyle2+'">';
+  html+='<div style="display:flex;justify-content:space-between;margin-top:5px">';
+  html+='<span style="font-size:9px;color:var(--text3)">Auto: $'+Math.round(totalPropLoss)+' from PnL · editable</span>';
+  html+='<span style="font-size:12px;font-weight:800;color:'+strColor+'">'+(stillToRecoverVal<=0?'✓ Recovered':'$'+Math.round(stillToRecoverVal).toLocaleString())+'</span>';
+  html+='</div>';
+  if(brokerLotCT > 0){
+    html+='<div style="font-size:9px;color:var(--text3);margin-top:3px">';
+    html+='Broker lot: <b style="color:var(--accent)">'+brokerLotCT.toFixed(3).replace(/\.?0+$/,'')+'</b>';
+    html+=' &middot; comm: <b style="color:var(--red)">−$'+commCT+'</b>';
+    html+=' &middot; net: <b style="color:var(--green)">$'+netRecoveryCT+'</b>';
+    html+='</div>';
   }
   html+='</div>';
 
@@ -2608,13 +2636,25 @@ function ctSetParam(pi, key, val){
         renderAccounts();
         renderCopyTrading();
       }
+      if(inp.classList.contains('ct-still-recover-inp')){
+        e.stopPropagation();
+        var pi=parseInt(inp.getAttribute('data-pi'));
+        var port=copyPortfolios[pi];
+        if(!port) return;
+        var raw=inp.value.trim();
+        var val=evalSumExpr(raw);
+        port.stillToRecover=(!isNaN(val)&&raw!=='')?Math.max(0,val):undefined;
+        saveCopyPortfolios();
+        renderCopyTrading();
+      }
       if(inp.classList.contains('ct-broker-pnl-inp')){
         e.stopPropagation();
         var pi=parseInt(inp.getAttribute('data-pi'));
         var port=copyPortfolios[pi];
         if(!port) return;
-        var val=parseFloat(inp.value.replace(/[^0-9.-]/g,''))||0;
-        port.brokerPnL=val!==0?val:'';
+        var raw=inp.value.trim();
+        var val=evalSumExpr(raw);
+        port.brokerPnL=(raw!==''&&!isNaN(val))?raw:'';
         saveCopyPortfolios();
         var allIds=[port.leadId].concat(port.followerIds||[]).filter(Boolean);
         var nAccs=allIds.length;
