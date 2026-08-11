@@ -2339,7 +2339,7 @@ function renderCopyTrading(){
 }
 
 function ctRenderPortfolio(port,pi){
-  var leadAcc=accounts.find(function(a){return a.id===port.leadId;});
+  var leadAcc=accounts.find(function(a){return a.id===port.leadId && a.phase!=='breached';});
   var riskPct=port.riskPct||4.5;
   var slPips=port.slPips||50;
   var pair=port.pair||'EURUSD';
@@ -2348,7 +2348,7 @@ function ctRenderPortfolio(port,pi){
   var allInPort=[];
   if(leadAcc) allInPort.push(leadAcc);
   (port.followerIds||[]).forEach(function(fid){
-    var a=accounts.find(function(x){return x.id===fid;});
+    var a=accounts.find(function(x){return x.id===fid && x.phase!=='breached';});
     if(a&&a.id!==port.leadId) allInPort.push(a);
   });
   var totalLot=allInPort.reduce(function(s,a){return s+getLot(a);},0);
