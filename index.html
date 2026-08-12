@@ -2393,7 +2393,7 @@ function ctRenderPortfolio(port,pi){
   // PROP LOT = lead account lot only (followers copy it)
   var propLotDisplay = leadAcc ? getLot(leadAcc) : 0;
 
-  // BROKER LOT = total PnL of all accounts / (brokerSL × pipVal)
+  // BROKER LOT setup — pip value table + broker SL is ALWAYS 2× the prop SL, for every pair (incl. EURUSD)
   var PIP_VALUES_CT = {
     'EURUSD':10,'GBPUSD':10,'AUDUSD':10,'NZDUSD':10,
     'USDJPY':6.5,'USDCHF':10,'USDCAD':7.5,
@@ -2401,26 +2401,14 @@ function ctRenderPortfolio(port,pi){
     'XAUUSD':100,'XAGUSD':50,'NAS100':10,'US30':10,'SP500':10
   };
   var pipValCT = PIP_VALUES_CT[pair] || 10;
-  var brokerSlCT = slPips * 2;
+  var brokerSlCT = slPips * 2; // broker SL is always DOUBLE the prop SL — never the raw prop pips
 
-  // Total PnL across all portfolio accounts (what we need to recover)
+  // Total PnL across all portfolio accounts (fallback target only, used if nothing else is set)
   var totalPnL = allInPort.reduce(function(s,a){ return s + getPnL(a); }, 0);
   var totalPnLAbs = Math.abs(Math.round(totalPnL));
-
-  // Broker Risk$ = total PnL (capped at 80% of broker balance)
-  var brokerRiskCT = totalPnLAbs;
   var brokerMaxCT = globalBrokerBalance > 0 ? Math.floor(globalBrokerBalance * 0.80) : null;
-  var brokerCappedCT = brokerMaxCT !== null && brokerRiskCT > brokerMaxCT;
-  if(brokerCappedCT) brokerRiskCT = brokerMaxCT;
-
-  // Broker Lot = Risk$ / (brokerSL × pipVal)
-  var brokerLotCT = (brokerRiskCT > 0 && brokerSlCT > 0)
-    ? Math.round((brokerRiskCT / (brokerSlCT * pipValCT)) * 1000) / 1000
-    : 0;
-
-  // Commission: $5/lot × 2 trades
-  var commCT = Math.round(brokerLotCT * 5 * 2 * 100) / 100;
-  var netRecoveryCT = Math.round((brokerRiskCT - commCT) * 100) / 100;
+  var brokerCappedCT = false;
+  var brokerRiskCT = 0, brokerLotCT = 0, commCT = 0, netRecoveryCT = 0;
 
   // Win/trade gross (prop, all accounts, 2RR)
   var potDailyGross = allInPort.reduce(function(s,a){ return s + (a.capital * riskPct/100 * 2); }, 0);
@@ -2437,15 +2425,19 @@ function ctRenderPortfolio(port,pi){
   // Total costs = only eval (prop firm fees) — broker is the hedge, not a cost
   // brokerPnLVal = what the broker has recovered (positive number entered by user)
   var totalCosts = allInPort.reduce(function(s,a){ return s + Math.abs(a.eval||0); }, 0);
-  // Still to recover = eval costs - broker gains
-  var stillToRecoverVal = Math.max(0, Math.round(totalCosts) - Math.round(Math.abs(brokerPnLVal)));
+  // Still to recover = eval costs - broker gains (auto), unless manually overridden by the user
+  var stillToRecoverAuto = Math.max(0, Math.round(totalCosts) - Math.round(brokerPnLVal));
+  var stillToRecoverManual = (port.stillToRecover !== undefined && port.stillToRecover !== null) ? port.stillToRecover : null;
+  var stillToRecoverVal = stillToRecoverManual !== null ? stillToRecoverManual : stillToRecoverAuto;
   var totalPropLoss = totalCosts; // for display
 
-  // Broker lot calculated from stillToRecover (not brokerPnLVal)
-  // RR 1:0.5 → risk per trade = stillToRecover (we need 2 wins to fully recover)
-  // If 1 trade already won: keep same risk or bump slightly for commissions
-  // RR 1:0.5 → risk = amount_to_recover × 2
-  var brokerRiskForLot = (stillToRecoverVal > 0 ? stillToRecoverVal : (Math.abs(brokerPnLVal) || totalPnLAbs)) * 2;
+  // Broker lot sized so the NET recovery (after round-trip commission across 2 wins) equals
+  // "Still to recover" EXACTLY — the risk is inflated just enough to absorb the $5/lot ×2 commission cost.
+  // net = R − 10×R/(SL×pipVal)  ⇒  R = target / (1 − 10/(SL×pipVal))
+  var targetForLot = stillToRecoverVal > 0 ? stillToRecoverVal : (Math.abs(brokerPnLVal) || totalPnLAbs);
+  var commDenom = (brokerSlCT>0 && pipValCT>0) ? (1 - 10/(brokerSlCT*pipValCT)) : 1;
+  if(commDenom <= 0.05) commDenom = 0.05; // safety floor: avoid runaway sizing on tiny SL/pip combos
+  var brokerRiskForLot = targetForLot / commDenom;
   if(brokerMaxCT !== null && brokerRiskForLot > brokerMaxCT){
     brokerCappedCT = true;
     brokerRiskForLot = brokerMaxCT;
@@ -2478,17 +2470,18 @@ function ctRenderPortfolio(port,pi){
   var brokerBorder = brokerCappedCT ? '1.5px solid #fca5a5' : '1.5px solid var(--border2)';
   html+='<div style="background:var(--surface2);border:'+brokerBorder+';border-radius:10px;padding:12px 14px">';
   html+='<div style="'+lblStyle2+'">💼 Broker P&L (total)</div>';
-  // Show expression + evaluated result
-  // Show evaluated result in input (not raw expression)
+  // Show evaluated result in input, WITH its sign preserved (negative stays negative) — same convention as the dashboard cells
   var brokerPnLEval = brokerPnLVal;
-  var brokerPnLDisplay = brokerPnLEval !== 0 ? String(Math.round(Math.abs(brokerPnLEval))) : '';
-  html+='<input type="text" inputmode="numeric" class="ct-broker-pnl-inp" data-pi="'+pi+'" placeholder="0" value="'+brokerPnLDisplay+'" style="'+inpStyle2+'">';
+  var brokerPnLDisplay = brokerPnLEval !== 0 ? String(Math.round(brokerPnLEval)) : '';
+  html+='<input type="text" inputmode="numeric" class="ct-broker-pnl-inp" data-pi="'+pi+'" placeholder="0" value="'+brokerPnLDisplay+'" style="'+inpStyle2+(brokerPnLEval<0?';color:var(--red)':brokerPnLEval>0?';color:var(--green)':'')+'">';
   if(brokerPnLEval !== 0){
+    var bpColor = brokerPnLEval<0 ? 'var(--red)' : 'var(--green)';
+    var bpPerAcc = brokerPnLEval/allInPort.length;
     html+='<div style="margin-top:5px;display:flex;align-items:center;justify-content:space-between">';
     html+='<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">';
-    html+='<span style="font-size:12px;font-weight:900;color:var(--text)">= $'+Math.round(Math.abs(brokerPnLEval))+'</span>';
+    html+='<span style="font-size:12px;font-weight:900;color:'+bpColor+'">= '+(brokerPnLEval<0?'-$'+Math.abs(Math.round(brokerPnLEval)):'$'+Math.round(brokerPnLEval))+'</span>';
     html+='<span style="font-size:9px;color:var(--text3)">÷ '+allInPort.length+' conturi</span>';
-    html+='<span style="font-size:12px;font-weight:900;color:var(--red)">= $'+Math.round(Math.abs(brokerPnLEval)/allInPort.length)+' / cont</span>';
+    html+='<span style="font-size:12px;font-weight:900;color:'+bpColor+'">= '+(bpPerAcc<0?'-$'+Math.abs(Math.round(bpPerAcc)):'$'+Math.round(bpPerAcc))+' / cont</span>';
     html+='</div>';
     if(brokerCappedCT) html+='<span style="font-size:9px;color:var(--red)">⚠ 80% cap</span>';
     html+='</div>';
@@ -2497,23 +2490,37 @@ function ctRenderPortfolio(port,pi){
   }
   html+='</div>';
 
-  // ── STILL TO RECOVER — calculated automatically ──
+  // ── STILL TO RECOVER — auto-calculated, but editable (manual override for commission buffer) ──
   var strColor = stillToRecoverVal <= 0 ? 'var(--green)' : stillToRecoverVal < totalPropLoss*0.5 ? 'var(--gold)' : 'var(--red)';
   var strBg = stillToRecoverVal <= 0 ? 'var(--green-bg)' : 'var(--surface2)';
   var strBorder = stillToRecoverVal <= 0 ? '1.5px solid var(--green-bd)' : '1.5px solid var(--border2)';
   html+='<div style="background:'+strBg+';border:'+strBorder+';border-radius:10px;padding:12px 14px">';
+  html+='<div style="display:flex;align-items:center;justify-content:space-between">';
   html+='<div style="'+lblStyle2+';color:'+strColor+'">🎯 Still to recover</div>';
-  html+='<div style="font-size:22px;font-weight:900;color:'+strColor+';margin:4px 0">'
-    +(stillToRecoverVal<=0?'✓ All recovered':'$'+Math.round(stillToRecoverVal).toLocaleString())+'</div>';
+  if(stillToRecoverManual!==null) html+='<button class="ct-str-reset-btn" data-pi="'+pi+'" title="Reset to auto-calculated value" style="background:none;border:none;color:'+strColor+';cursor:pointer;font-size:11px;font-weight:700;opacity:0.85">↺ auto</button>';
+  html+='</div>';
+  html+='<div style="display:flex;align-items:center;gap:6px;margin:6px 0;background:#fff;border:1.5px solid '+strColor+';border-radius:8px;padding:6px 10px;box-shadow:0 1px 3px rgba(0,0,0,0.06)">';
+  html+='<span style="font-size:20px;font-weight:900;color:'+strColor+'">$</span>';
+  html+='<input type="text" inputmode="numeric" class="ct-still-recover-inp" data-pi="'+pi+'" value="'+(stillToRecoverManual!==null?Math.round(stillToRecoverManual):'')+'" placeholder="'+Math.round(stillToRecoverAuto).toLocaleString()+'" style="flex:1;min-width:0;background:transparent;border:none;outline:none;font-size:22px;font-weight:900;color:'+strColor+';font-family:inherit;padding:2px 0;cursor:text">';
+  html+='<span style="font-size:13px;color:var(--text3);opacity:0.6">✎</span>';
+  html+='</div>';
+  if(stillToRecoverManual!==null){
+    html+='<div style="font-size:9px;color:var(--text3);margin-bottom:2px">Manual (auto would be $'+Math.round(stillToRecoverAuto).toLocaleString()+')</div>';
+  } else {
+    html+='<div style="font-size:9px;color:var(--text3);margin-bottom:2px">Tap the amount above to override (e.g. add a $2–3 commission buffer)</div>';
+  }
   html+='<div style="font-size:9px;color:var(--text3)">';
   html+='Prop PnL: <b>−$'+Math.round(totalPropLoss)+'</b>';
-  html+=' &minus; Broker recovered: <b>$'+Math.round(Math.abs(brokerPnLVal))+'</b>';
+  html+=' &minus; Broker '+(brokerPnLVal<0?'lost':'recovered')+': <b style="color:'+(brokerPnLVal<0?'var(--red)':'var(--text)')+'">'+(brokerPnLVal<0?'-$'+Math.abs(Math.round(brokerPnLVal)):'$'+Math.round(brokerPnLVal))+'</b>';
   html+='</div>';
-  if(brokerLotCT > 0 && stillToRecoverVal > 0){
+  if(brokerLotCT > 0 && targetForLot > 0){
     html+='<div style="font-size:9px;color:var(--text3);margin-top:4px;padding-top:4px;border-top:1px solid var(--border)">';
     html+='Next broker lot: <b style="color:var(--accent)">'+brokerLotCT.toFixed(3).replace(/\.?0+$/,'')+'</b>';
-    html+=' &middot; net/trade: <b style="color:var(--green)">$'+Math.round(netRecoveryCT/2)+'</b>';
+    html+=' &middot; commission: <b style="color:var(--red)">−$'+commCT.toFixed(2)+'</b>';
+    html+=' &middot; net: <b style="color:var(--green)">$'+Math.round(netRecoveryCT).toLocaleString()+'</b>';
     html+='</div>';
+    html+='<div style="font-size:8.5px;color:var(--text3);margin-top:2px">Broker SL: <b>'+brokerSlCT+' pips</b> (2× prop '+slPips+' pips, not the raw '+pair+' pips) &middot; pip value $'+pipValCT+'/lot</div>';
+    html+='<div style="font-size:8.5px;color:var(--text3);margin-top:1px">Risk sized to absorb $5/lot ×2 commission automatically — net always ≈ target above.</div>';
   }
   html+='</div>';
 
@@ -2549,7 +2556,9 @@ function ctRenderPortfolio(port,pi){
   html+='<div class="ct-param-group"><label>Risk %</label>';
   html+='<input class="ct-param-inp" type="number" step="0.1" min="0.1" max="10" value="'+riskPct+'" data-pi="'+pi+'" onchange="ctSetParam(+this.dataset.pi,\'riskPct\',+this.value)"></div>';
   html+='<div class="ct-param-group"><label>SL (pips)</label>';
-  html+='<input class="ct-param-inp" type="number" step="1" min="1" value="'+slPips+'" data-pi="'+pi+'" onchange="ctSetParam(+this.dataset.pi,\'slPips\',+this.value)"></div>';
+  html+='<input class="ct-param-inp" type="number" step="1" min="1" value="'+slPips+'" data-pi="'+pi+'" onchange="ctSetParam(+this.dataset.pi,\'slPips\',+this.value)">';
+  html+='<div style="font-size:8.5px;color:var(--text3);margin-top:2px">Broker uses 2× = '+(slPips*2)+' pips</div>';
+  html+='</div>';
   html+='</div>';
   // Quick info
   if(leadAcc){
@@ -2633,7 +2642,19 @@ function ctSetParam(pi, key, val){
   if(ctContent){
     ctContent.addEventListener('click',function(e){
       if(e.target.classList.contains('ct-lead-bal-inp')||
-         e.target.classList.contains('ct-broker-pnl-inp')) e.stopPropagation();
+         e.target.classList.contains('ct-broker-pnl-inp')||
+         e.target.classList.contains('ct-still-recover-inp')) e.stopPropagation();
+      var resetBtn=e.target.closest('.ct-str-reset-btn');
+      if(resetBtn){
+        e.stopPropagation();
+        var pi=parseInt(resetBtn.getAttribute('data-pi'));
+        var port=copyPortfolios[pi];
+        if(port){
+          port.stillToRecover=undefined;
+          saveCopyPortfolios();
+          renderCopyTrading();
+        }
+      }
     });
     ctContent.addEventListener('change',function(e){
       var inp=e.target;
@@ -2710,7 +2731,8 @@ function ctSetParam(pi, key, val){
     });
     ctContent.addEventListener('keydown',function(e){
       if(e.key==='Enter'&&(e.target.classList.contains('ct-lead-bal-inp')||
-         e.target.classList.contains('ct-broker-pnl-inp'))) e.target.blur();
+         e.target.classList.contains('ct-broker-pnl-inp')||
+         e.target.classList.contains('ct-still-recover-inp'))) e.target.blur();
     });
   }
 })();
