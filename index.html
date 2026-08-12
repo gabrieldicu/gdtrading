@@ -1841,17 +1841,27 @@ function bindCellEvents(){
         accounts[idx].phase='breached'; accounts[idx].icon='warn';
         recordPhaseChange(accounts[idx],'breached');
         saveState();
-        // Reset Broker P&L on any Copy Trading portfolio that includes this account
+        // Reset Broker P&L on any Copy Trading portfolio that includes this account —
+        // and zero out the already-distributed broker value on its remaining active members too
         var portfoliosChanged=false;
         copyPortfolios.forEach(function(port){
           var inPort = port.leadId===breachedId || (port.followerIds||[]).indexOf(breachedId)!==-1;
           if(inPort && port.brokerPnL){
             port.brokerPnL='';
             portfoliosChanged=true;
+            var remainingIds=[port.leadId].concat(port.followerIds||[]).filter(Boolean);
+            remainingIds.forEach(function(id){
+              var acc=accounts.find(function(a){return a.id===id;});
+              if(acc && acc.phase!=='breached' && acc.broker!==0){
+                acc.broker=0;
+                acc.brokerExpr='';
+              }
+            });
           }
         });
         if(portfoliosChanged){
           saveCopyPortfolios();
+          saveState();
           renderCopyTrading();
         }
         renderAccounts(); return;
@@ -2303,6 +2313,42 @@ function loadCopyPortfolios(){
 }
 loadCopyPortfolios();
 
+function ctSyncPortfolioDistribution(port){
+  // Recomputes and re-applies this portfolio's Broker P&L distribution to its CURRENT active
+  // members (excluding breached accounts). Returns true if any account value was changed.
+  if(!port || !port.brokerPnL) return false;
+  var val=evalSumExpr(String(port.brokerPnL));
+  if(isNaN(val)||val===0) return false;
+  var allIds=[port.leadId].concat(port.followerIds||[]).filter(Boolean).filter(function(id){
+    var a=accounts.find(function(x){return x.id===id;});
+    return a && a.phase!=='breached';
+  });
+  var nAccs=allIds.length;
+  if(nAccs===0) return false;
+  var perAcc=Math.round(val/nAccs);
+  var signedPerAcc = val<0 ? -Math.abs(perAcc) : Math.abs(perAcc);
+  var changed=false;
+  allIds.forEach(function(id){
+    var acc=accounts.find(function(a){return a.id===id;});
+    if(acc && acc.broker!==signedPerAcc){
+      acc.broker=signedPerAcc;
+      acc.brokerExpr=String(signedPerAcc);
+      changed=true;
+    }
+  });
+  return changed;
+}
+
+function ctSyncAllPortfolioDistributions(){
+  var anyChanged=false;
+  copyPortfolios.forEach(function(port){
+    if(ctSyncPortfolioDistribution(port)) anyChanged=true;
+  });
+  if(anyChanged) saveState();
+  return anyChanged;
+}
+ctSyncAllPortfolioDistributions(); // re-apply on every page load, so stale distributed values self-heal
+
 function ctGenId(){ return 'ct_'+Date.now()+'_'+Math.random().toString(36).slice(2,6); }
 
 function ctGetLot(acc, riskPct, slPips){
@@ -2317,6 +2363,7 @@ function ctGetLot(acc, riskPct, slPips){
 function renderCopyTrading(){
   var el=document.getElementById('copytrading-content');
   if(!el) return;
+  if(ctSyncAllPortfolioDistributions()) renderAccounts();
   var html='';
   // Welcome header with button on same row
   html+='<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px">';
