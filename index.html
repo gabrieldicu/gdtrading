@@ -2435,9 +2435,8 @@ function ctRenderPortfolio(port,pi){
   // "Still to recover" EXACTLY — the risk is inflated just enough to absorb the $5/lot ×2 commission cost.
   // net = R − 10×R/(SL×pipVal)  ⇒  R = target / (1 − 10/(SL×pipVal))
   var targetForLot = stillToRecoverVal > 0 ? stillToRecoverVal : (Math.abs(brokerPnLVal) || totalPnLAbs);
-  var commDenom = (brokerSlCT>0 && pipValCT>0) ? (1 - 10/(brokerSlCT*pipValCT)) : 1;
-  if(commDenom <= 0.05) commDenom = 0.05; // safety floor: avoid runaway sizing on tiny SL/pip combos
-  var brokerRiskForLot = targetForLot / commDenom;
+  // RR 1:0.5 → risk = amount to recover × 2 — EXACT same formula as the individual account's Broker Lot card
+  var brokerRiskForLot = targetForLot * 2;
   if(brokerMaxCT !== null && brokerRiskForLot > brokerMaxCT){
     brokerCappedCT = true;
     brokerRiskForLot = brokerMaxCT;
@@ -2520,7 +2519,7 @@ function ctRenderPortfolio(port,pi){
     html+=' &middot; net: <b style="color:var(--green)">$'+Math.round(netRecoveryCT).toLocaleString()+'</b>';
     html+='</div>';
     html+='<div style="font-size:8.5px;color:var(--text3);margin-top:2px">Broker SL: <b>'+brokerSlCT+' pips</b> (2× prop '+slPips+' pips, not the raw '+pair+' pips) &middot; pip value $'+pipValCT+'/lot</div>';
-    html+='<div style="font-size:8.5px;color:var(--text3);margin-top:1px">Risk sized to absorb $5/lot ×2 commission automatically — net always ≈ target above.</div>';
+    html+='<div style="font-size:8.5px;color:var(--text3);margin-top:1px">Same formula as each account\'s Broker Lot card: risk = target ×2, RR 1:0.5.</div>';
   }
   html+='</div>';
 
@@ -2666,7 +2665,10 @@ function ctSetParam(pi, key, val){
         var val=parseFloat(inp.value.replace(/[^0-9.]/g,''))||0;
         port.leadBalance=val>0?val:'';
         saveCopyPortfolios();
-        var allIds=[port.leadId].concat(port.followerIds||[]).filter(Boolean);
+        var allIds=[port.leadId].concat(port.followerIds||[]).filter(Boolean).filter(function(id){
+          var a=accounts.find(function(x){return x.id===id;});
+          return a && a.phase!=='breached';
+        });
         allIds.forEach(function(id){
           var acc=accounts.find(function(a){return a.id===id;});
           if(acc&&val>0){
@@ -2710,7 +2712,10 @@ function ctSetParam(pi, key, val){
         // Show evaluated result in input so user sees the sum
         if(!isNaN(val) && newExpr!=='') inp.value=String(Math.round(val));
         saveCopyPortfolios();
-        var allIds=[port.leadId].concat(port.followerIds||[]).filter(Boolean);
+        var allIds=[port.leadId].concat(port.followerIds||[]).filter(Boolean).filter(function(id){
+          var a=accounts.find(function(x){return x.id===id;});
+          return a && a.phase!=='breached';
+        });
         var nAccs=allIds.length;
         if(nAccs>0&&val!==0){
           var perAcc=Math.round(val/nAccs);
