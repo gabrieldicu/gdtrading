@@ -2161,21 +2161,34 @@ function renderChart(){
   var zeroY=valY(0); // the $0 baseline — used for area fills and as the series' starting/ending anchor
   var botY=zeroY; // kept for compatibility with the code below
 
-  // ── GRID — spans the full min→max range so losses get their own gridlines below $0
+  // ── GRID — always draws an exact $0 baseline; positive ticks above it, negative (red) ticks below
   ctx.font='500 10px Inter';
   var gridSteps=4;
-  for(var gi=0;gi<=gridSteps;gi++){
-    var gv=Math.round(minV+(vRange/gridSteps)*gi);
+  // Positive ticks: 0 → maxV
+  for(var gi=1;gi<=gridSteps;gi++){
+    var gv=Math.round((maxV/gridSteps)*gi);
     var gy=valY(gv);
-    var isZeroLine = Math.abs(gv)<Math.round(vRange/gridSteps/2);
-    ctx.strokeStyle=isZeroLine?'rgba(15,23,42,0.18)':'rgba(15,23,42,0.06)';
-    ctx.lineWidth=isZeroLine?1.5:1;
-    ctx.setLineDash(isZeroLine?[]:[3,4]);
-    ctx.beginPath();ctx.moveTo(PAD.l,gy);ctx.lineTo(PAD.l+gW,gy);ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.fillStyle=gv<0?'#dc2626':'#adb5bd';ctx.textAlign='right';ctx.textBaseline='middle';
-    ctx.fillText((gv<0?'-$'+Math.abs(gv):'$'+gv),PAD.l-8,gy);
+    ctx.strokeStyle='rgba(15,23,42,0.06)';ctx.lineWidth=1;ctx.setLineDash([3,4]);
+    ctx.beginPath();ctx.moveTo(PAD.l,gy);ctx.lineTo(PAD.l+gW,gy);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle='#adb5bd';ctx.textAlign='right';ctx.textBaseline='middle';
+    ctx.fillText('$'+gv,PAD.l-8,gy);
   }
+  // Negative ticks (red): 0 → minV, only when there are losses
+  if(minV<0){
+    for(var gi=1;gi<=gridSteps;gi++){
+      var gv=Math.round((minV/gridSteps)*gi);
+      var gy=valY(gv);
+      ctx.strokeStyle='rgba(220,38,38,0.10)';ctx.lineWidth=1;ctx.setLineDash([3,4]);
+      ctx.beginPath();ctx.moveTo(PAD.l,gy);ctx.lineTo(PAD.l+gW,gy);ctx.stroke();ctx.setLineDash([]);
+      ctx.fillStyle='#dc2626';ctx.textAlign='right';ctx.textBaseline='middle';
+      ctx.fillText('-$'+Math.abs(gv),PAD.l-8,gy);
+    }
+  }
+  // The $0 baseline itself — always exact, always bold, so the line's start/end point sits visibly on it
+  ctx.strokeStyle='rgba(15,23,42,0.22)';ctx.lineWidth=1.5;ctx.setLineDash([]);
+  ctx.beginPath();ctx.moveTo(PAD.l,zeroY);ctx.lineTo(PAD.l+gW,zeroY);ctx.stroke();
+  ctx.fillStyle='#5b6478';ctx.textAlign='right';ctx.textBaseline='middle';
+  ctx.fillText('$0',PAD.l-8,zeroY);
   ctx.textBaseline='alphabetic';
 
   // ── X LABELS
@@ -2220,14 +2233,16 @@ function renderChart(){
     }
     for(var i=0;i<dotPositions.length;i++){
       var dx=dotPositions[i].dx, dy=dotPositions[i].dy;
+      var isNeg = dotPositions[i].profit<0;
+      var thisDotColor = isNeg ? '#dc2626' : dotColor;
       ctx.beginPath();ctx.arc(dx,dy,7,0,6.28);
-      ctx.fillStyle=dotColor+'22';ctx.fill();
+      ctx.fillStyle=thisDotColor+'22';ctx.fill();
       ctx.beginPath();ctx.arc(dx,dy,4,0,6.28);
-      ctx.fillStyle=dotColor;ctx.fill();
+      ctx.fillStyle=thisDotColor;ctx.fill();
       ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();
       // calculate label offset to avoid overlap with nearby dots
       var lbl=fmtMoney(dotPositions[i].profit);
-      ctx.fillStyle=dotColor;ctx.font='700 10px Inter';ctx.textAlign='center';
+      ctx.fillStyle=thisDotColor;ctx.font='700 10px Inter';ctx.textAlign='center';
       // alternate above/below based on index, with extra offset if dots are close vertically
       var baseOffset=16;
       var above=(i%2===0);
