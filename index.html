@@ -2150,32 +2150,39 @@ function renderChart(){
   var PAD={l:64,r:20,t:30,b:34};
   var gW=W-PAD.l-PAD.r, gH=H-PAD.t-PAD.b;
   var allVals=fxData.map(function(e){return e.profit;}).concat(theoData.map(function(e){return e.profit;}));
-  var maxVal=Math.max.apply(null,allVals.concat([1]));
-  var maxV=maxVal*1.25; // 25% padding so labels don't clip
+  var maxVal=Math.max.apply(null,allVals.concat([0]));
+  var minVal=Math.min.apply(null,allVals.concat([0]));
+  var maxV=maxVal>0?maxVal*1.25:1; // 25% headroom above the highest point (always show a little green room)
+  var minV=minVal<0?minVal*1.25:0; // 25% headroom below the lowest point (only when there are losses)
+  var vRange=(maxV-minV)||1;
   var dayX=function(d){return PAD.l+((d-1)/Math.max(nDays-1,1))*gW;};
-  var valY=function(v){return PAD.t+gH*(1-v/maxV);};
-  var botY=PAD.t+gH;
+  var valY=function(v){return PAD.t+gH*(1-(v-minV)/vRange);};
+  var chartBottom=PAD.t+gH; // actual bottom edge of the plotting area (for x-axis labels)
+  var zeroY=valY(0); // the $0 baseline — used for area fills and as the series' starting/ending anchor
+  var botY=zeroY; // kept for compatibility with the code below
 
-  // ── GRID
+  // ── GRID — spans the full min→max range so losses get their own gridlines below $0
   ctx.font='500 10px Inter';
-  for(var gi=0;gi<=4;gi++){
-    var gv=Math.round(maxVal/4*gi);
+  var gridSteps=4;
+  for(var gi=0;gi<=gridSteps;gi++){
+    var gv=Math.round(minV+(vRange/gridSteps)*gi);
     var gy=valY(gv);
-    ctx.strokeStyle=gi===0?'rgba(15,23,42,0.18)':'rgba(15,23,42,0.06)';
-    ctx.lineWidth=gi===0?1.5:1;
-    ctx.setLineDash(gi===0?[]:[3,4]);
+    var isZeroLine = Math.abs(gv)<Math.round(vRange/gridSteps/2);
+    ctx.strokeStyle=isZeroLine?'rgba(15,23,42,0.18)':'rgba(15,23,42,0.06)';
+    ctx.lineWidth=isZeroLine?1.5:1;
+    ctx.setLineDash(isZeroLine?[]:[3,4]);
     ctx.beginPath();ctx.moveTo(PAD.l,gy);ctx.lineTo(PAD.l+gW,gy);ctx.stroke();
     ctx.setLineDash([]);
-    ctx.fillStyle='#adb5bd';ctx.textAlign='right';ctx.textBaseline='middle';
-    ctx.fillText('$'+gv,PAD.l-8,gy);
+    ctx.fillStyle=gv<0?'#dc2626':'#adb5bd';ctx.textAlign='right';ctx.textBaseline='middle';
+    ctx.fillText((gv<0?'-$'+Math.abs(gv):'$'+gv),PAD.l-8,gy);
   }
   ctx.textBaseline='alphabetic';
 
   // ── X LABELS
   ctx.fillStyle='#adb5bd';ctx.textAlign='center';ctx.font='500 10px Inter';
   var step=nDays<=10?1:nDays<=20?2:4;
-  for(var d=1;d<=nDays;d+=step) ctx.fillText(d,dayX(d),botY+16);
-  ctx.fillText(nDays,dayX(nDays),botY+16);
+  for(var d=1;d<=nDays;d+=step) ctx.fillText(d,dayX(d),chartBottom+16);
+  ctx.fillText(nDays,dayX(nDays),chartBottom+16);
 
   // ── DRAW LINE helper — Opțiunea A: fiecare payout la valoarea lui individuală
   function drawSeries(dataArr, colorA, colorB, dotColor){
@@ -2192,7 +2199,7 @@ function renderChart(){
     ctx.beginPath();ctx.moveTo(pts[0].x,botY);
     for(var i=0;i<pts.length;i++) ctx.lineTo(pts[i].x,pts[i].y);
     ctx.lineTo(pts[pts.length-1].x,botY);ctx.closePath();
-    var fg=ctx.createLinearGradient(0,PAD.t,0,botY);
+    var fg=ctx.createLinearGradient(0,PAD.t,0,chartBottom);
     fg.addColorStop(0,colorA+'33');fg.addColorStop(1,colorA+'05');
     ctx.fillStyle=fg;ctx.fill();
 
