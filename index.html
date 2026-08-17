@@ -2374,12 +2374,11 @@ ctSyncAllPortfolioDistributions(); // re-apply on every page load, so stale dist
 function ctGenId(){ return 'ct_'+Date.now()+'_'+Math.random().toString(36).slice(2,6); }
 
 function ctGetLot(acc, riskPct, slPips){
-  // lot = (capital × risk%) / (slPips × pipValue)
-  // For 10K EURUSD: pipValue = $10/lot, so lot = capital * riskPct/100 / (slPips * 10)
-  var cap = acc ? acc.capital : 10000;
-  var pipVal = 10; // $10/lot for majors at 10K — standard
+  // lot = (LIVE balance × risk%) / (slPips × pipValue) — same base as each account's own Prop Lot card
+  var base = acc ? (acc.balance!==undefined&&acc.balance!==null ? acc.balance : acc.capital) : 10000;
+  var pipVal = 10; // $10/lot for majors — standard
   if(slPips <= 0) return 0;
-  return (cap * riskPct / 100) / (slPips * pipVal);
+  return (base * riskPct / 100) / (slPips * pipVal);
 }
 
 function renderCopyTrading(){
@@ -2453,7 +2452,7 @@ function ctRenderPortfolio(port,pi){
   if(leadAcc){
     html+='<div style="display:flex;align-items:center;gap:8px;margin-top:2px">';
     html+='<span class="ct-badge-lead">\u2605 LEAD</span>';
-    html+='<span class="ct-lead-detail">$'+leadAcc.capital.toLocaleString()+' capital &middot; <b>'+getLot(leadAcc).toFixed(2)+' lot</b></span>';
+    html+='<span class="ct-lead-detail">$'+Math.round(leadAcc.balance!==undefined&&leadAcc.balance!==null?leadAcc.balance:leadAcc.capital).toLocaleString()+' balance &middot; <b>'+getLot(leadAcc).toFixed(2)+' lot</b></span>';
     html+='</div>';
   } else {
     html+='<div style="font-size:11px;color:var(--text3);margin-top:4px">Select a lead account to begin.</div>';
@@ -2538,7 +2537,7 @@ function ctRenderPortfolio(port,pi){
   var brokerBorder = brokerCappedCT ? '1.5px solid #fca5a5' : '1.5px solid var(--border2)';
   html+='<div style="background:var(--surface2);border:'+brokerBorder+';border-radius:10px;padding:12px 14px">';
   html+='<div style="'+lblStyle2+'">💼 Broker P&L (total)</div>';
-  // Show evaluated result in input, WITH its sign preserved (negative stays negative) — same convention as the dashboard cells
+  // Main box: always shows and REPLACES the current total directly — no hidden expression, no append surprises.
   var brokerPnLEval = brokerPnLVal;
   var brokerPnLDisplay = brokerPnLEval !== 0 ? String(Math.round(brokerPnLEval)) : '';
   html+='<input type="text" inputmode="numeric" class="ct-broker-pnl-inp" data-pi="'+pi+'" placeholder="0" value="'+brokerPnLDisplay+'" style="'+inpStyle2+(brokerPnLEval<0?';color:var(--red)':brokerPnLEval>0?';color:var(--green)':'')+'">';
@@ -2554,8 +2553,14 @@ function ctRenderPortfolio(port,pi){
     if(brokerCappedCT) html+='<span style="font-size:9px;color:var(--red)">⚠ 80% cap</span>';
     html+='</div>';
   } else {
-    html+='<div style="font-size:9px;color:var(--text3);margin-top:4px">Adaugă: <code>99</code> sau <code>+33</code> sau <code>-20</code> · distribuie egal pe '+allInPort.length+' conturi</div>';
+    html+='<div style="font-size:9px;color:var(--text3);margin-top:4px">Set the total directly, or use "+ Add result" below</div>';
   }
+  // Separate, explicit "add a new result" control — no ambiguity about append vs replace.
+  html+='<div style="display:flex;gap:6px;margin-top:8px;padding-top:8px;border-top:1px dashed var(--border2)">';
+  html+='<input type="text" inputmode="numeric" class="ct-broker-add-inp" data-pi="'+pi+'" placeholder="+270 sau -50" style="flex:1;background:var(--surface);border:1.5px solid var(--border2);border-radius:8px;padding:6px 10px;font-size:12px;font-weight:700;color:var(--text);font-family:inherit;outline:none">';
+  html+='<button class="ct-broker-add-btn" data-pi="'+pi+'" style="background:linear-gradient(135deg,#2563eb,#1d4ed8);border:none;color:#fff;font-family:inherit;font-size:11px;font-weight:700;padding:0 14px;border-radius:8px;cursor:pointer;white-space:nowrap">+ Add result</button>';
+  html+='</div>';
+  html+='<div style="font-size:8.5px;color:var(--text3);margin-top:3px">Adds to the current total ('+(brokerPnLEval<0?'-$'+Math.abs(Math.round(brokerPnLEval)):'$'+Math.round(brokerPnLEval))+' + your entry) — doesn\'t replace it.</div>';
   html+='</div>';
 
   // ── STILL TO RECOVER — auto-calculated, but editable (manual override for commission buffer) ──
@@ -2631,11 +2636,12 @@ function ctRenderPortfolio(port,pi){
   // Quick info
   if(leadAcc){
     var pipVal=10;
+    var leadBase = leadAcc.balance!==undefined&&leadAcc.balance!==null ? leadAcc.balance : leadAcc.capital;
     var exampleLot=ctGetLot(leadAcc,riskPct,slPips);
     html+='<div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-top:auto">';
-    html+='<div style="font-size:9px;font-weight:800;letter-spacing:0.8px;color:var(--text3);text-transform:uppercase;margin-bottom:6px">Lot formula (10K account)</div>';
-    html+='<div style="font-size:11px;color:var(--text2);line-height:1.6">$'+leadAcc.capital.toLocaleString()+' &times; '+riskPct+'% &divide; ('+slPips+' &times; $'+pipVal+')<br>';
-    html+='= <b style="color:var(--accent)">'+exampleLot.toFixed(2)+' lot</b> per 10K account</div>';
+    html+='<div style="font-size:9px;font-weight:800;letter-spacing:0.8px;color:var(--text3);text-transform:uppercase;margin-bottom:6px">Lot formula (lead\'s live balance)</div>';
+    html+='<div style="font-size:11px;color:var(--text2);line-height:1.6">$'+Math.round(leadBase).toLocaleString()+' &times; '+riskPct+'% &divide; ('+slPips+' &times; $'+pipVal+')<br>';
+    html+='= <b style="color:var(--accent)">'+exampleLot.toFixed(2)+' lot</b> for the lead account</div>';
     html+='</div>';
   }
   html+='</div>';
@@ -2711,6 +2717,7 @@ function ctSetParam(pi, key, val){
     ctContent.addEventListener('click',function(e){
       if(e.target.classList.contains('ct-lead-bal-inp')||
          e.target.classList.contains('ct-broker-pnl-inp')||
+         e.target.classList.contains('ct-broker-add-inp')||
          e.target.classList.contains('ct-still-recover-inp')) e.stopPropagation();
       var resetBtn=e.target.closest('.ct-str-reset-btn');
       if(resetBtn){
@@ -2723,7 +2730,47 @@ function ctSetParam(pi, key, val){
           renderCopyTrading();
         }
       }
+      var addBtn=e.target.closest('.ct-broker-add-btn');
+      if(addBtn){
+        e.stopPropagation();
+        var pi=parseInt(addBtn.getAttribute('data-pi'));
+        var port=copyPortfolios[pi];
+        var addInp=ctContent.querySelector('.ct-broker-add-inp[data-pi="'+pi+'"]');
+        if(port && addInp){
+          var delta=evalSumExpr(addInp.value.trim());
+          if(!isNaN(delta) && delta!==0){
+            var currentTotal=evalSumExpr(String(port.brokerPnL||''))||0;
+            ctApplyBrokerPnL(port, currentTotal+delta);
+            addInp.value='';
+          }
+        }
+      }
     });
+    // Shared: sets the portfolio's Broker P&L total and re-distributes it across active members.
+    window.ctApplyBrokerPnL=function(port, newTotal){
+      var finalVal = isNaN(newTotal) ? 0 : newTotal;
+      port.brokerPnL = finalVal!==0 ? String(Math.round(finalVal)) : '';
+      saveCopyPortfolios();
+      var allIds=[port.leadId].concat(port.followerIds||[]).filter(Boolean).filter(function(id){
+        var a=accounts.find(function(x){return x.id===id;});
+        return a && a.phase!=='breached';
+      });
+      var nAccs=allIds.length;
+      if(nAccs>0){
+        var perAcc=Math.round(finalVal/nAccs);
+        allIds.forEach(function(id){
+          var acc=accounts.find(function(a){return a.id===id;});
+          if(acc){
+            var signedPerAcc = finalVal===0 ? 0 : (finalVal < 0 ? -Math.abs(perAcc) : Math.abs(perAcc));
+            acc.broker=signedPerAcc;
+            acc.brokerExpr=String(signedPerAcc);
+          }
+        });
+        saveState();
+        renderAccounts();
+      }
+      renderCopyTrading();
+    };
     ctContent.addEventListener('change',function(e){
       var inp=e.target;
       if(inp.classList.contains('ct-lead-bal-inp')){
@@ -2762,51 +2809,26 @@ function ctSetParam(pi, key, val){
         renderCopyTrading();
       }
       if(inp.classList.contains('ct-broker-pnl-inp')){
+        // Main box ALWAYS replaces the total directly — no hidden expression, no append surprises.
+        // What you type here becomes the new total, full stop.
         e.stopPropagation();
         var pi=parseInt(inp.getAttribute('data-pi'));
         var port=copyPortfolios[pi];
         if(!port) return;
         var raw=inp.value.trim();
-        // If starts with + or -, append to existing expression
-        var currentExpr = port.brokerPnL || '';
-        var newExpr;
-        if(raw===''){ newExpr=''; }
-        else if((raw[0]==='+'||raw[0]==='-') && currentExpr!==''){
-          newExpr = currentExpr + raw; // append
-        } else {
-          newExpr = raw; // replace
-        }
-        var val=evalSumExpr(newExpr);
-        port.brokerPnL=(!isNaN(val)&&newExpr!=='')?newExpr:'';
-        // Show evaluated result in input so user sees the sum
-        if(!isNaN(val) && newExpr!=='') inp.value=String(Math.round(val));
-        saveCopyPortfolios();
-        var allIds=[port.leadId].concat(port.followerIds||[]).filter(Boolean).filter(function(id){
-          var a=accounts.find(function(x){return x.id===id;});
-          return a && a.phase!=='breached';
-        });
-        var nAccs=allIds.length;
-        if(nAccs>0&&val!==0){
-          var perAcc=Math.round(val/nAccs);
-          allIds.forEach(function(id){
-            var acc=accounts.find(function(a){return a.id===id;});
-            if(acc){
-              // Keep sign as entered: negative = loss, positive = profit
-              var signedPerAcc = val < 0 ? -Math.abs(perAcc) : Math.abs(perAcc);
-              acc.broker=signedPerAcc;
-              acc.brokerExpr=String(signedPerAcc);
-            }
-          });
-          saveState();
-          renderAccounts();
-        }
-        renderCopyTrading();
+        var val=raw===''?0:evalSumExpr(raw);
+        ctApplyBrokerPnL(port, isNaN(val)?0:val);
       }
     });
     ctContent.addEventListener('keydown',function(e){
       if(e.key==='Enter'&&(e.target.classList.contains('ct-lead-bal-inp')||
          e.target.classList.contains('ct-broker-pnl-inp')||
          e.target.classList.contains('ct-still-recover-inp'))) e.target.blur();
+      if(e.key==='Enter'&&e.target.classList.contains('ct-broker-add-inp')){
+        e.preventDefault();
+        var addBtn=ctContent.querySelector('.ct-broker-add-btn[data-pi="'+e.target.getAttribute('data-pi')+'"]');
+        if(addBtn) addBtn.click();
+      }
     });
   }
 })();
